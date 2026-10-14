@@ -38,7 +38,7 @@ log = logging.getLogger(__name__)
 EDITION_NAME = 'Gemeinde-Edition'
 # The GitHub repository ("owner/name") whose releases are the updates of this edition. Without it, there is no update
 # check.
-EDITION_REPOSITORY = ''
+EDITION_REPOSITORY = 'SlavaSchmick/OpenLP-Gemeinde-Edition'
 
 
 def edition_title():

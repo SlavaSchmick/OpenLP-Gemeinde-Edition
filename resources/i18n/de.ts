@@ -9439,6 +9439,14 @@ wurde erfolgreich erstellt.</translation>
         <comment>container title</comment>
         <translation>Liedprotokollierung</translation>
     </message>
+    <message>
+        <source>Show &amp;Statistics</source>
+        <translation>&amp;Statistik anzeigen</translation>
+    </message>
+    <message>
+        <source>Show the statistics of the song usage.</source>
+        <translation>Zeigt die Statistik der gesungenen Lieder.</translation>
+    </message>
 </context>
 <context>
     <name>SongUsagePlugin.SongUsageDeleteForm</name>
@@ -12745,6 +12753,189 @@ Jetzt herunterladen und installieren? OpenLP wird dafür beendet; Lieder, Bibeln
     <message>
         <source>The downloaded update is damaged and was deleted. Please try again later.</source>
         <translation>Das heruntergeladene Update ist beschädigt und wurde gelöscht. Bitte versuche es später noch einmal.</translation>
+    </message>
+</context>
+<context>
+    <name>SongUsagePlugin.SongUsageStatisticsForm</name>
+    <message>
+        <source>Song Statistics</source>
+        <translation>Liedstatistik</translation>
+    </message>
+    <message>
+        <source>Save as &amp;PDF...</source>
+        <translation>Als &amp;PDF speichern...</translation>
+    </message>
+    <message>
+        <source>Save as &amp;Web Page...</source>
+        <translation>Als &amp;Webseite speichern...</translation>
+    </message>
+    <message>
+        <source>song_statistics</source>
+        <translation>Liedstatistik</translation>
+    </message>
+    <message>
+        <source>Save as PDF</source>
+        <translation>Als PDF speichern</translation>
+    </message>
+    <message>
+        <source>PDF files</source>
+        <translation>PDF-Dateien</translation>
+    </message>
+    <message>
+        <source>Save as Web Page</source>
+        <translation>Als Webseite speichern</translation>
+    </message>
+    <message>
+        <source>Web pages</source>
+        <translation>Webseiten</translation>
+    </message>
+    <message>
+        <source>Saving Failed</source>
+        <translation>Speichern fehlgeschlagen</translation>
+    </message>
+    <message>
+        <source>The statistics could not be saved as {file}.</source>
+        <translation>Die Statistik konnte nicht als {file} gespeichert werden.</translation>
+    </message>
+    <message>
+        <source>Song statistics</source>
+        <translation>Liedstatistik</translation>
+    </message>
+    <message>
+        <source>4 weeks</source>
+        <translation>4 Wochen</translation>
+    </message>
+    <message>
+        <source>3 months</source>
+        <translation>3 Monate</translation>
+    </message>
+    <message>
+        <source>12 months</source>
+        <translation>12 Monate</translation>
+    </message>
+    <message>
+        <source>This year</source>
+        <translation>Dieses Jahr</translation>
+    </message>
+    <message>
+        <source>All</source>
+        <translation>Gesamt</translation>
+    </message>
+    <message>
+        <source>Period</source>
+        <translation>Zeitraum</translation>
+    </message>
+    <message>
+        <source>All songbooks</source>
+        <translation>Alle Liederbücher</translation>
+    </message>
+    <message>
+        <source>Search song or number, e.g. d203</source>
+        <translation>Lied oder Nummer suchen, z. B. d203</translation>
+    </message>
+    <message>
+        <source>Days with songs</source>
+        <translation>Tage mit Liedern</translation>
+    </message>
+    <message>
+        <source>Songs sung</source>
+        <translation>Gesungene Lieder</translation>
+    </message>
+    <message>
+        <source>Different songs</source>
+        <translation>Verschiedene Lieder</translation>
+    </message>
+    <message>
+        <source>Songs per day</source>
+        <translation>Lieder pro Tag</translation>
+    </message>
+    <message>
+        <source>Songbooks</source>
+        <translation>Liederbücher</translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation>Sonstige</translation>
+    </message>
+    <message>
+        <source>W{week}</source>
+        <translation>KW {week}</translation>
+    </message>
+    <message>
+        <source>Week of {date}</source>
+        <translation>Woche ab {date}</translation>
+    </message>
+    <message>
+        <source>{songs} songs on {days} days</source>
+        <translation>{songs} Lieder an {days} Tagen</translation>
+    </message>
+    <message>
+        <source>Songs per week</source>
+        <translation>Lieder pro Woche</translation>
+    </message>
+    <message>
+        <source>Songs per month</source>
+        <translation>Lieder pro Monat</translation>
+    </message>
+    <message>
+        <source>Show less</source>
+        <translation>Weniger anzeigen</translation>
+    </message>
+    <message>
+        <source>Show all ({count})</source>
+        <translation>Alle anzeigen ({count})</translation>
+    </message>
+    <message>
+        <source>Most sung songs</source>
+        <translation>Am häufigsten gesungen</translation>
+    </message>
+    <message>
+        <source>No songs in this period.</source>
+        <translation>Keine Lieder in diesem Zeitraum.</translation>
+    </message>
+    <message>
+        <source>Song</source>
+        <translation>Lied</translation>
+    </message>
+    <message>
+        <source>Times sung</source>
+        <translation>Wie oft</translation>
+    </message>
+    <message>
+        <source>Last sung</source>
+        <translation>Zuletzt</translation>
+    </message>
+    <message>
+        <source>Not sung in this period</source>
+        <translation>In diesem Zeitraum nicht gesungen</translation>
+    </message>
+    <message>
+        <source>{days} days ago</source>
+        <translation>vor {days} Tagen</translation>
+    </message>
+    <message>
+        <source>No song usage recorded yet</source>
+        <translation>Noch keine Lieder protokolliert</translation>
+    </message>
+    <message>
+        <source>Turn on song usage tracking: Tools → Song Usage Tracking → Toggle Tracking. From then on, every song which is shown live is recorded.</source>
+        <translation>Protokollierung einschalten: Extras → Protokollierung → Aktiviere Protokollierung (oder F4). Ab dann wird jedes Lied festgehalten, das live gezeigt wird.</translation>
+    </message>
+    <message>
+        <source>{from} to {to}</source>
+        <translation>{from} bis {to}</translation>
+    </message>
+    <message>
+        <source>Songbook {book}</source>
+        <translation>Liederbuch {book}</translation>
+    </message>
+    <message>
+        <source>Search: {query}</source>
+        <translation>Suche: {query}</translation>
+    </message>
+    <message>
+        <source>A song which is shown several times on a day counts once on that day. Click on a song to see the days it was sung.</source>
+        <translation>Ein Lied, das an einem Tag mehrmals gezeigt wird, zählt an diesem Tag einmal. Ein Klick auf ein Lied zeigt die Tage, an denen es gesungen wurde.</translation>
     </message>
 </context>
 </TS>

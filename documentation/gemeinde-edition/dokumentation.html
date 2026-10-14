@@ -60,6 +60,7 @@
   <li>Medien und Präsentationen</li>
   <li>Schneller Bibel-Workflow</li>
   <li>Schnelle Liedsuche</li>
+  <li>Liedstatistik</li>
   <li>Automatische Textgröße</li>
   <li>Die Liederbücher im Detail</li>
   <li>Tastenkürzel im Überblick</li>
@@ -197,7 +198,7 @@
   <li>Ein Bibelvers wird <strong>nie auf zwei Folien verteilt</strong> – in keinem Layout.</li>
   <li>Mit <strong>Vergleichstext</strong> (zweite Übersetzung) steht der Vers in <strong>beiden Übersetzungen zusammen</strong> auf einer Folie.</li>
   <li>Bei Layouts mit mehreren Versen pro Folie („Vers pro Zeile“, „Fortlaufend“, „Ganze Verse fortlaufend“) wird nur zwischen zwei Versen auf eine neue Folie gewechselt.</li>
-  <li>Ist ein Vers sehr lang, wird seine Schrift so weit verkleinert, dass er vollständig zu sehen ist (siehe Kapitel 8).</li>
+  <li>Ist ein Vers sehr lang, wird seine Schrift so weit verkleinert, dass er vollständig zu sehen ist (siehe Kapitel 9).</li>
 </ul>
 
 <div style="page-break-inside: avoid"><h3>Tolerante Eingabe</h3>
@@ -231,7 +232,26 @@
 </table>
 <p>Beim Start ist immer der Suchtyp <strong>„Ganzes Lied“</strong> eingestellt; er durchsucht Kennung, Titel und Liedtext gleichzeitig.</p>
 
-<h2>8. Automatische Textgröße</h2>
+<h2>8. Liedstatistik</h2>
+<p>OpenLP kann festhalten, welche Lieder live gezeigt wurden (Liedprotokollierung). Bisher ließ sich daraus nur eine Textdatei
+erzeugen; jetzt gibt es eine übersichtliche <strong>Liedstatistik</strong>: <span class="path">Extras → Protokollierung →
+Statistik anzeigen</span>.</p>
+<table>
+  <tr><th style="width:26%">Bereich</th><th>Inhalt</th></tr>
+  <tr><td>Zeitraum</td><td>4 Wochen, 3 Monate, 12 Monate, dieses Jahr, gesamt oder ein frei gewählter Zeitraum (Datumsfelder).</td></tr>
+  <tr><td>Liederbuch und Suche</td><td>Nur Deutsch (<code>D</code>) oder Russisch (<code>R</code>) anzeigen; die Suche findet Titel und Kennungen wie <code>d203</code>.</td></tr>
+  <tr><td>Kennzahlen</td><td>Tage mit Liedern, gesungene Lieder, verschiedene Lieder, Lieder pro Tag und der Anteil der Liederbücher.</td></tr>
+  <tr><td>Diagramm</td><td>Lieder pro Monat (bei kurzen Zeiträumen pro Woche).</td></tr>
+  <tr><td>Am häufigsten gesungen</td><td>Rangliste mit Anzahl und letztem Datum; ein Klick auf ein Lied zeigt alle Tage, an denen es gesungen wurde.</td></tr>
+  <tr><td>Lieder pro Tag</td><td>Für jeden Gottesdienst-Tag die gesungenen Lieder.</td></tr>
+  <tr><td>Nicht gesungen</td><td>Lieder, die früher gesungen wurden, im gewählten Zeitraum aber nicht – mit dem letzten Datum.</td></tr>
+  <tr><td>Speichern</td><td><em>Als PDF speichern</em> (zum Drucken oder Weitergeben) und <em>Als Webseite speichern</em> (in jedem Browser zu öffnen, mit allen Filtern).</td></tr>
+</table>
+<p>Ein Lied, das an einem Tag mehrmals gezeigt wird, zählt an diesem Tag einmal. Damit Lieder erfasst werden, müssen die
+Erweiterung „Liedprotokollierung“ (<span class="path">Einstellungen → Plugins verwalten</span>) und die Protokollierung
+(<span class="path">Extras → Protokollierung → Aktiviere Protokollierung</span> oder <kbd>F4</kbd>) eingeschaltet sein.</p>
+
+<h2>9. Automatische Textgröße</h2>
 <p>Bibel- und Liedtexte sind unterschiedlich lang. Damit die Fläche immer optimal genutzt wird und der Text auch aus großer Entfernung lesbar ist, wählt OpenLP <strong>für jede Folie die größte Schrift</strong>, bei der der Text vollständig in den Textbereich passt – innerhalb einer Spanne, die im Design festgelegt wird.</p>
 
 <h3>Einstellen</h3>
@@ -261,7 +281,7 @@
   <strong>Tipp:</strong> Bei vorhandenen Designs steht die größte Größe noch auf dem bisherigen Wert (z. B. 40 pt) – kurze Texte werden dann nicht größer als vorher. Für eine gut gefüllte Leinwand die <strong>Größte Größe</strong> z. B. auf 100–120 pt setzen. Bei Liedern mit einer sehr langen Zeile kann unten Platz frei bleiben; dann hilft die vertikale Ausrichtung „Mitte“.
 </div>
 
-<h2 class="page-break">9. Die Liederbücher im Detail</h2>
+<h2 class="page-break">10. Die Liederbücher im Detail</h2>
 <p>Grundlage sind die SongBeamer-Liederbücher (1310 deutsche, 801 russische Dateien). Alle Lieder wurden automatisch bereinigt, geprüft und in das OpenLP-Format gebracht.</p>
 
 <h3>Titel und Kennung</h3>
@@ -300,7 +320,7 @@
 </ul>
 
 <div style="page-break-inside: avoid">
-<h2>10. Tastenkürzel im Überblick</h2>
+<h2>11. Tastenkürzel im Überblick</h2>
 <table>
   <tr><th style="width:30%">Taste</th><th>Wirkung</th></tr>
   <tr><td><kbd>Strg</kbd>+<kbd>B</kbd></td><td>Ins Bibel-Suchfeld springen</td></tr>
@@ -312,16 +332,16 @@
 <p class="small">Alle Kürzel lassen sich unter <span class="path">Einstellungen → Konfiguriere Tastenkürzel…</span> ändern.</p>
 </div>
 
-<h2>11. Hinweise und bekannte Grenzen</h2>
+<h2>12. Hinweise und bekannte Grenzen</h2>
 <ul>
   <li><strong>Übersetzungen:</strong> Die russische und die ukrainische Oberfläche sollten von Muttersprachlern durchgesehen werden, insbesondere Fachbegriffe (z. B. „Служение/Служіння“ für den Gottesdienstablauf).</li>
   <li><strong>Zeilenumbrüche in den Liedquellen:</strong> Einige Lieder haben in den SongBeamer-Dateien falsch gesetzte Zeilenumbrüche (z. B. D1: „Cherubim und Seraphinen Stimmen / Dir ein Loblied an“). Diese lassen sich nicht automatisch erkennen und können bei Bedarf im Lied-Editor korrigiert werden.</li>
   <li><strong>Suche nach Nummern:</strong> Die Suche findet alles, was die Kennung enthält; das exakt passende Lied steht immer oben.</li>
   <li><strong>Signatur:</strong> Das Setup ist nicht digital signiert (SmartScreen-Warnung, siehe Kapitel 1).</li>
-  <li><strong>Lizenz:</strong> OpenLP steht unter der GNU General Public License Version 3. Wer diese angepasste Version weitergibt, muss den Empfängern auch den Quellcode zugänglich machen – er liegt öffentlich auf GitHub (siehe Kapitel 12).</li>
+  <li><strong>Lizenz:</strong> OpenLP steht unter der GNU General Public License Version 3. Wer diese angepasste Version weitergibt, muss den Empfängern auch den Quellcode zugänglich machen – er liegt öffentlich auf GitHub (siehe Kapitel 13).</li>
 </ul>
 
-<h2>12. Updates</h2>
+<h2>13. Updates</h2>
 <p>Die Gemeinde-Edition bekommt ihre Updates aus ihrem eigenen GitHub-Repository – <strong>nicht</strong> von openlp.org. So kann niemand versehentlich das offizielle OpenLP installieren, das alle Ergänzungen dieser Edition entfernen würde.</p>
 <h3>So läuft ein Update</h3>
 <ol>
@@ -339,7 +359,7 @@
 <h3>Version</h3>
 <p>Die Version steht im Info-Dialog (<span class="path">Hilfe → Info über OpenLP</span>), z. B. <code>3.1.7 Build gemeinde.1</code>: 3.1.7 ist die zugrunde liegende OpenLP-Version, <code>gemeinde.1</code> die Ausgabe der Gemeinde-Edition.</p>
 
-<h2 class="page-break">13. Technischer Anhang</h2>
+<h2 class="page-break">14. Technischer Anhang</h2>
 <table>
   <tr><th style="width:30%">Punkt</th><th>Details</th></tr>
   <tr><td>Grundlage</td><td>OpenLP 3.1.7 (Python, PyQt5, QtWebEngine)</td></tr>
@@ -351,7 +371,7 @@
   <tr><td>Systemvoraussetzung</td><td>Windows 10 oder 11, 64 Bit</td></tr>
   <tr><td>Live-Video</td><td>Kamerazugriff über die Chromium-Engine (nur für OpenLP-eigene Seiten freigegeben); Windows-Kameraberechtigung für Desktop-Apps muss erlaubt sein</td></tr>
   <tr><td>Audio-Ausgabe</td><td>VLC über WASAPI; Gerät wird beim Laden jedes Mediums gesetzt</td></tr>
-  <tr><td>Qualitätssicherung</td><td>Automatische Tests: 2604 Python-Tests und 112 JavaScript-Tests; zusätzlich Prüfungen im laufenden Programm (Bibel- und Liedsuche, Tastatur-Workflow, Textgröße, ganze Verse mit Vergleichstext, PowerPoint-Präsentation, Update über GitHub, Live-Video, Audio, Sprachen)</td></tr>
+  <tr><td>Qualitätssicherung</td><td>Automatische Tests: 2625 Python-Tests und 112 JavaScript-Tests; zusätzlich Prüfungen im laufenden Programm (Bibel- und Liedsuche, Tastatur-Workflow, Textgröße, ganze Verse mit Vergleichstext, PowerPoint-Präsentation, Update über GitHub, Liedstatistik mit PDF, Live-Video, Audio, Sprachen)</td></tr>
 </table>
 
 </body>

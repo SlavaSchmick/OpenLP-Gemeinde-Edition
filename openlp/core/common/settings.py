@@ -678,6 +678,7 @@ class Settings(QtCore.QSettings):
             'shortcuts/showScreen': [QtGui.QKeySequence(QtCore.Qt.Key_Space)],
             'shortcuts/settingsExportItem': [],
             'shortcuts/songUsageReport': [],
+            'shortcuts/songUsageStatistics': [],
             'shortcuts/songImportItem': [],
             'shortcuts/themeScreen': [QtGui.QKeySequence(QtCore.Qt.Key_T)],
             'shortcuts/toolsReindexItem': [],

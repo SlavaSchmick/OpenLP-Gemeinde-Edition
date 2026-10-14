@@ -9442,7 +9442,15 @@ has been successfully created. </source>
             <comment>container title</comment>
             <translation>Використання пісень</translation>
         </message>
-    </context>
+        <message>
+        <source>Show &amp;Statistics</source>
+        <translation>Показати &amp;статистику</translation>
+    </message>
+    <message>
+        <source>Show the statistics of the song usage.</source>
+        <translation>Показати статистику виконаних пісень.</translation>
+    </message>
+</context>
     <context>
         <name>SongUsagePlugin.SongUsageDeleteForm</name>
         <message>
@@ -12747,6 +12755,189 @@ Download and install it now? OpenLP will be closed for this; your songs, Bibles,
     <message>
         <source>The downloaded update is damaged and was deleted. Please try again later.</source>
         <translation>Завантажене оновлення пошкоджене й було видалене. Спробуйте пізніше.</translation>
+    </message>
+</context>
+<context>
+    <name>SongUsagePlugin.SongUsageStatisticsForm</name>
+    <message>
+        <source>Song Statistics</source>
+        <translation>Статистика пісень</translation>
+    </message>
+    <message>
+        <source>Save as &amp;PDF...</source>
+        <translation>Зберегти як &amp;PDF...</translation>
+    </message>
+    <message>
+        <source>Save as &amp;Web Page...</source>
+        <translation>Зберегти як &amp;веб-сторінку...</translation>
+    </message>
+    <message>
+        <source>song_statistics</source>
+        <translation>статистика_пісень</translation>
+    </message>
+    <message>
+        <source>Save as PDF</source>
+        <translation>Зберегти як PDF</translation>
+    </message>
+    <message>
+        <source>PDF files</source>
+        <translation>Файли PDF</translation>
+    </message>
+    <message>
+        <source>Save as Web Page</source>
+        <translation>Зберегти як веб-сторінку</translation>
+    </message>
+    <message>
+        <source>Web pages</source>
+        <translation>Веб-сторінки</translation>
+    </message>
+    <message>
+        <source>Saving Failed</source>
+        <translation>Не вдалося зберегти</translation>
+    </message>
+    <message>
+        <source>The statistics could not be saved as {file}.</source>
+        <translation>Не вдалося зберегти статистику у файл {file}.</translation>
+    </message>
+    <message>
+        <source>Song statistics</source>
+        <translation>Статистика пісень</translation>
+    </message>
+    <message>
+        <source>4 weeks</source>
+        <translation>4 тижні</translation>
+    </message>
+    <message>
+        <source>3 months</source>
+        <translation>3 місяці</translation>
+    </message>
+    <message>
+        <source>12 months</source>
+        <translation>12 місяців</translation>
+    </message>
+    <message>
+        <source>This year</source>
+        <translation>Цей рік</translation>
+    </message>
+    <message>
+        <source>All</source>
+        <translation>Увесь час</translation>
+    </message>
+    <message>
+        <source>Period</source>
+        <translation>Період</translation>
+    </message>
+    <message>
+        <source>All songbooks</source>
+        <translation>Усі збірники</translation>
+    </message>
+    <message>
+        <source>Search song or number, e.g. d203</source>
+        <translation>Пошук пісні або номера, напр. r47</translation>
+    </message>
+    <message>
+        <source>Days with songs</source>
+        <translation>Дні з піснями</translation>
+    </message>
+    <message>
+        <source>Songs sung</source>
+        <translation>Виконано пісень</translation>
+    </message>
+    <message>
+        <source>Different songs</source>
+        <translation>Різних пісень</translation>
+    </message>
+    <message>
+        <source>Songs per day</source>
+        <translation>Пісні за днями</translation>
+    </message>
+    <message>
+        <source>Songbooks</source>
+        <translation>Збірники</translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation>Інші</translation>
+    </message>
+    <message>
+        <source>W{week}</source>
+        <translation>Т{week}</translation>
+    </message>
+    <message>
+        <source>Week of {date}</source>
+        <translation>Тиждень з {date}</translation>
+    </message>
+    <message>
+        <source>{songs} songs on {days} days</source>
+        <translation>пісень: {songs}, днів: {days}</translation>
+    </message>
+    <message>
+        <source>Songs per week</source>
+        <translation>Пісні за тижнями</translation>
+    </message>
+    <message>
+        <source>Songs per month</source>
+        <translation>Пісні за місяцями</translation>
+    </message>
+    <message>
+        <source>Show less</source>
+        <translation>Показати менше</translation>
+    </message>
+    <message>
+        <source>Show all ({count})</source>
+        <translation>Показати всі ({count})</translation>
+    </message>
+    <message>
+        <source>Most sung songs</source>
+        <translation>Найчастіше виконувані</translation>
+    </message>
+    <message>
+        <source>No songs in this period.</source>
+        <translation>У цьому періоді пісень немає.</translation>
+    </message>
+    <message>
+        <source>Song</source>
+        <translation>Пісня</translation>
+    </message>
+    <message>
+        <source>Times sung</source>
+        <translation>Скільки разів</translation>
+    </message>
+    <message>
+        <source>Last sung</source>
+        <translation>Останній раз</translation>
+    </message>
+    <message>
+        <source>Not sung in this period</source>
+        <translation>Не виконувались у цьому періоді</translation>
+    </message>
+    <message>
+        <source>{days} days ago</source>
+        <translation>{days} дн. тому</translation>
+    </message>
+    <message>
+        <source>No song usage recorded yet</source>
+        <translation>Виконання пісень ще не записано</translation>
+    </message>
+    <message>
+        <source>Turn on song usage tracking: Tools → Song Usage Tracking → Toggle Tracking. From then on, every song which is shown live is recorded.</source>
+        <translation>Увімкніть запис: Інструменти → Відстеження використання пісень → Перемкнути відстеження (або F4). Після цього записується кожна пісня, показана в прямому ефірі.</translation>
+    </message>
+    <message>
+        <source>{from} to {to}</source>
+        <translation>з {from} по {to}</translation>
+    </message>
+    <message>
+        <source>Songbook {book}</source>
+        <translation>Збірник {book}</translation>
+    </message>
+    <message>
+        <source>Search: {query}</source>
+        <translation>Пошук: {query}</translation>
+    </message>
+    <message>
+        <source>A song which is shown several times on a day counts once on that day. Click on a song to see the days it was sung.</source>
+        <translation>Пісня, показана за день кілька разів, рахується в цей день один раз. Натисніть на пісню, щоб побачити дні, коли її виконували.</translation>
     </message>
 </context>
 </TS>

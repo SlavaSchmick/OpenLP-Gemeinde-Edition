@@ -34,6 +34,7 @@ from openlp.core.lib.ui import create_action
 from openlp.core.ui.icons import UiIcons
 from openlp.plugins.songusage.forms.songusagedetailform import SongUsageDetailForm
 from openlp.plugins.songusage.forms.songusagedeleteform import SongUsageDeleteForm
+from openlp.plugins.songusage.forms.songusagestatisticsform import SongUsageStatisticsForm
 from openlp.plugins.songusage.lib import upgrade
 from openlp.plugins.songusage.lib.db import SongUsageItem, init_schema
 
@@ -55,6 +56,7 @@ class SongUsagePlugin(Plugin):
         self.weight = -4
         self.icon = UiIcons().song_usage
         self.song_usage_active = False
+        self.song_usage_statistics_form = None
         State().add_service('song_usage', self.weight, is_plugin=True)
         State().update_pre_conditions('song_usage', self.check_pre_conditions())
 
@@ -87,6 +89,12 @@ class SongUsagePlugin(Plugin):
             text=translate('SongUsagePlugin', '&Extract Tracking Data'),
             statustip=translate('SongUsagePlugin', 'Generate a report on song usage.'),
             triggers=self.on_song_usage_report)
+        # SongUsage statistics
+        self.song_usage_statistics = create_action(
+            tools_menu, 'songUsageStatistics',
+            text=translate('SongUsagePlugin', 'Show &Statistics'),
+            statustip=translate('SongUsagePlugin', 'Show the statistics of the song usage.'),
+            icon=UiIcons().song_usage, can_shortcuts=True, triggers=self.on_song_usage_statistics)
         # SongUsage activation
         self.song_usage_status = create_action(
             tools_menu, 'songUsageStatus',
@@ -97,6 +105,7 @@ class SongUsagePlugin(Plugin):
         self.tools_menu.addAction(self.song_usage_menu.menuAction())
         self.song_usage_menu.addAction(self.song_usage_status)
         self.song_usage_menu.addSeparator()
+        self.song_usage_menu.addAction(self.song_usage_statistics)
         self.song_usage_menu.addAction(self.song_usage_report)
         self.song_usage_menu.addAction(self.song_usage_delete)
         self.song_usage_active_button = QtWidgets.QToolButton(self.main_window.status_bar)
@@ -122,8 +131,10 @@ class SongUsagePlugin(Plugin):
         action_list.add_action(self.song_usage_status, translate('SongUsagePlugin', 'Song Usage'))
         action_list.add_action(self.song_usage_delete, translate('SongUsagePlugin', 'Song Usage'))
         action_list.add_action(self.song_usage_report, translate('SongUsagePlugin', 'Song Usage'))
+        action_list.add_action(self.song_usage_statistics, translate('SongUsagePlugin', 'Song Usage'))
         self.song_usage_delete_form = SongUsageDeleteForm(self.manager, self.main_window)
         self.song_usage_detail_form = SongUsageDetailForm(self, self.main_window)
+        self.song_usage_statistics_form = None
         self.song_usage_menu.menuAction().setVisible(True)
         self.song_usage_active_button.show()
 
@@ -139,6 +150,9 @@ class SongUsagePlugin(Plugin):
         action_list.remove_action(self.song_usage_status, translate('SongUsagePlugin', 'Song Usage'))
         action_list.remove_action(self.song_usage_delete, translate('SongUsagePlugin', 'Song Usage'))
         action_list.remove_action(self.song_usage_report, translate('SongUsagePlugin', 'Song Usage'))
+        action_list.remove_action(self.song_usage_statistics, translate('SongUsagePlugin', 'Song Usage'))
+        if self.song_usage_statistics_form:
+            self.song_usage_statistics_form.close()
         self.song_usage_active_button.hide()
         # stop any events being processed
         self.song_usage_active = False
@@ -215,6 +229,14 @@ class SongUsagePlugin(Plugin):
         """
         self.song_usage_detail_form.initialise()
         self.song_usage_detail_form.exec()
+
+    def on_song_usage_statistics(self):
+        """
+        Show the window with the song usage statistics (it is created when it is shown for the first time)
+        """
+        if not self.song_usage_statistics_form:
+            self.song_usage_statistics_form = SongUsageStatisticsForm(self, self.main_window)
+        self.song_usage_statistics_form.show_statistics()
 
     @staticmethod
     def about():

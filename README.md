@@ -32,6 +32,8 @@ Die ausführliche Beschreibung aller Ergänzungen für Anwender steht in
   geteilt (auch mit Vergleichstext), leere Bibeln aus fehlgeschlagenen Importen werden aufgeräumt.
 - **Lieder:** Suche während der Eingabe, Kennungen wie `r47` / `d203` mit exaktem Treffer oben,
   Enter / Umschalt+Enter, Strg+L.
+- **Liedstatistik:** übersichtliche Auswertung der Liedprotokollierung (Kennzahlen, Diagramm, häufigste und lange
+  nicht gesungene Lieder, Lieder pro Tag), speicherbar als PDF oder Webseite.
 - **Automatische Textgröße:** größte passende Schrift je Folie innerhalb einer Spanne im Design; Liedzeilen werden
   nicht umbrochen, Bibelverse immer ganz gezeigt.
 - **Präsentationen:** PowerPoint funktioniert auch mit Microsoft 365 (Click-to-Run).

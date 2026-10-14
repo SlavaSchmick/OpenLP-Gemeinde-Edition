@@ -92,3 +92,21 @@ def test_toggle_song_usage_state(MockedManager, settings, state):
 
     # THEN: song_usage_state should have been toggled
     assert song_usage.song_usage_active is False
+
+
+@patch('openlp.plugins.songusage.songusageplugin.SongUsageStatisticsForm')
+@patch('openlp.plugins.songusage.songusageplugin.DBManager')
+def test_song_usage_statistics(MockedManager, MockedStatisticsForm, settings, state):
+    """
+    Test that the statistics window is created once, and shown with the current statistics each time
+    """
+    # GIVEN: A SongUsagePlugin
+    song_usage = SongUsagePlugin()
+
+    # WHEN: The statistics are shown twice
+    song_usage.on_song_usage_statistics()
+    song_usage.on_song_usage_statistics()
+
+    # THEN: The window is created once and shown twice
+    MockedStatisticsForm.assert_called_once()
+    assert MockedStatisticsForm.return_value.show_statistics.call_count == 2

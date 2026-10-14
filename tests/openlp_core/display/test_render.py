@@ -265,3 +265,91 @@ def test_format_slide_no_split(settings):
 
     # THEN: The formatted slides should have all the text and no blank slides
     assert formatted_slides == ['line one<br>line two']
+
+
+def make_bible_renderer(fits):
+    """A renderer for Bible slides, where a text fits on a slide when ``fits`` says so"""
+    with patch('openlp.core.display.render.ThemePreviewRenderer.__init__') as init_fn:
+        init_fn.return_value = None
+        preview_renderer = ThemePreviewRenderer()
+    preview_renderer._is_initialised = True
+    preview_renderer.log_debug = MagicMock()
+    preview_renderer.set_theme = MagicMock()
+    preview_renderer.theme_level = None
+    preview_renderer._text_fits_on_slide = MagicMock(side_effect=fits)
+    preview_renderer.force_page = False
+    return preview_renderer
+
+
+def make_bible_item(*capabilities):
+    """A Bible service item with the given capabilities"""
+    from openlp.core.lib.serviceitem import ItemCapabilities
+    item = MagicMock()
+    item.name = 'bibles'
+    item.is_capable.side_effect = lambda capability: capability in capabilities or (
+        capability == ItemCapabilities.CanWordSplit and 'word split' in capabilities)
+    return item
+
+
+def test_format_slide_never_splits_a_bible_verse(settings):
+    """
+    Test that a Bible verse which doesn't fit is not split over slides, also for an item of an older service with the
+    CanWordSplit capability. The display makes its text smaller instead.
+    """
+    # GIVEN: A long verse which doesn't fit, of an item which may split words
+    renderer = make_bible_renderer(lambda text: len(text) < 20)
+    verse = '{su}16{/su}For God so loved the world, that he gave his only begotten Son'
+
+    # WHEN: The slide is formatted
+    slides = renderer.format_slide(verse, make_bible_item('word split'))
+
+    # THEN: The verse stays whole on one slide
+    assert slides == [verse]
+
+
+def test_format_slide_never_splits_a_verse_in_two_translations(settings):
+    """
+    Test that a slide with a verse in two translations (the comparison text) is never split, even when the two
+    translations together don't fit
+    """
+    # GIVEN: A verse in two translations, which doesn't fit
+    renderer = make_bible_renderer(lambda text: False)
+    verse = '{su}16{/su}Denn also hat Gott die Welt geliebt\n\n{su}16{/su}Ибо так возлюбил Бог мир'
+
+    # WHEN: The slide is formatted
+    slides = renderer.format_slide(verse, make_bible_item())
+
+    # THEN: Both translations stay together on one slide, not even checked for fitting
+    assert slides == [verse]
+    renderer._text_fits_on_slide.assert_not_called()
+
+
+def test_format_slide_splits_bible_slides_only_between_verses(settings):
+    """
+    Test that a slide with several verses (verse per line) is split only between verses
+    """
+    # GIVEN: Three verses of which two fit on a slide
+    renderer = make_bible_renderer(lambda text: text.count('verse') <= 2)
+    verses = '{su}1{/su}First verse\n{su}2{/su}Second verse\n{su}3{/su}Third verse'
+
+    # WHEN: The slide is formatted
+    slides = renderer.format_slide(verses, make_bible_item())
+
+    # THEN: The slides are split between verses
+    assert slides == ['{su}1{/su}First verse<br>{su}2{/su}Second verse', '{su}3{/su}Third verse']
+
+
+def test_format_slide_splits_continuous_bible_text_only_between_verses(settings):
+    """
+    Test that continuous Bible text (without line breaks) is split only between verses
+    """
+    # GIVEN: Three verses of continuous text, of which two fit on a slide
+    from openlp.core.lib.serviceitem import ItemCapabilities
+    renderer = make_bible_renderer(lambda text: text.count('verse') <= 2)
+    verses = '{su}1{/su}First verse\n {su}2{/su}Second verse\n {su}3{/su}Third verse'
+
+    # WHEN: The slide is formatted
+    slides = renderer.format_slide(verses, make_bible_item(ItemCapabilities.NoLineBreaks))
+
+    # THEN: The slides are split between verses, which flow on a slide
+    assert slides == ['{su}1{/su}First verse {su}2{/su}Second verse', '{su}3{/su}Third verse']

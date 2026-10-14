@@ -27,12 +27,12 @@ import sys
 from collections import OrderedDict
 from datetime import date
 
-from packaging.version import parse
 from PyQt5 import QtCore
 
 from openlp.core.common.applocation import AppLocation
 from openlp.core.common.httputils import get_web_page
 from openlp.core.common.registry import Registry
+from openlp.core.edition import is_newer_release, parse_latest_release, releases_api_url
 from openlp.core.threading import ThreadWorker, run_thread
 
 
@@ -53,18 +53,14 @@ LIBRARIES = OrderedDict([
     ('Mako', ('mako',)),
     ('VLC', ('openlp.core.ui.media.vlcplayer', 'VERSION')),
 ])
-VERSION_BASE_URL = 'https://get.openlp.org/versions/'
-VERSION_STABLE = 'version.txt'
-VERSION_DEVELOP = 'dev_version.txt'
-VERSION_NIGHTLY = 'nightly_version.txt'
 
 
 class VersionWorker(ThreadWorker):
     """
-    A worker class to fetch the version of OpenLP from the website. This is run from within a thread so that it
-    doesn't affect the loading time of OpenLP.
+    A worker class to fetch the latest release of this edition of OpenLP from its GitHub repository. This is run from
+    within a thread so that it doesn't affect the loading time of OpenLP.
     """
-    new_version = QtCore.pyqtSignal(str)
+    new_version = QtCore.pyqtSignal(object)
     no_internet = QtCore.pyqtSignal()
 
     def __init__(self, last_check_date, current_version):
@@ -80,43 +76,39 @@ class VersionWorker(ThreadWorker):
 
     def start(self):
         """
-        Check the latest version of OpenLP against the version file on the OpenLP site.
-
-        **Rules around versions and version files:**
-
-        * If a version number has a revision hash (i.e. g9034d140b), then it is a nightly.
-        * If a version number's minor version is an odd number, it is a development release.
-        * If a version number's minor version is an even number, it is a stable release.
+        Check the latest release of this edition on GitHub against the running version. The versions of the official
+        OpenLP on openlp.org are not checked: installing one of them would replace this edition and its additions.
         """
         log.debug('VersionWorker - Start')
-        download_url = VERSION_BASE_URL
-        if self.current_version['build']:
-            download_url += VERSION_NIGHTLY
-        elif int(self.current_version['version'].split('.')[1]) % 2 != 0:
-            download_url += VERSION_DEVELOP
-        else:
-            download_url += VERSION_STABLE
+        url = releases_api_url()
+        if not url:
+            log.debug('No GitHub repository for the updates of this edition')
+            self.quit.emit()
+            return
         headers = {
             'User-Agent': 'OpenLP/{version} {system}/{release}; '.format(version=self.current_version['full'],
                                                                          system=platform.system(),
-                                                                         release=platform.release())
+                                                                         release=platform.release()),
+            'Accept': 'application/vnd.github+json'
         }
-        remote_version = None
+        release = None
         retries = 0
         while retries < 3:
             try:
-                response = get_web_page(download_url, headers=headers)
-                if response:
-                    remote_version = response.strip()
-                log.debug('New version found: %s', remote_version)
+                response = get_web_page(url, headers=headers)
+                release = parse_latest_release(response) if response else None
+                log.debug('Latest release: %s', release)
+                break
+            except ValueError:
+                log.exception('The latest release on GitHub could not be read')
                 break
             except OSError:
-                log.exception('Unable to connect to OpenLP server to download version file')
+                log.exception('Unable to connect to GitHub to find the latest release')
                 retries += 1
         else:
             self.no_internet.emit()
-        if remote_version and (parse(remote_version) > parse(self.current_version['full'])):
-            self.new_version.emit(remote_version)
+        if is_newer_release(release, self.current_version['full']):
+            self.new_version.emit(release)
         self.quit.emit()
 
 

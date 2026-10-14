@@ -155,13 +155,56 @@ def test_setup_item(media_item: BibleMediaItem):
     # a way to properly test them.
 
     # GIVEN: A mocked Registry.register_function method and an instance of BibleMediaItem
-    with patch.object(Registry(), 'register_function') as mocked_register_function:
+    with patch.object(Registry(), 'register_function') as mocked_register_function, \
+            patch.object(media_item, 'add_bible_search_shortcut') as mocked_add_bible_search_shortcut:
 
         # WHEN: Calling setup_itme
         media_item.setup_item()
 
-        # THEN: Registry.register_function method should have been called with the reload_bibles method
+        # THEN: Registry.register_function method should have been called with the reload_bibles method, and the
+        #       shortcut to the search field should have been added
         mocked_register_function.assert_called_once_with('bibles_load_list', media_item.reload_bibles)
+        mocked_add_bible_search_shortcut.assert_called_once_with()
+
+
+def test_add_bible_search_shortcut(media_item: BibleMediaItem):
+    """
+    Test that the shortcut to the search field is added to the main window, so it works from anywhere in it
+    """
+    # GIVEN: A main window
+    main_window = MagicMock()
+    media_item._main_window = main_window
+    with patch('openlp.plugins.bibles.lib.mediaitem.create_action') as mocked_create_action:
+        # WHEN: Adding the shortcut
+        media_item.add_bible_search_shortcut()
+
+    # THEN: A configurable shortcut action is added to the main window
+    args, kwargs = mocked_create_action.call_args
+    assert args == (main_window, 'bibleSearchShortcut')
+    assert kwargs['can_shortcuts'] is True
+    assert kwargs['triggers'] == media_item.on_bible_search_shortcut_triggered
+    main_window.addAction.assert_called_once_with(mocked_create_action.return_value)
+
+
+def test_bible_search_shortcut_triggered(media_item: BibleMediaItem):
+    """
+    Test that the shortcut shows the Bibles and puts the cursor into the search field with the text selected
+    """
+    # GIVEN: A hidden library
+    main_window = MagicMock(**{'media_manager_dock.isVisible.return_value': False})
+    media_item._main_window = main_window
+    media_item.search_tab_bar = MagicMock()
+    media_item.search_edit = MagicMock()
+
+    # WHEN: The shortcut is pressed
+    media_item.on_bible_search_shortcut_triggered()
+
+    # THEN: The library shows the search of the Bibles, ready to type
+    main_window.media_manager_dock.setVisible.assert_called_once_with(True)
+    main_window.media_tool_box.setCurrentWidget.assert_called_once_with(media_item)
+    media_item.search_tab_bar.setCurrentIndex.assert_called_once_with(SearchTabs.Search)
+    media_item.search_edit.setFocus.assert_called_once_with()
+    media_item.search_edit.selectAll.assert_called_once_with()
 
 
 def test_required_icons(media_item: BibleMediaItem):
@@ -353,9 +396,9 @@ def test_initalise_reset_search_type(media_item: BibleMediaItem):
         media_item.initialise()
 
         # THEN: The search_edit search types should have been set and that the current search type should be set to
-        #       'Combined'
+        #       'Reference', since looking up a passage is what is needed most
         assert media_item.search_edit.set_search_types.called is True
-        media_item.search_edit.set_current_search_type.assert_called_once_with(BibleSearch.Combined)
+        media_item.search_edit.set_current_search_type.assert_called_once_with(BibleSearch.Reference)
 
 
 def test_populate_bible_combo_boxes(media_item: BibleMediaItem):
@@ -393,13 +436,19 @@ def test_reload_bibles(media_item: BibleMediaItem):
     Test reload_bibles
     """
     # GIVEN: An instance of :class:`MediaManagerItem` and mocked out settings class with known values
-    with patch.object(media_item, 'populate_bible_combo_boxes') as mocked_populate_bible_combo_boxes:
+    media_item.select_book_combo_box = MagicMock(**{'currentData.return_value': 43})
+    with patch.object(media_item, 'populate_bible_combo_boxes') as mocked_populate_bible_combo_boxes, \
+            patch.object(media_item, 'initialise_advanced_bible') as mocked_initialise_advanced_bible, \
+            patch.object(media_item, 'update_auto_completer') as mocked_update_auto_completer:
         # WHEN: Calling reload_bibles()
         media_item.reload_bibles()
 
-        # THEN: The manager reload_bibles method should have been called and the bible combo boxes updated
+        # THEN: The manager reload_bibles method should have been called and the bible combo boxes updated, including
+        #       the book names, which depend on the language setting
         media_item.plugin.manager.reload_bibles.assert_called_once_with()
         mocked_populate_bible_combo_boxes.assert_called_once_with()
+        mocked_initialise_advanced_bible.assert_called_once_with(43)
+        mocked_update_auto_completer.assert_called_once_with()
 
 
 def test_get_common_books_no_second_book(media_item: BibleMediaItem):
@@ -1731,3 +1780,205 @@ def test_generate_slide_data_data_string_one_bible(media_item: BibleMediaItem):
             }
         ]
     }
+
+
+def make_verse_data(verse, is_reference=True, second_bible=''):
+    return {'book': 'Johannes', 'book_ref_id': 43, 'is_reference': is_reference, 'chapter': 3, 'verse': verse,
+            'bible': 'Luther', 'version': 'Luther 2017', 'copyright': 'DBG', 'permissions': '', 'text': f'Text {verse}',
+            'second_bible': second_bible, 'second_version': 'KJV' if second_bible else '', 'second_copyright': '',
+            'second_permissions': '', 'second_text': f'Second {verse}' if second_bible else ''}
+
+
+@pytest.fixture()
+def chapter_media_item(media_item: BibleMediaItem):
+    """A media item which reads John 3 with 5 verses from the Bible"""
+    from openlp.core.common.enum import LayoutStyle
+    media_item.settings_tab = MagicMock(layout_style=LayoutStyle.VersePerSlide, bible_theme='')
+    media_item.format_verse = lambda old_chapter, chapter, verse: '{}:{} '.format(chapter, verse)
+    media_item.plugin.manager.get_verses.side_effect = lambda bible, refs, show_error: [
+        MagicMock(chapter=3, verse=number, text='{} {}'.format(bible, number)) for number in range(1, 6)]
+    separators = {'sep_v_display': ',', 'sep_r_display': '-', 'sep_l_display': '.', 'sep_e': ''}
+    with patch('openlp.plugins.bibles.lib.versereferencelist.get_reference_separator',
+               side_effect=lambda name: separators.get(name, '')):
+        yield media_item
+
+
+def test_generate_slide_data_reference_shows_whole_chapter(chapter_media_item: BibleMediaItem):
+    """
+    Test that a passage looked up by its reference is shown with its whole chapter, starting at the first verse of the
+    passage, so that you can move freely through the chapter with the arrow keys
+    """
+    # GIVEN: The verses 3 and 4 of a reference search
+    from openlp.core.lib.serviceitem import ServiceItem
+    service_item = ServiceItem(None)
+    items = [MagicMock(**{'data.return_value': make_verse_data(verse)}) for verse in (3, 4)]
+
+    # WHEN: Generating the service item
+    chapter_media_item.generate_slide_data(service_item, item=items)
+
+    # THEN: All 5 verses of the chapter are slides, the item starts at verse 3, and each slide has its own footer
+    assert [slide['text'] for slide in service_item.slides] == ['3:{0} Luther {0}'.format(verse)
+                                                                for verse in range(1, 6)]
+    assert service_item.start_verse_tag == '3'
+    assert service_item.slides[2]['footer_html'].startswith('Johannes 3,3')
+    assert service_item.slides[4]['footer_html'].startswith('Johannes 3,5')
+    assert service_item.title.startswith('Johannes 3,3-4')
+    chapter_media_item.plugin.manager.get_verses.assert_called_once_with('Luther', [(43, 3, 1, -1)], False)
+
+
+def test_generate_slide_data_reference_with_second_bible(chapter_media_item: BibleMediaItem):
+    """
+    Test that the whole chapter of the second Bible is shown next to the first one
+    """
+    # GIVEN: A verse of a reference search with a second Bible
+    from openlp.core.lib.serviceitem import ServiceItem
+    service_item = ServiceItem(None)
+    items = [MagicMock(**{'data.return_value': make_verse_data(2, second_bible='KJV')})]
+
+    # WHEN: Generating the service item
+    chapter_media_item.generate_slide_data(service_item, item=items)
+
+    # THEN: Each slide contains the verse of both Bibles
+    assert len(service_item.slides) == 5
+    assert service_item.slides[1]['text'] == '3:2 Luther 2\n\n3:2 KJV 2'
+    assert service_item.start_verse_tag == '2'
+
+
+@pytest.mark.parametrize('layout_name, second_bible', [('VersePerSlide', ''), ('VersePerLine', ''),
+                                                       ('Continuous', ''), ('WholeVerseContinuous', ''),
+                                                       ('VersePerSlide', 'KJV')])
+def test_generate_slide_data_never_splits_verses(chapter_media_item: BibleMediaItem, layout_name, second_bible):
+    """
+    Test that a Bible item never allows its verses to be split over slides, in any layout and with a second Bible
+    """
+    # GIVEN: Verses found by a text search in a layout
+    from openlp.core.common.enum import LayoutStyle
+    from openlp.core.lib.serviceitem import ItemCapabilities, ServiceItem
+    chapter_media_item.settings_tab.layout_style = getattr(LayoutStyle, layout_name)
+    service_item = ServiceItem(None)
+    items = [MagicMock(**{'data.return_value': make_verse_data(verse, is_reference=False, second_bible=second_bible)})
+             for verse in (3, 4)]
+
+    # WHEN: Generating the service item
+    chapter_media_item.generate_slide_data(service_item, item=items)
+
+    # THEN: Words of a verse may never be split over slides
+    assert not service_item.is_capable(ItemCapabilities.CanWordSplit)
+
+
+def test_generate_slide_data_continuous_separates_verses(chapter_media_item: BibleMediaItem):
+    """
+    Test that continuous text has its verses on separate lines, so that the renderer splits slides only between verses,
+    while the lines are not shown
+    """
+    # GIVEN: The continuous layout
+    from openlp.core.common.enum import LayoutStyle
+    from openlp.core.lib.serviceitem import ItemCapabilities, ServiceItem
+    chapter_media_item.settings_tab.layout_style = LayoutStyle.Continuous
+    service_item = ServiceItem(None)
+    items = [MagicMock(**{'data.return_value': make_verse_data(verse, is_reference=False)}) for verse in (3, 4)]
+
+    # WHEN: Generating the service item
+    chapter_media_item.generate_slide_data(service_item, item=items)
+
+    # THEN: One slide with a verse per line, shown as continuous text
+    assert [slide['text'] for slide in service_item.slides] == ['3:3 Text 3\n 3:4 Text 4']
+    assert service_item.is_capable(ItemCapabilities.NoLineBreaks)
+
+
+def test_generate_slide_data_text_search_is_not_expanded(chapter_media_item: BibleMediaItem):
+    """
+    Test that the results of a text search are shown as they are, since they can come from anywhere in the Bible
+    """
+    # GIVEN: Verses found by a text search
+    from openlp.core.lib.serviceitem import ServiceItem
+    service_item = ServiceItem(None)
+    items = [MagicMock(**{'data.return_value': make_verse_data(verse, is_reference=False)}) for verse in (3, 4)]
+
+    # WHEN: Generating the service item
+    chapter_media_item.generate_slide_data(service_item, item=items)
+
+    # THEN: Only the found verses are slides, starting at the first one
+    assert len(service_item.slides) == 2
+    assert service_item.start_verse_tag is None
+    chapter_media_item.plugin.manager.get_verses.assert_not_called()
+
+
+def test_expand_to_chapters_falls_back_to_the_selection(chapter_media_item: BibleMediaItem):
+    """
+    Test that the selected verses are used when the chapter can't be read
+    """
+    # GIVEN: A Bible that returns no verses
+    chapter_media_item.plugin.manager.get_verses.side_effect = None
+    chapter_media_item.plugin.manager.get_verses.return_value = []
+    selected = [make_verse_data(3)]
+
+    # WHEN: Expanding to the chapter
+    result = chapter_media_item.expand_to_chapters(selected)
+
+    # THEN: The selection is used
+    assert result == (selected, 0)
+
+
+def test_search_edit_return_pressed_previews_the_results(media_item: BibleMediaItem):
+    """
+    Test that Enter in the search field searches and sends the found verses to the Preview, keeping the focus in the
+    search field for the next search
+    """
+    # GIVEN: A search which finds verses
+    media_item.list_view = MagicMock(**{'selectedItems.return_value': [MagicMock()]})
+    media_item.search_edit = MagicMock()
+    with patch.object(media_item, 'on_search_button_clicked') as mocked_search, \
+            patch.object(media_item, 'on_preview_click') as mocked_preview, \
+            patch.object(media_item, 'on_live_click') as mocked_live, \
+            patch('openlp.plugins.bibles.lib.mediaitem.QtWidgets.QApplication.keyboardModifiers',
+                  return_value=QtCore.Qt.NoModifier):
+        # WHEN: Enter is pressed in the search field
+        media_item.on_search_edit_return_pressed()
+
+    # THEN: The search is done and the results are previewed, not sent live
+    mocked_search.assert_called_once_with()
+    mocked_preview.assert_called_once_with(keep_focus=True)
+    mocked_live.assert_not_called()
+    media_item.search_edit.setFocus.assert_called_once_with()
+
+
+def test_search_edit_shift_return_pressed_goes_live(media_item: BibleMediaItem):
+    """
+    Test that Shift+Enter in the search field searches and sends the found verses straight live, and gives the focus
+    to the verses of the Live panel, so the operator can go on with the arrow keys
+    """
+    # GIVEN: A search which finds verses
+    media_item.list_view = MagicMock(**{'selectedItems.return_value': [MagicMock()]})
+    media_item.search_edit = MagicMock()
+    live_controller = MagicMock()
+    Registry().register('live_controller', live_controller)
+    with patch.object(media_item, 'on_search_button_clicked') as mocked_search, \
+            patch.object(media_item, 'on_preview_click') as mocked_preview, \
+            patch.object(media_item, 'on_live_click') as mocked_live, \
+            patch('openlp.plugins.bibles.lib.mediaitem.QtWidgets.QApplication.keyboardModifiers',
+                  return_value=QtCore.Qt.ShiftModifier):
+        # WHEN: Shift+Enter is pressed in the search field
+        media_item.on_search_edit_return_pressed()
+
+    # THEN: The search is done and the results go live, not to the Preview
+    mocked_search.assert_called_once_with()
+    mocked_live.assert_called_once_with()
+    mocked_preview.assert_not_called()
+    live_controller.preview_widget.setFocus.assert_called_once_with()
+    media_item.search_edit.setFocus.assert_not_called()
+
+
+def test_search_edit_return_pressed_without_results(media_item: BibleMediaItem):
+    """
+    Test that nothing is previewed when the search finds nothing
+    """
+    # GIVEN: A search which finds nothing
+    media_item.list_view = MagicMock(**{'selectedItems.return_value': []})
+    with patch.object(media_item, 'on_search_button_clicked'), \
+            patch.object(media_item, 'on_preview_click') as mocked_preview:
+        # WHEN: Enter is pressed in the search field
+        media_item.on_search_edit_return_pressed()
+
+    # THEN: Nothing is previewed
+    mocked_preview.assert_not_called()

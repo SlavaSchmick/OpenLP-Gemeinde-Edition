@@ -293,3 +293,109 @@ def test_update_reference_separators_custom_seps(request, settings):
         'sep_v_display': ':'
     }
     assert lib.REFERENCE_SEPARATORS == expected_separators
+
+
+def make_tolerant_bible(book_ids, names=None):
+    """A Bible which contains the given books, with optional Bible specific names"""
+    names = names or {}
+    books = []
+    for book_id in book_ids:
+        book = MagicMock(book_reference_id=book_id)
+        book.name = names.get(book_id, '')
+        books.append(book)
+    bible = MagicMock()
+    bible.get_books.return_value = books
+    bible.get_book_by_book_ref_id.side_effect = lambda book_id: book_id in book_ids
+    return bible
+
+
+RESOURCE_BOOKS = [{'id': 1, 'name': 'Genesis', 'abbreviation': 'Gen'},
+                  {'id': 6, 'name': 'Joshua', 'abbreviation': 'Josh'},
+                  {'id': 43, 'name': 'John', 'abbreviation': 'John'},
+                  {'id': 45, 'name': 'Romans', 'abbreviation': 'Rom'},
+                  {'id': 62, 'name': '1 John', 'abbreviation': '1John'}]
+
+
+@pytest.mark.parametrize('typed, expected', [
+    ('1mos', [1]), ('1. Mose', [1]), ('1 Mo', [1]), ('gen', [1]), ('GEN', [1]), ('Genesis', [1]),
+    ('Röm', [45]), ('roem', [45]), ('rom', [45]), ('Römer', [45]), ('joh', [43]), ('Johannes', [43]),
+    ('1joh', [62]), ('1. Johannes', [62]), ('matth', []), ('xyz', [])])
+def test_find_book_ref_ids(typed, expected):
+    """
+    Test that books are found by their German, English or Bible specific names and abbreviations
+    """
+    bible = make_tolerant_bible([1, 6, 43, 45, 62], names={1: 'Das erste Buch Mose'})
+    with patch('openlp.plugins.bibles.lib.db.BiblesResourcesDB.get_books', return_value=RESOURCE_BOOKS):
+        assert lib.find_book_ref_ids(typed, bible) == expected
+
+
+def test_find_book_ref_ids_prefers_an_exact_abbreviation():
+    """
+    Test that an exact abbreviation wins over a book whose name only starts with the typed text
+    """
+    # "jo" is the start of Josua and Johannes, but "Jos" is the exact abbreviation of Josua
+    bible = make_tolerant_bible([6, 43])
+    with patch('openlp.plugins.bibles.lib.db.BiblesResourcesDB.get_books', return_value=RESOURCE_BOOKS):
+        assert lib.find_book_ref_ids('jos', bible) == [6]
+        assert lib.find_book_ref_ids('johan', bible) == [43]
+
+
+@pytest.mark.parametrize('typed, expected', [
+    ('Ин', [43]), ('ин', [43]), ('Иоанна', [43]), ('Быт', [1]), ('бытие', [1]), ('Рим', [45]), ('1Ин', [62]),
+    ('1 Иоанна', [62]), ('Ів', [43]), ('Івана', [43]), ('Бут', [1]), ('Буття', [1]), ('1Ів', [62]),
+    ('1 Івана', [62]), ('Нав', [6]), ('Ісус Навин', [6]), ('Иисус Навин', [6])])
+def test_find_book_ref_ids_russian_and_ukrainian(typed, expected):
+    """
+    Test that books are found by their Russian and Ukrainian names and abbreviations, whatever the interface language
+    """
+    bible = make_tolerant_bible([1, 6, 43, 45, 62])
+    with patch('openlp.plugins.bibles.lib.db.BiblesResourcesDB.get_books', return_value=RESOURCE_BOOKS):
+        for language in ('ru', 'uk', 'de', 'en'):
+            assert lib.find_book_ref_ids(typed, bible, language) == expected, language
+
+
+@pytest.mark.parametrize('language, expected', [('ru', [9]), ('uk', [11]), ('de', [9])])
+def test_find_book_ref_ids_prefers_the_interface_language(language, expected):
+    """
+    Test that an abbreviation which means different books is resolved by the interface language
+    """
+    # "1Цар" is 1 Samuel in Russian and 1 Kings in Ukrainian
+    bible = make_tolerant_bible([9, 11])
+    with patch('openlp.plugins.bibles.lib.db.BiblesResourcesDB.get_books', return_value=[]):
+        assert lib.find_book_ref_ids('1Цар', bible, language) == expected
+
+
+def test_find_book_ref_ids_uses_the_interface_language(settings):
+    """
+    Test that the interface language from the settings is used when no language is given
+    """
+    bible = make_tolerant_bible([9, 11])
+    settings.setValue('core/language', 'uk')
+    with patch('openlp.plugins.bibles.lib.db.BiblesResourcesDB.get_books', return_value=[]):
+        assert lib.find_book_ref_ids('1Цар', bible) == [11]
+    settings.setValue('core/language', 'ru')
+    with patch('openlp.plugins.bibles.lib.db.BiblesResourcesDB.get_books', return_value=[]):
+        assert lib.find_book_ref_ids('1Цар', bible) == [9]
+
+
+@pytest.mark.parametrize('name, expected', [
+    ('1. Mose', '1mose'), ('Röm', 'roem'), ("Об'явлення", 'обявлення'), ('Обʼявлення', 'обявлення'),
+    ('Ёлка', 'елка')])
+def test_normalise_book_name(name, expected):
+    """
+    Test that book names are normalised for a tolerant comparison
+    """
+    assert lib.normalise_book_name(name) == expected
+
+
+@pytest.mark.parametrize('typed, expected', [
+    ('gen 3 4', 'gen 3:4'), ('joh 3 16-18', 'joh 3:16-18'), ('1 mos 3 4', '1 mos 3:4'),
+    ('joh 3 16 to 18', 'joh 3:16 to 18'), ('joh 3:16', 'joh 3:16'), ('Ps 23', 'Ps 23'),
+    ('love one another', 'love one another')])
+def test_normalise_reference(mocked_bible_test, typed, expected):
+    """
+    Test that chapter and verse may be separated by a space
+    """
+    update_reference_separators()
+
+    assert lib.normalise_reference(typed) == expected

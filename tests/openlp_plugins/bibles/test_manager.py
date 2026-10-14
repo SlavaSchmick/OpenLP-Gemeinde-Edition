@@ -50,3 +50,45 @@ def test_delete_bible(settings):
         mocked_close.assert_called_once_with()
         assert mocked_bible.session is None
         mocked_delete_file.assert_called_once_with(Path('bibles') / 'KJV.sqlite')
+
+
+def test_delete_bible_releases_the_file(settings):
+    """
+    Test that deleting a Bible also closes the connections of its database engine, which would otherwise keep the file
+    open and prevent deleting it on Windows
+    """
+    # GIVEN: A Bible with a session bound to an engine
+    with patch.object(BibleManager, 'reload_bibles'), \
+            patch('openlp.plugins.bibles.lib.manager.delete_file', return_value=True):
+        instance = BibleManager(MagicMock())
+        mocked_engine = MagicMock()
+        mocked_bible = MagicMock(path=Path('bibles'), **{'session.get_bind.return_value': mocked_engine})
+        instance.db_cache = {'KJV': mocked_bible}
+
+        # WHEN: Deleting the Bible
+        instance.delete_bible('KJV')
+
+    # THEN: The connections of the engine are closed
+    mocked_engine.dispose.assert_called_once_with()
+
+
+def test_reload_bibles_removes_an_empty_bible(settings, tmp_path):
+    """
+    Test that an empty Bible without a name, as a failed import leaves it behind, is removed when the Bibles are loaded,
+    also on Windows where an open file can't be deleted
+    """
+    import sqlite3
+    # GIVEN: An empty Bible database next to the Bibles
+    bibles = tmp_path / 'bibles'
+    bibles.mkdir()
+    connection = sqlite3.connect(bibles / '..sqlite')
+    connection.executescript('create table metadata (key varchar(255) primary key, value varchar(255));'
+                             'insert into metadata values ("version", "2");')
+    connection.close()
+    settings.setValue('advanced/data path', tmp_path)
+
+    # WHEN: The Bibles are loaded
+    BibleManager(MagicMock())
+
+    # THEN: The empty Bible is gone
+    assert not (bibles / '..sqlite').exists()

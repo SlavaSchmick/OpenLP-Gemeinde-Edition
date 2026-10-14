@@ -1,4 +1,4 @@
-function _createDiv(attrs, inElement) {
+﻿function _createDiv(attrs, inElement) {
     var div = document.createElement("div");
     for (key in attrs) {
         div.setAttribute(key, attrs[key]);
@@ -863,6 +863,198 @@ describe("Display.setTextSlides", function () {
   });
 });
 
+describe("Automatic font size", function () {
+  var autoSizeTheme = function (extra) {
+    var theme = {
+      "font_main_auto_size": true,
+      "font_main_size": 120,
+      "font_main_min_size": 20,
+      "font_main_width": 800,
+      "font_main_height": 400,
+      "font_main_name": "Arial",
+      "font_main_line_adjustment": 0,
+      "font_main_letter_adjustment": 0,
+      "display_vertical_align": VerticalAlign.Middle
+    };
+    for (var key in extra) {
+      theme[key] = extra[key];
+    }
+    return theme;
+  };
+  var slideSize = function (index) {
+    return parseInt($(".text-slides > section")[index].style.fontSize, 10);
+  };
+  var textHeightAt = function (text, size) {
+    var measure = Display._getTextMeasure();
+    measure.innerHTML = _prepareText(text);
+    measure.querySelectorAll("p").forEach(function (paragraph) { paragraph.style.margin = "0"; });
+    measure.style.fontSize = size + "pt";
+    return measure.scrollHeight;
+  };
+  var longText = new Array(60).join("For God so loved the world that he gave his only Son. ");
+
+  beforeEach(function() {
+    document.body.innerHTML = "";
+    var revealContainer = Display._revealContainer = _createDiv({"class": "reveal"});
+    Display._slidesContainer = _createDiv({"class": "slides"}, revealContainer);
+    Display._footerContainer = _createDiv({"class": "footer"}, revealContainer);
+    Display._slides = {};
+    spyOn(Reveal, "sync");
+    spyOn(Reveal, "slide");
+  });
+
+  it("should make a short text as large as the largest size", function () {
+    Display.setTheme(autoSizeTheme());
+    Display.setTextSlides([{"verse": "v1", "text": "Jesus wept."}]);
+
+    expect(slideSize(0)).toEqual(120);
+  });
+
+  it("should shrink a long text, but not below the smallest size", function () {
+    Display.setTheme(autoSizeTheme());
+    Display.setTextSlides([{"verse": "v1", "text": longText}]);
+
+    expect(slideSize(0)).toEqual(20);
+  });
+
+  it("should use the largest size at which the text fits", function () {
+    var text = "For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him " +
+               "should not perish, but have everlasting life.";
+    Display.setTheme(autoSizeTheme());
+    Display.setTextSlides([{"verse": "v1", "text": text}]);
+
+    var size = slideSize(0);
+    expect(size).toBeGreaterThan(20);
+    expect(size).toBeLessThan(120);
+    // It fits at this size, but not at one point more
+    expect(textHeightAt(text, size)).not.toBeGreaterThan(400);
+    expect(textHeightAt(text, size + 1)).toBeGreaterThan(400);
+  });
+
+  it("should size every slide on its own", function () {
+    Display.setTheme(autoSizeTheme());
+    Display.setTextSlides([{"verse": "v1", "text": "Jesus wept."}, {"verse": "v2", "text": longText}]);
+
+    expect(slideSize(0)).toEqual(120);
+    expect(slideSize(1)).toEqual(20);
+  });
+
+  it("should give each slide its own line height, so it follows the font size", function () {
+    Display.setTheme(autoSizeTheme({"font_main_line_adjustment": 20}));
+    Display.setTextSlides([{"verse": "v1", "text": "Jesus wept."}]);
+
+    expect($(".text-slides > section")[0].style.lineHeight).toEqual("120%");
+  });
+
+  it("should leave the font size of the theme alone without the automatic size", function () {
+    Display.setTheme(autoSizeTheme({"font_main_auto_size": false}));
+    Display.setTextSlides([{"verse": "v1", "text": "Jesus wept."}]);
+
+    expect($(".text-slides > section")[0].style.fontSize).toEqual("");
+    expect($(".text-slides")[0].style.fontSize).toEqual("120pt");
+  });
+
+  it("should size the test slide of the renderer, so it is split only when it doesn't fit at the smallest size",
+     function () {
+    Display.setTheme(autoSizeTheme());
+    Display.setTextSlide("Jesus wept.");
+    expect(slideSize(0)).toEqual(120);
+
+    Display.setTextSlide(longText);
+    expect(slideSize(0)).toEqual(20);
+  });
+
+  it("should not break the lines of songs, but make the text only as large as the longest line fits", function () {
+    // Two short lines would fit at 120 pt when the long line could be broken, but not without breaking it
+    var text = "Amazing grace\nhow sweet the sound that saved a wretch like me\nI once was lost";
+    Display.setTheme(autoSizeTheme());
+    Display.setTextSlides([{"verse": "v1", "text": text}], true);
+
+    var size = slideSize(0);
+    var measure = Display._getTextMeasure();
+    measure.innerHTML = _prepareText(text);
+    measure.style.whiteSpace = "nowrap";
+    measure.style.fontSize = size + "pt";
+    expect(measure.scrollWidth).not.toBeGreaterThan(800);
+    expect(textHeightAt(text, size)).not.toBeGreaterThan(400);
+    measure.style.whiteSpace = "nowrap";
+    measure.style.fontSize = (size + 1) + "pt";
+    expect(measure.scrollWidth).toBeGreaterThan(800);
+  });
+
+  it("should break the text of Bibles to make it larger", function () {
+    var text = "For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him";
+    Display.setTheme(autoSizeTheme());
+    Display.setTextSlides([{"verse": "v1", "text": text}], true);
+    var songSize = slideSize(0);
+    Display.setTextSlides([{"verse": "v1", "text": text}], false);
+    var bibleSize = slideSize(0);
+
+    expect(bibleSize).toBeGreaterThan(songSize);
+  });
+
+  it("should use the smallest size for a song line which is too long even at the smallest size", function () {
+    Display.setTheme(autoSizeTheme());
+    Display.setTextSlides([{"verse": "v1", "text": "Short line\n" + longText}], true);
+
+    expect(slideSize(0)).toEqual(20);
+  });
+
+  it("should keep the lines of songs when the theme is applied again", function () {
+    var text = "Amazing grace\nhow sweet the sound that saved a wretch like me";
+    Display.setTheme(autoSizeTheme());
+    Display.setTextSlides([{"verse": "v1", "text": text}], true);
+    var size = slideSize(0);
+
+    Display.resetTheme();
+
+    expect(slideSize(0)).toEqual(size);
+  });
+
+  it("should make a Bible verse smaller than the smallest size, so it is seen whole", function () {
+    Display.setTheme(autoSizeTheme());
+    Display.setTextSlides([{"verse": "1", "text": longText}], false, true);
+
+    var size = slideSize(0);
+    expect(size).toBeLessThan(20);
+    expect(size).toBeGreaterThan(0);
+    // It fits at this size, but not at one point more
+    expect(textHeightAt(longText, size)).not.toBeGreaterThan(400);
+    expect(textHeightAt(longText, size + 1)).toBeGreaterThan(400);
+  });
+
+  it("should keep a Bible verse which fits within the range", function () {
+    Display.setTheme(autoSizeTheme());
+    Display.setTextSlides([{"verse": "1", "text": "Jesus wept."}, {"verse": "2", "text": longText}], false, true);
+
+    expect(slideSize(0)).toEqual(120);
+    expect(slideSize(1)).toBeLessThan(20);
+  });
+
+  it("should make a Bible verse smaller than the size of the theme without the automatic size", function () {
+    Display.setTheme(autoSizeTheme({"font_main_auto_size": false, "font_main_size": 40}));
+    Display.setTextSlides([{"verse": "1", "text": "Jesus wept."}, {"verse": "2", "text": longText}], false, true);
+
+    expect(slideSize(0)).toEqual(40);
+    expect(slideSize(1)).toBeLessThan(40);
+    expect(textHeightAt(longText, slideSize(1))).not.toBeGreaterThan(400);
+  });
+
+  it("should not make other texts smaller than the smallest size", function () {
+    Display.setTheme(autoSizeTheme());
+    Display.setTextSlides([{"verse": "v1", "text": longText}], false, false);
+
+    expect(slideSize(0)).toEqual(20);
+  });
+
+  it("should not use a smallest size above the largest size", function () {
+    Display.setTheme(autoSizeTheme({"font_main_min_size": 200}));
+    Display.setTextSlides([{"verse": "v1", "text": longText}]);
+
+    expect(slideSize(0)).toEqual(120);
+  });
+});
+
 describe("Display.setImageSlides", function () {
   beforeEach(function() {
     document.body.innerHTML = "";
@@ -1143,5 +1335,152 @@ describe("Reveal slidechanged event", function () {
     var currentSlide = Display._slidesContainer.querySelector('*:nth-child(2)');
     currentSlide.id = '1';
     Display._onSlideChanged({currentSlide: currentSlide});
+  });
+});
+
+describe("Live video device labels", function () {
+  var devices = [
+    {"kind": "audioinput", "label": "HD Pro Webcam C920 (046d:082d)", "deviceId": "mic"},
+    {"kind": "videoinput", "label": "HD Pro Webcam C920 Pro (046d:0892)", "deviceId": "cam1"},
+    {"kind": "videoinput", "label": "HD Pro Webcam C920 (046d:082d)", "deviceId": "cam2"},
+    {"kind": "videoinput", "label": "OBS Virtual Camera", "deviceId": "cam3"}
+  ];
+
+  it("should ignore the USB ids and the case of a label", function () {
+    expect(_normaliseDeviceLabel("HD Pro Webcam C920 (046d:082d)")).toEqual("hd pro webcam c920");
+    expect(_normaliseDeviceLabel(" OBS Virtual Camera ")).toEqual("obs virtual camera");
+    expect(_normaliseDeviceLabel(undefined)).toEqual("");
+  });
+
+  it("should match labels with and without USB ids", function () {
+    expect(_deviceLabelsMatch("HD Pro Webcam C920 (046d:082d)", "HD Pro Webcam C920")).toBe(true);
+    expect(_deviceLabelsMatch("Integrated Camera", "OBS Virtual Camera")).toBe(false);
+    expect(_deviceLabelsMatch("", "")).toBe(false);
+  });
+
+  it("should prefer an exact match and ignore other kinds of devices", function () {
+    expect(_findVideoDevice(devices, "HD Pro Webcam C920").deviceId).toEqual("cam2");
+    expect(_findVideoDevice(devices, "obs virtual camera").deviceId).toEqual("cam3");
+    expect(_findVideoDevice(devices, "Magewell USB Capture HDMI")).toBe(null);
+  });
+});
+
+describe("Display.setLiveVideo", function () {
+  var fakeTrack, fakeStream;
+  var source = {
+    "deviceLabel": "HD Pro Webcam C920",
+    "width": 1280,
+    "height": 720,
+    "frameRate": 0,
+    "scaleMode": "cover",
+    "mirror": true,
+    "strings": {"connecting": "Connecting...", "noSignal": "No signal"}
+  };
+
+  beforeEach(function() {
+    document.body.innerHTML = "";
+    Display._slidesContainer = _createDiv({"class": "slides"});
+    Display._footerContainer = _createDiv({"class": "footer"});
+    Display._slides = {};
+    Display._liveVideoFeeds = [];
+    Display._liveVideoDeviceIds = {};
+    Display._isDisplay = false;
+    Display._doItemTransitions = false;
+    Display._theme = null;
+    fakeTrack = {
+      label: "HD Pro Webcam C920 (046d:082d)",
+      stop: jasmine.createSpy("stop"),
+      addEventListener: jasmine.createSpy("addEventListener")
+    };
+    fakeStream = new MediaStream();
+    fakeStream.getTracks = () => [fakeTrack];
+    fakeStream.getVideoTracks = () => [fakeTrack];
+    spyOn(navigator.mediaDevices, "enumerateDevices").and.returnValue(Promise.resolve([
+      {"kind": "videoinput", "label": "Integrated Camera", "deviceId": "cam1"},
+      {"kind": "videoinput", "label": "HD Pro Webcam C920 (046d:082d)", "deviceId": "cam2"}
+    ]));
+    spyOn(navigator.mediaDevices, "getUserMedia").and.returnValue(Promise.resolve(fakeStream));
+    spyOn(HTMLMediaElement.prototype, "play").and.returnValue(Promise.resolve());
+    spyOn(Reveal, "sync");
+    spyOn(Reveal, "slide");
+  });
+
+  afterEach(function() {
+    Display.stopLiveVideo();
+    clearTimeout(Display._liveVideoRetryTimer);
+    Display._liveVideoRetryTimer = null;
+  });
+
+  it("should add a live video slide", function () {
+    Display.setLiveVideo(source);
+
+    var videoElements = $(".slides > section.live-video > section > video.live-video-feed");
+    expect(videoElements.length).toEqual(1);
+    expect(videoElements[0].classList.contains("fit-cover")).toBe(true);
+    expect(videoElements[0].classList.contains("mirror")).toBe(true);
+    expect(videoElements[0].muted).toBe(true);
+    expect(Display._slides["0"]).toEqual(0);
+    expect($(".slides > section.live-video")[0].getAttribute("data-live-video-state")).toEqual("connecting");
+  });
+
+  it("should open the matching device with the requested size", function (done) {
+    Display.setLiveVideo(source);
+
+    setTimeout(function () {
+      expect(navigator.mediaDevices.getUserMedia).toHaveBeenCalledWith({
+        "audio": false,
+        "video": {"deviceId": {"exact": "cam2"}, "width": {"ideal": 1280}, "height": {"ideal": 720}}
+      });
+      expect($(".slides > section.live-video")[0].getAttribute("data-live-video-state")).toEqual("playing");
+      expect($(".slides video")[0].srcObject).toBe(fakeStream);
+      done();
+    }, 0);
+  });
+
+  it("should keep the device running when the same source is set again", function (done) {
+    Display.setLiveVideo(source);
+
+    setTimeout(function () {
+      Display.setLiveVideo(Object.assign({}, source));
+
+      expect($(".slides > section.live-video").length).toEqual(1);
+      expect(navigator.mediaDevices.getUserMedia).toHaveBeenCalledTimes(1);
+      expect(fakeTrack.stop).not.toHaveBeenCalled();
+      done();
+    }, 0);
+  });
+
+  it("should show no signal in the preview when the device is not connected", function (done) {
+    Display.setLiveVideo(Object.assign({}, source, {"deviceLabel": "Magewell USB Capture HDMI"}));
+
+    setTimeout(function () {
+      expect(navigator.mediaDevices.getUserMedia).not.toHaveBeenCalled();
+      expect($(".slides > section.live-video")[0].getAttribute("data-live-video-state")).toEqual("noSignal");
+      expect($(".live-video-status-title")[0].textContent).toEqual("No signal");
+      expect($(".live-video-status-device")[0].textContent).toEqual("Magewell USB Capture HDMI");
+      expect(Display._liveVideoRetryTimer).not.toBe(null);
+      done();
+    }, 0);
+  });
+
+  it("should not show status notices on the screen", function () {
+    Display._isDisplay = true;
+
+    Display.setLiveVideo(source);
+
+    expect($(".live-video-status").length).toEqual(0);
+  });
+
+  it("should release the device when the slide is removed", function (done) {
+    Display.setLiveVideo(source);
+
+    setTimeout(function () {
+      Display._slidesContainer.innerHTML = "";
+      setTimeout(function () {
+        expect(fakeTrack.stop).toHaveBeenCalled();
+        expect(Display._liveVideoFeeds.length).toEqual(0);
+        done();
+      }, 0);
+    }, 0);
   });
 });

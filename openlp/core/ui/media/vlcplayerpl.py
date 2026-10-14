@@ -37,7 +37,7 @@ from openlp.core.lib.ui import critical_error_message_box
 from openlp.core.ui.slidecontroller import SlideController
 from openlp.core.ui.media import MediaState, VlCState, get_volume
 from openlp.core.ui.media.mediaplayer import MediaPlayer
-from openlp.core.ui.media.vlcplayer import get_vlc
+from openlp.core.ui.media.vlcplayer import get_vlc, set_audio_output_device
 
 log = logging.getLogger(__name__)
 
@@ -147,6 +147,7 @@ class VlcPlayerPL(MediaPlayer, LogMixin):
             return False
         # The media player moved here to clear the playlist between uses.
         controller.vlc_media_player = controller.vlc_instance.media_player_new()
+        set_audio_output_device(controller)
         controller.vlc_widget.resize(controller.size())
         controller.vlc_widget.hide()
         self.add_display(controller)

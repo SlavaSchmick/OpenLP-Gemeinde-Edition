@@ -220,8 +220,8 @@ class BiblesTab(SettingsTab):
             LanguageSelection.English, translate('BiblesPlugin.BiblesTab', 'English'))
         self.bible_quick_settings_group_box.setTitle(translate('BiblesPlugin.BiblesTab', 'Quick Search Settings'))
         self.reset_to_combined_quick_search_check_box.setText(translate('BiblesPlugin.BiblesTab',
-                                                                        'Reset search type to "Text or Scripture'
-                                                                        ' Reference" on startup'))
+                                                                        'Reset search type to "Scripture Reference"'
+                                                                        ' on startup'))
         self.hide_combined_quick_error_check_box.setText(translate('BiblesPlugin.BiblesTab',
                                                                    'Don\'t show error if nothing is found in "Text or '
                                                                    'Scripture Reference"'))
@@ -443,7 +443,7 @@ class BiblesTab(SettingsTab):
         update_reference_separators()
         if self.language_selection != self.settings.value('bibles/book name language'):
             self.settings.setValue('bibles/book name language', self.language_selection)
-            self.settings_form.register_post_process('bibles/bibles_load_list')
+            self.settings_form.register_post_process('bibles_load_list')
         self.settings.setValue('bibles/reset to combined quick search', self.reset_to_combined_quick_search)
         self.settings.setValue('bibles/hide combined quick error', self.hide_combined_quick_error)
         self.settings.setValue('bibles/is search while typing enabled', self.bible_search_while_typing)

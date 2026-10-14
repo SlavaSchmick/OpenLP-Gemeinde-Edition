@@ -620,3 +620,93 @@ def test_set_shadow_size_property(settings):
 
     # THEN: The correct value should be set
     instance.shadow_size_spinbox.setValue.assert_called_once_with(10)
+
+
+def test_auto_size_properties(settings):
+    """
+    Test that the automatic size and the smallest size can be set and read
+    """
+    # GIVEN: An instance of FontSelectPage with a largest size
+    instance = FontSelectPage()
+    instance.font_size = 100
+
+    # WHEN: The automatic size and the smallest size are set
+    instance.is_auto_size_enabled = True
+    instance.min_font_size = 30
+
+    # THEN: They can be read back and the smallest size can be changed
+    assert instance.is_auto_size_enabled is True
+    assert instance.min_font_size == 30
+    assert instance.min_font_size_spinbox.isEnabled() is True
+
+
+def test_auto_size_changes_the_size_label_and_smallest_size(settings):
+    """
+    Test that with the automatic size the size is labelled as the largest size, and the smallest size can be set only
+    with the automatic size
+    """
+    # GIVEN: An instance of FontSelectPage
+    instance = FontSelectPage()
+    instance.retranslate_ui()
+
+    # WHEN: The automatic size is switched on and off
+    instance.is_auto_size_enabled = True
+    label_with_auto_size = instance.font_size_label.text()
+    instance.is_auto_size_enabled = False
+
+    # THEN: The label and the smallest size follow
+    assert label_with_auto_size == 'Largest size:'
+    assert instance.font_size_label.text() == 'Size:'
+    assert instance.min_font_size_spinbox.isEnabled() is False
+
+
+def test_smallest_size_is_not_larger_than_the_largest_size(settings):
+    """
+    Test that the smallest size is limited by the largest size
+    """
+    # GIVEN: An instance of FontSelectPage with a smallest size of 40
+    instance = FontSelectPage()
+    instance.font_size = 100
+    instance.min_font_size = 40
+
+    # WHEN: The largest size is made smaller than that
+    instance.font_size = 30
+
+    # THEN: The smallest size follows
+    assert instance.min_font_size == 30
+
+
+def test_auto_size_signals(settings):
+    """
+    Test that the automatic size and the smallest size signal their changes
+    """
+    # GIVEN: An instance of FontSelectPage with mocked out signals
+    instance = FontSelectPage()
+    instance.is_auto_size_enabled_changed = MagicMock()
+    instance.min_font_size_changed = MagicMock()
+
+    # WHEN: They change
+    instance._on_auto_size_toggled(True)
+    instance._on_min_font_size_changed(25)
+
+    # THEN: The signals are emitted
+    instance.is_auto_size_enabled_changed.emit.assert_called_once_with(True)
+    instance.min_font_size_changed.emit.assert_called_once_with(25)
+
+
+def test_footer_has_no_auto_size(settings):
+    """
+    Test that the automatic size can be hidden, as it is for the footer
+    """
+    # GIVEN: An instance of FontSelectPage with the automatic size switched on
+    instance = FontSelectPage()
+    instance.retranslate_ui()
+    instance.is_auto_size_enabled = True
+
+    # WHEN: The feature is disabled
+    instance.disable_features(FontSelectPage.AutoSize)
+
+    # THEN: The widgets are hidden and the size is just the size
+    assert instance.auto_size_checkbox.isHidden() is True
+    assert instance.min_font_size_spinbox.isHidden() is True
+    assert instance.font_size_label.text() == 'Size:'

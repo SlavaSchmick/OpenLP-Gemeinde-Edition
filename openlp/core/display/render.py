@@ -607,7 +607,7 @@ class ThemePreviewRenderer(DisplayWindow, LogMixin):
             verses['text'] = render_tags(slides[0])
             verses['verse'] = 'V1'
             verses['footer'] = self.generate_footer()
-            self.load_verses([verses], is_sync=True)
+            self.load_verses([verses], is_sync=True, keep_lines=True)
             # Wait for a second
             wait_for(lambda: False, timeout=1)
             self.force_page = False
@@ -633,15 +633,16 @@ class ThemePreviewRenderer(DisplayWindow, LogMixin):
         line_end = '<br>'
         if item and item.is_capable(ItemCapabilities.NoLineBreaks):
             line_end = ' '
-        # Bibles
+        # Bibles: a verse is always shown whole on one slide, the display makes its text smaller when needed. A slide
+        # with a verse in two translations (separated by an empty line) is never split, other slides only between
+        # their verses (one per line). This also applies to items with the old CanWordSplit capability.
         if item and item.name == 'bibles':
-            if item.is_capable(ItemCapabilities.CanWordSplit):
-                pages = self._paginate_slide_words(text.split('\n'), line_end)
+            if '\n\n' in text:
+                pages = [text]
+            elif item.is_capable(ItemCapabilities.NoLineBreaks):
+                pages = self._paginate_slide(text.split('\n'), "")
             else:
-                if item.is_capable(ItemCapabilities.NoLineBreaks):
-                    pages = self._paginate_slide(text.split('\n'), "")
-                else:
-                    pages = self._paginate_slide(text.split('\n'), line_end)
+                pages = self._paginate_slide(text.split('\n'), line_end)
         # Songs and Custom
         elif item is None or (item and item.is_capable(ItemCapabilities.CanSoftBreak)):
             pages = []

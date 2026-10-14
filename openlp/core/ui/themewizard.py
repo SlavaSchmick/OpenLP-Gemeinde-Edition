@@ -70,7 +70,7 @@ class Ui_ThemeWizard(object):
         # Footer Area Page
         self.footer_area_page = FontSelectPage()
         self.footer_area_page.setObjectName('footer_area_page')
-        self.footer_area_page.disable_features(FontSelectPage.Outline, FontSelectPage.Shadow)
+        self.footer_area_page.disable_features(FontSelectPage.Outline, FontSelectPage.Shadow, FontSelectPage.AutoSize)
         theme_wizard.addPage(self.footer_area_page)
         # Alignment Page
         self.alignment_page = AlignmentTransitionsPage()

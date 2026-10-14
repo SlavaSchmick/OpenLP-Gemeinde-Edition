@@ -38,9 +38,12 @@ class FontSelectPage(GridLayoutPage):
     Shadow = 'shadow'
     LineSpacing = 'line_spacing'
     LetterSpacing = 'letter_spacing'
+    AutoSize = 'auto_size'
 
     font_name_changed = QtCore.pyqtSignal(str)
     font_size_changed = QtCore.pyqtSignal(int)
+    is_auto_size_enabled_changed = QtCore.pyqtSignal(bool)
+    min_font_size_changed = QtCore.pyqtSignal(int)
     font_color_changed = QtCore.pyqtSignal(str)
     is_bold_changed = QtCore.pyqtSignal(bool)
     is_italic_changed = QtCore.pyqtSignal(bool)
@@ -59,7 +62,8 @@ class FontSelectPage(GridLayoutPage):
             FontSelectPage.Outline: [self.outline_groupbox],
             FontSelectPage.Shadow: [self.shadow_groupbox],
             FontSelectPage.LineSpacing: [self.line_spacing_label, self.line_spacing_spinbox],
-            FontSelectPage.LetterSpacing: [self.letter_spacing_label, self.letter_spacing_spinbox]
+            FontSelectPage.LetterSpacing: [self.letter_spacing_label, self.letter_spacing_spinbox],
+            FontSelectPage.AutoSize: [self.auto_size_checkbox, self.min_font_size_label, self.min_font_size_spinbox]
         }
 
     def setup_ui(self):
@@ -123,13 +127,25 @@ class FontSelectPage(GridLayoutPage):
         self.letter_spacing_spinbox.setMaximum(250)
         self.letter_spacing_spinbox.setObjectName('letter_spacing_spinbox')
         self.layout.addWidget(self.letter_spacing_spinbox, 3, 3)
+        # Automatic font size: the text of each slide is as large as fits, between the smallest size and the size above
+        self.auto_size_checkbox = QtWidgets.QCheckBox(self)
+        self.auto_size_checkbox.setObjectName('auto_size_checkbox')
+        self.layout.addWidget(self.auto_size_checkbox, 3, 0, 1, 2)
+        self.min_font_size_label = FormLabel(self)
+        self.min_font_size_label.setObjectName('min_font_size_label')
+        self.layout.addWidget(self.min_font_size_label, 4, 0)
+        self.min_font_size_spinbox = QtWidgets.QSpinBox(self)
+        self.min_font_size_spinbox.setMinimum(1)
+        self.min_font_size_spinbox.setMaximum(self.font_size_spinbox.value())
+        self.min_font_size_spinbox.setObjectName('min_font_size_spinbox')
+        self.layout.addWidget(self.min_font_size_spinbox, 4, 1)
         # Outline
         self.outline_groupbox = QtWidgets.QGroupBox(self)
         self.outline_groupbox.setCheckable(True)
         self.outline_groupbox.setChecked(False)
         self.outline_groupbox.setObjectName('outline_groupbox')
         self.outline_layout = QtWidgets.QGridLayout(self.outline_groupbox)
-        self.layout.addWidget(self.outline_groupbox, 4, 0, 1, 2)
+        self.layout.addWidget(self.outline_groupbox, 5, 0, 1, 2)
         # Outline colour
         self.outline_color_label = FormLabel(self.outline_groupbox)
         self.outline_color_label.setObjectName('outline_color_label')
@@ -151,7 +167,7 @@ class FontSelectPage(GridLayoutPage):
         self.shadow_groupbox.setChecked(False)
         self.shadow_groupbox.setObjectName('shadow_groupbox')
         self.shadow_layout = QtWidgets.QGridLayout(self.shadow_groupbox)
-        self.layout.addWidget(self.shadow_groupbox, 4, 2, 1, 2)
+        self.layout.addWidget(self.shadow_groupbox, 5, 2, 1, 2)
         # Shadow color
         self.shadow_color_label = FormLabel(self.shadow_groupbox)
         self.shadow_color_label.setObjectName('shadow_color_label')
@@ -173,6 +189,8 @@ class FontSelectPage(GridLayoutPage):
         self.style_bold_button.toggled.connect(self._on_style_bold_toggled)
         self.style_italic_button.toggled.connect(self._on_style_italic_toggled)
         self.font_size_spinbox.valueChanged.connect(self._on_font_size_changed)
+        self.auto_size_checkbox.toggled.connect(self._on_auto_size_toggled)
+        self.min_font_size_spinbox.valueChanged.connect(self._on_min_font_size_changed)
         self.line_spacing_spinbox.valueChanged.connect(self._on_line_spacing_changed)
         self.letter_spacing_spinbox.valueChanged.connect(self._on_letter_spacing_changed)
         self.outline_groupbox.toggled.connect(self._on_outline_toggled)
@@ -194,8 +212,15 @@ class FontSelectPage(GridLayoutPage):
             name=translate('OpenLP.FontSelectWidget', 'Italic'),
             shortcut=QtGui.QKeySequence(QtGui.QKeySequence.StandardKey.Italic).toString()
         ))
-        self.font_size_label.setText(translate('OpenLP.FontSelectWidget', 'Size:'))
+        self._update_font_size_label()
         self.font_size_spinbox.setSuffix(' {unit}'.format(unit=UiStrings().FontSizePtUnit))
+        self.auto_size_checkbox.setText(translate('OpenLP.FontSelectWidget', 'Automatic size (fill the area)'))
+        self.auto_size_checkbox.setToolTip(
+            translate('OpenLP.FontSelectWidget', 'The text of each slide is made as large as fits into the main area, '
+                      'between the smallest and the largest size. A slide is only split when its text does not fit '
+                      'even at the smallest size.'))
+        self.min_font_size_label.setText(translate('OpenLP.FontSelectWidget', 'Smallest size:'))
+        self.min_font_size_spinbox.setSuffix(' {unit}'.format(unit=UiStrings().FontSizePtUnit))
         self.line_spacing_label.setText(translate('OpenLP.FontSelectWidget', 'Line Spacing:'))
         self.letter_spacing_label.setText(translate('OpenLP.FontSelectWidget', 'Letter Spacing:'))
         self.outline_groupbox.setTitle(translate('OpenLP.FontSelectWidget', 'Outline'))
@@ -219,7 +244,27 @@ class FontSelectPage(GridLayoutPage):
         self.is_italic_changed.emit(is_italic)
 
     def _on_font_size_changed(self, size):
+        # The smallest size can't be larger than the (largest) size
+        self.min_font_size_spinbox.setMaximum(size)
         self.font_size_changed.emit(size)
+
+    def _on_auto_size_toggled(self, is_enabled):
+        self.min_font_size_label.setEnabled(is_enabled)
+        self.min_font_size_spinbox.setEnabled(is_enabled)
+        self._update_font_size_label()
+        self.is_auto_size_enabled_changed.emit(is_enabled)
+
+    def _on_min_font_size_changed(self, size):
+        self.min_font_size_changed.emit(size)
+
+    def _update_font_size_label(self):
+        """
+        With the automatic size the size is the largest size the text may get
+        """
+        if self.auto_size_checkbox.isChecked() and not self.auto_size_checkbox.isHidden():
+            self.font_size_label.setText(translate('OpenLP.FontSelectWidget', 'Largest size:'))
+        else:
+            self.font_size_label.setText(translate('OpenLP.FontSelectWidget', 'Size:'))
 
     def _on_line_spacing_changed(self, spacing):
         self.line_spacing_changed.emit(spacing)
@@ -254,6 +299,7 @@ class FontSelectPage(GridLayoutPage):
                 raise KeyError('No such feature: {feature_name}'.format(feature_name=feature_name))
             for widget in self.feature_widgets[feature_name]:
                 widget.show()
+        self._update_font_size_label()
 
     def disable_features(self, *features):
         """
@@ -264,6 +310,7 @@ class FontSelectPage(GridLayoutPage):
                 raise KeyError('No such feature: {feature_name}'.format(feature_name=feature_name))
             for widget in self.feature_widgets[feature_name]:
                 widget.hide()
+        self._update_font_size_label()
 
     @property
     def font_name(self):
@@ -304,6 +351,24 @@ class FontSelectPage(GridLayoutPage):
     @font_size.setter
     def font_size(self, size):
         self.font_size_spinbox.setValue(size)
+
+    @property
+    def is_auto_size_enabled(self):
+        return self.auto_size_checkbox.isChecked()
+
+    @is_auto_size_enabled.setter
+    def is_auto_size_enabled(self, is_enabled):
+        self.auto_size_checkbox.setChecked(is_enabled)
+        # Also when the value didn't change, so the smallest size is enabled correctly
+        self._on_auto_size_toggled(is_enabled)
+
+    @property
+    def min_font_size(self):
+        return self.min_font_size_spinbox.value()
+
+    @min_font_size.setter
+    def min_font_size(self, size):
+        self.min_font_size_spinbox.setValue(size)
 
     @property
     def line_spacing(self):

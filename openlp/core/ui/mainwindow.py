@@ -45,11 +45,13 @@ from openlp.core.common.platform import is_macosx, is_win
 from openlp.core.common.registry import Registry
 from openlp.core.common.settings import Settings
 from openlp.core.display.screens import ScreenList
+from openlp.core.edition import edition_title
 from openlp.core.lib.plugin import PluginStatus
 from openlp.core.lib.ui import create_action
 from openlp.core.projectors.manager import ProjectorManager
 from openlp.core.state import State
 from openlp.core.ui.aboutform import AboutForm
+from openlp.core.ui.editionupdate import offer_update
 from openlp.core.ui.firsttimeform import FirstTimeForm
 from openlp.core.ui.formattingtagform import FormattingTagForm
 from openlp.core.ui.icons import UiIcons
@@ -60,7 +62,6 @@ from openlp.core.ui.settingsform import SettingsForm
 from openlp.core.ui.shortcutlistform import ShortcutListForm
 from openlp.core.ui.style import PROGRESSBAR_STYLE, get_library_stylesheet
 from openlp.core.ui.thememanager import ThemeManager
-from openlp.core.version import get_version
 from openlp.core.widgets.dialogs import FileDialog
 from openlp.core.widgets.docks import MediaDockManager, OpenLPDockWidget
 
@@ -359,7 +360,8 @@ class Ui_MainWindow(object):
         """
         Set up the translation system
         """
-        main_window.setWindowTitle(UiStrings().OpenLP)
+        # The edition is shown in the title, so that it is clear that this is a modified version of OpenLP
+        main_window.setWindowTitle(edition_title())
         self.file_menu.setTitle(translate('OpenLP.MainWindow', '&File'))
         self.file_import_menu.setTitle(translate('OpenLP.MainWindow', '&Import'))
         self.file_export_menu.setTitle(translate('OpenLP.MainWindow', '&Export'))
@@ -622,17 +624,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, LogMixin, RegistryPropert
         if widget:
             widget.on_focus()
 
-    def on_new_version(self, version: str):
+    def on_new_version(self, release):
         """
-        Notifies the user that a newer version of OpenLP is available. Triggered by delay thread and cannot display
-        popup.
+        Offers a newer release of this edition from its GitHub repository, which can be downloaded and installed right
+        away. Triggered by delay thread.
 
-        :param version: The Version to be displayed.
+        :param openlp.core.edition.EditionRelease release: The new release
         """
-        version_text = translate('OpenLP.MainWindow', 'Version {new} of OpenLP is now available for download (you are '
-                                 'currently running version {current}). \n\nYou can download the latest version from '
-                                 'https://openlp.org/.').format(new=version, current=get_version()[u'full'])
-        QtWidgets.QMessageBox.question(self, translate('OpenLP.MainWindow', 'OpenLP Version Updated'), version_text)
+        offer_update(self, release)
 
     def on_new_remote_version(self, version: str):
         """
@@ -1156,9 +1155,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, LogMixin, RegistryPropert
         :param file_name: The file name of the service file.
         """
         if modified:
-            title = '{title} - {name}*'.format(title=UiStrings().OpenLP, name=file_name)
+            title = '{title} - {name}*'.format(title=edition_title(), name=file_name)
         else:
-            title = '{title} - {name}'.format(title=UiStrings().OpenLP, name=file_name)
+            title = '{title} - {name}'.format(title=edition_title(), name=file_name)
         self.setWindowTitle(title)
 
     def show_status_message(self, message: str):

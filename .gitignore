@@ -52,3 +52,16 @@ openlp-test-projectordb.sqlite
 */test-results.xml
 .DS_Store
 OpenLP.spec
+
+# OpenLP Gemeinde-Edition
+# The spec file of the Windows build (OpenLP.spec above would match it, as Windows ignores the case)
+!packaging/windows/openlp.spec
+packaging/windows/build-info/
+Auslieferung/
+MagicMock/
+# Of the sources, only the two song books in the OpenLP format are part of the repository
+/sources/*
+!/sources/OpenLP/
+/sources/OpenLP/*
+!/sources/OpenLP/Deutsch/
+!/sources/OpenLP/Russisch/

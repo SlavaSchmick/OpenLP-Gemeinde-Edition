@@ -25,6 +25,9 @@ This module is for controlling powerpoint. PPT API documentation:
 2013: https://msdn.microsoft.com/en-us/library/office/ff743835.aspx
 """
 import logging
+import shutil
+import tempfile
+from pathlib import Path
 
 from openlp.core.common import trace_error_handler
 from openlp.core.common.i18n import UiStrings
@@ -196,15 +199,25 @@ class PowerpointDocument(PresentationDocument):
         if super().check_thumbnails():
             # No need for thumbnails but we still need the index
             generate_thumbs = False
-        key = 1
-        for num in range(self.presentation.Slides.Count):
-            if not self.presentation.Slides(num + 1).SlideShowTransition.Hidden:
-                self.index_map[key] = num + 1
-                if generate_thumbs:
-                    self.presentation.Slides(num + 1).Export(
-                        str(self.get_thumbnail_folder() / 'slide{key:d}.png'.format(key=key)), 'png', 320, 240)
-                key += 1
-        self.slide_count = key - 1
+        # Some PowerPoint installations (e.g. Microsoft 365 Click-to-Run) can't export into folders below AppData, where
+        # the thumbnails are kept, but they can into the temporary folder. So the slides are exported there first.
+        export_folder = Path(tempfile.mkdtemp(prefix='openlp-powerpoint-')) if generate_thumbs else None
+        if generate_thumbs:
+            self.get_thumbnail_folder().mkdir(parents=True, exist_ok=True)
+        try:
+            key = 1
+            for num in range(self.presentation.Slides.Count):
+                if not self.presentation.Slides(num + 1).SlideShowTransition.Hidden:
+                    self.index_map[key] = num + 1
+                    if generate_thumbs:
+                        file_name = 'slide{key:d}.png'.format(key=key)
+                        self.presentation.Slides(num + 1).Export(str(export_folder / file_name), 'png', 320, 240)
+                        shutil.move(str(export_folder / file_name), str(self.get_thumbnail_folder() / file_name))
+                    key += 1
+            self.slide_count = key - 1
+        finally:
+            if export_folder:
+                shutil.rmtree(export_folder, ignore_errors=True)
 
     def close_presentation(self):
         """

@@ -28,7 +28,7 @@ from openlp.core.common.applocation import AppLocation
 from openlp.core.common.i18n import UiStrings, translate
 from openlp.core.common.mixins import LogMixin, RegistryProperties
 from openlp.core.common.registry import Registry
-from openlp.plugins.bibles.lib import parse_reference
+from openlp.plugins.bibles.lib import normalise_reference, parse_reference
 from openlp.plugins.bibles.lib.db import BibleDB
 
 from .importers.csvbible import CSVBible
@@ -140,11 +140,9 @@ class BibleManager(LogMixin, RegistryProperties):
             if not bible.session:
                 continue
             name = bible.get_name()
-            # Remove corrupted files.
+            # Remove corrupted files, e.g. an empty Bible left behind by a failed import.
             if name is None:
-                bible.session.close()
-                bible.session = None
-                gc.collect()
+                self._close_bible(bible)
                 delete_file(self.path / file_path)
                 continue
             log.debug('Bible Name: "{name}"'.format(name=name))
@@ -188,10 +186,22 @@ class BibleManager(LogMixin, RegistryProperties):
         """
         log.debug('BibleManager.delete_bible("{name}")'.format(name=name))
         bible = self.db_cache[name]
+        self._close_bible(bible)
+        return delete_file(bible.path / '{name}{suffix}'.format(name=name, suffix=self.suffix))
+
+    @staticmethod
+    def _close_bible(bible):
+        """
+        Close the database of a Bible completely, so that its file can be deleted. Closing the session is not enough:
+        the connection pool of the engine still holds the file open, which prevents deleting it on Windows.
+
+        :param bible: The Bible
+        """
+        engine = bible.session.get_bind()
         bible.session.close()
         bible.session = None
+        engine.dispose()
         gc.collect()
-        return delete_file(bible.path / '{name}{suffix}'.format(name=name, suffix=self.suffix))
 
     def get_bibles(self):
         """
@@ -262,7 +272,8 @@ class BibleManager(LogMixin, RegistryProperties):
         if not bible:
             return
         language_selection = self.get_language_selection(bible)
-        return parse_reference(reference_text, self.db_cache[bible], language_selection, book_ref_id)
+        return parse_reference(normalise_reference(reference_text), self.db_cache[bible], language_selection,
+                               book_ref_id)
 
     def get_verses(self, bible, ref_list, show_error=True):
         """

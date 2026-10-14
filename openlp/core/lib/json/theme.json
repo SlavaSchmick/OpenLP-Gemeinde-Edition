@@ -42,6 +42,7 @@
             "y": 690
             },
         "main": {
+            "auto_size": true,
             "bold": false,
             "color": "#FFFFFF",
             "height": 690,
@@ -49,6 +50,7 @@
             "line_adjustment": 0,
             "letter_adjustment": 0,
             "location": "",
+            "min_size": 20,
             "name": "Arial",
             "outline": false,
             "outline_color": "#000000",

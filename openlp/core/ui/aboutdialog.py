@@ -23,6 +23,7 @@ import datetime
 from PyQt5 import QtGui, QtWidgets
 
 from openlp.core.common.i18n import UiStrings, translate
+from openlp.core.edition import edition_title, repository_url
 from openlp.core.lib.ui import create_button, create_button_box
 from openlp.core.ui.icons import UiIcons
 
@@ -99,8 +100,19 @@ class UiAboutDialog(object):
 
         :param about_dialog: The QDialog object to translate
         """
-        about_dialog.setWindowTitle('{about} OpenLP'.format(about=UiStrings().About))
+        about_dialog.setWindowTitle('{about} {title}'.format(about=UiStrings().About, title=edition_title()))
+        # This is a modified version of OpenLP, which must be clear to its users
+        source = ''
+        if repository_url():
+            source = translate('OpenLP.AboutForm', 'Source code and updates: {link}').format(
+                link='<a href="{url}">{url}</a>'.format(url=repository_url()))
+        edition_text = '<p><b>{title}</b><br>{notice} {source}</p>'.format(
+            title=edition_title(), source=source,
+            # {version} is replaced in AboutForm, like in the text below
+            notice=translate('OpenLP.AboutForm', 'This is a modified version of OpenLP {version}, with additions and '
+                             'changes which are not made or supported by the OpenLP developers.'))
         self.about_text_edit.setHtml(
+            edition_text +
             translate('OpenLP.AboutForm',
                       '<p>OpenLP {{version}}{{revision}} - Open Source Lyrics Projection<br>'
                       'Copyright {crs} 2004-{yr} OpenLP Developers</p>'

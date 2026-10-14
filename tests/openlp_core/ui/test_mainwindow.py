@@ -30,7 +30,6 @@ from tempfile import mkdtemp
 import pytest
 from PyQt5 import QtCore, QtWidgets, QtGui
 
-from openlp.core.common.i18n import UiStrings
 from openlp.core.common.platform import is_macosx
 from openlp.core.common.registry import Registry
 from openlp.core.display.screens import ScreenList
@@ -248,9 +247,8 @@ def test_main_window_title(main_window):
 
     # WHEN no changes are made to the service
 
-    # THEN the main window's title should be the same as the OpenLP string in the UiStrings class
-    assert main_window.windowTitle() == UiStrings().OpenLP, \
-        'The main window\'s title should be the same as the OpenLP string in UiStrings class'
+    # THEN the main window's title should show that this is the Gemeinde-Edition, a modified version of OpenLP
+    assert main_window.windowTitle() == 'OpenLP Gemeinde-Edition'
 
 
 def test_set_service_modified(main_window):
@@ -262,9 +260,8 @@ def test_set_service_modified(main_window):
     # WHEN set_service_modified is called with with the modified flag set true and a file name
     main_window.set_service_modified(True, 'test.osz')
 
-    # THEN the main window's title should be set to the
-    assert main_window.windowTitle(), '%s - %s*' % (UiStrings().OpenLP, 'test.osz') == \
-        'The main window\'s title should be set to "<the contents of UiStrings().OpenLP> - test.osz*"'
+    # THEN the main window's title should show the edition and the modified service
+    assert main_window.windowTitle() == 'OpenLP Gemeinde-Edition - test.osz*'
 
 
 def test_set_service_unmodified(main_window):
@@ -276,9 +273,8 @@ def test_set_service_unmodified(main_window):
     # WHEN set_service_modified is called with with the modified flag set False and a file name
     main_window.set_service_modified(False, 'test.osz')
 
-    # THEN the main window's title should be set to the
-    assert main_window.windowTitle(), '%s - %s' % (UiStrings().OpenLP, 'test.osz') == \
-        'The main window\'s title should be set to "<the contents of UiStrings().OpenLP> - test.osz"'
+    # THEN the main window's title should show the edition and the service
+    assert main_window.windowTitle() == 'OpenLP Gemeinde-Edition - test.osz'
 
 
 def test_load_settings_position_valid(main_window, settings):

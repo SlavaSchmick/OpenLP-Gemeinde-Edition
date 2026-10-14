@@ -405,7 +405,7 @@ def test_load_audio_cd_on_windows(mocked_normcase, mocked_get_vlc, mocked_is_win
 @patch('openlp.core.ui.media.vlcplayer.is_win')
 @patch('openlp.core.ui.media.vlcplayer.get_vlc')
 @patch('openlp.core.ui.media.vlcplayer.os.path.normcase')
-def test_load_audio_cd_no_tracks(mocked_normcase, mocked_get_vlc, mocked_is_win):
+def test_load_audio_cd_no_tracks(mocked_normcase, mocked_get_vlc, mocked_is_win, mock_settings):
     """
     Test loading an audio CD that has no tracks into VLC
     """

@@ -393,11 +393,17 @@ class DisplayWindow(QtWidgets.QWidget, RegistryProperties, LogMixin):
         """
         self.run_in_display('goToSlide', verse)
 
-    def load_verses(self, verses, is_sync=False):
+    def load_verses(self, verses, is_sync=False, keep_lines=False, fit_whole=False):
         """
         Set verses in the display
+
+        :param verses: The verses (slides)
+        :param is_sync: Wait for the display to have the verses
+        :param keep_lines: Never break the lines of the verses, e.g. of songs, also not for the automatic font size
+        :param fit_whole: The whole text of a slide must be visible, e.g. a Bible verse: if it doesn't fit even at the
+            smallest size of the theme, its text is made smaller still
         """
-        self.run_in_display('setTextSlides', verses, is_sync=is_sync)
+        self.run_in_display('setTextSlides', verses, keep_lines, fit_whole, is_sync=is_sync)
 
     def load_images(self, images):
         """
@@ -413,6 +419,20 @@ class DisplayWindow(QtWidgets.QWidget, RegistryProperties, LogMixin):
             else:
                 image['thumbnail'] = image['path']
         self.run_in_display('setImageSlides', imagesr)
+
+    def load_live_video(self, source):
+        """
+        Show a live video source, such as a camera or a capture card, in the display
+
+        :param dict source: The source to show, see ``Display.setLiveVideo()`` in display.js for the keys
+        """
+        self.run_in_display('setLiveVideo', source)
+
+    def stop_live_video(self):
+        """
+        Stop all live video sources in the display and release their devices
+        """
+        self.run_in_display('stopLiveVideo')
 
     def save_screenshot(self, fname=None):
         """

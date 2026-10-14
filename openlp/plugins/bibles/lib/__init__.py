@@ -132,6 +132,166 @@ class BibleStrings(metaclass=Singleton):
         }
 
 
+# Common German names and abbreviations of the books (Loccumer Richtlinien and everyday use), by book reference id. They
+# are used when a typed book can't be found by the names in the Bible, e.g. "1mos" for a Bible which calls it "Genesis".
+GERMAN_BOOK_ALIASES = {
+    1: ['1. Mose', '1Mo', '1Mos', 'Genesis'], 2: ['2. Mose', '2Mo', '2Mos', 'Exodus', 'Ex'],
+    3: ['3. Mose', '3Mo', '3Mos', 'Levitikus', 'Lev'], 4: ['4. Mose', '4Mo', '4Mos', 'Numeri', 'Num'],
+    5: ['5. Mose', '5Mo', '5Mos', 'Deuteronomium', 'Dtn'], 6: ['Josua', 'Jos'], 7: ['Richter', 'Ri'],
+    8: ['Rut', 'Ruth'], 9: ['1. Samuel', '1Sam'], 10: ['2. Samuel', '2Sam'], 11: ['1. Könige', '1Kön', '1Kö'],
+    12: ['2. Könige', '2Kön', '2Kö'], 13: ['1. Chronik', '1Chr'], 14: ['2. Chronik', '2Chr'], 15: ['Esra', 'Esr'],
+    16: ['Nehemia', 'Neh'], 17: ['Ester', 'Esther', 'Est'], 18: ['Hiob', 'Ijob', 'Hi'], 19: ['Psalm', 'Psalmen', 'Ps'],
+    20: ['Sprüche', 'Sprichwörter', 'Spr'], 21: ['Prediger', 'Kohelet', 'Pred', 'Koh'],
+    22: ['Hoheslied', 'Hohelied', 'Hld'], 23: ['Jesaja', 'Jes'], 24: ['Jeremia', 'Jer'], 25: ['Klagelieder', 'Klgl'],
+    26: ['Hesekiel', 'Ezechiel', 'Hes', 'Ez'], 27: ['Daniel', 'Dan'], 28: ['Hosea', 'Hos'], 29: ['Joel'],
+    30: ['Amos', 'Am'], 31: ['Obadja', 'Obd'], 32: ['Jona'], 33: ['Micha', 'Mi'], 34: ['Nahum', 'Nah'],
+    35: ['Habakuk', 'Hab'], 36: ['Zefanja', 'Zephanja', 'Zef'], 37: ['Haggai', 'Hag'], 38: ['Sacharja', 'Sach'],
+    39: ['Maleachi', 'Mal'], 40: ['Matthäus', 'Mt'], 41: ['Markus', 'Mk'], 42: ['Lukas', 'Lk'],
+    43: ['Johannes', 'Joh'], 44: ['Apostelgeschichte', 'Apg'], 45: ['Römer', 'Röm'], 46: ['1. Korinther', '1Kor'],
+    47: ['2. Korinther', '2Kor'], 48: ['Galater', 'Gal'], 49: ['Epheser', 'Eph'], 50: ['Philipper', 'Phil'],
+    51: ['Kolosser', 'Kol'], 52: ['1. Thessalonicher', '1Thess'], 53: ['2. Thessalonicher', '2Thess'],
+    54: ['1. Timotheus', '1Tim'], 55: ['2. Timotheus', '2Tim'], 56: ['Titus', 'Tit'], 57: ['Philemon', 'Phlm'],
+    58: ['Hebräer', 'Hebr'], 59: ['Jakobus', 'Jak'], 60: ['1. Petrus', '1Petr'], 61: ['2. Petrus', '2Petr'],
+    62: ['1. Johannes', '1Joh'], 63: ['2. Johannes', '2Joh'], 64: ['3. Johannes', '3Joh'], 65: ['Judas', 'Jud'],
+    66: ['Offenbarung', 'Offb', 'Apk']
+}
+
+# Common Russian names and abbreviations of the books (Synodal translation), by book reference id
+RUSSIAN_BOOK_ALIASES = {
+    1: ['Бытие', 'Быт'], 2: ['Исход', 'Исх'], 3: ['Левит', 'Лев'], 4: ['Числа', 'Чис'], 5: ['Второзаконие', 'Втор'],
+    6: ['Иисус Навин', 'Иисуса Навина', 'Нав'], 7: ['Судьи', 'Суд'], 8: ['Руфь', 'Руф'], 9: ['1 Царств', '1Цар'],
+    10: ['2 Царств', '2Цар'], 11: ['3 Царств', '3Цар'], 12: ['4 Царств', '4Цар'], 13: ['1 Паралипоменон', '1Пар'],
+    14: ['2 Паралипоменон', '2Пар'], 15: ['Ездра', 'Ездр', 'Езд'], 16: ['Неемия', 'Неем'], 17: ['Есфирь', 'Есф'],
+    18: ['Иов'], 19: ['Псалтирь', 'Псалом', 'Псалмы', 'Пс'], 20: ['Притчи', 'Притч', 'Прит'],
+    21: ['Екклесиаст', 'Еккл'], 22: ['Песнь Песней', 'Песн'], 23: ['Исаия', 'Ис'], 24: ['Иеремия', 'Иер'],
+    25: ['Плач Иеремии', 'Плач'], 26: ['Иезекииль', 'Иез'], 27: ['Даниил', 'Дан'], 28: ['Осия', 'Ос'],
+    29: ['Иоиль', 'Иоил'], 30: ['Амос', 'Ам'], 31: ['Авдий', 'Авд'], 32: ['Иона', 'Ион'], 33: ['Михей', 'Мих'],
+    34: ['Наум'], 35: ['Аввакум', 'Авв'], 36: ['Софония', 'Соф'], 37: ['Аггей', 'Агг'], 38: ['Захария', 'Зах'],
+    39: ['Малахия', 'Мал'], 40: ['Матфея', 'Матфей', 'Мф', 'Мат'], 41: ['Марка', 'Марк', 'Мк', 'Мар'],
+    42: ['Луки', 'Лука', 'Лк', 'Лук'], 43: ['Иоанна', 'Иоанн', 'Ин', 'Иоан'], 44: ['Деяния', 'Деян'],
+    45: ['Римлянам', 'Рим'], 46: ['1 Коринфянам', '1Кор'], 47: ['2 Коринфянам', '2Кор'], 48: ['Галатам', 'Гал'],
+    49: ['Ефесянам', 'Еф'], 50: ['Филиппийцам', 'Флп', 'Фил'], 51: ['Колоссянам', 'Кол'],
+    52: ['1 Фессалоникийцам', '1Фес'], 53: ['2 Фессалоникийцам', '2Фес'], 54: ['1 Тимофею', '1Тим'],
+    55: ['2 Тимофею', '2Тим'], 56: ['Титу', 'Тит'], 57: ['Филимону', 'Флм'], 58: ['Евреям', 'Евр'],
+    59: ['Иакова', 'Иак'], 60: ['1 Петра', '1Пет'], 61: ['2 Петра', '2Пет'], 62: ['1 Иоанна', '1Ин'],
+    63: ['2 Иоанна', '2Ин'], 64: ['3 Иоанна', '3Ин'], 65: ['Иуды', 'Иуд'], 66: ['Откровение', 'Откр']
+}
+
+# Common Ukrainian names and abbreviations of the books (Ohienko translation), by book reference id
+UKRAINIAN_BOOK_ALIASES = {
+    1: ['Буття', 'Бут'], 2: ['Вихід', 'Вих'], 3: ['Левит', 'Лев'], 4: ['Числа', 'Чис'],
+    5: ['Повторення Закону', 'Повт'], 6: ['Ісус Навин', 'Ісуса Навина', 'ІсН', 'Нав'], 7: ['Суддів', 'Суд'],
+    8: ['Рут'], 9: ['1 Самуїлова', '1Сам'], 10: ['2 Самуїлова', '2Сам'], 11: ['1 Царів', '1Цар'],
+    12: ['2 Царів', '2Цар'], 13: ['1 Хроніки', '1Хр'], 14: ['2 Хроніки', '2Хр'], 15: ['Ездра', 'Езд'],
+    16: ['Неемія', 'Неем'], 17: ['Естер', 'Ест'], 18: ['Йов'], 19: ['Псалми', 'Псалом', 'Пс'],
+    20: ['Приповісті', 'Прип'], 21: ['Екклезіяст', 'Проповідник', 'Екл'], 22: ['Пісня над піснями', 'Пісн'],
+    23: ['Ісая', 'Іс'], 24: ['Єремія', 'Єр'], 25: ['Плач Єремії', 'Плач'], 26: ['Єзекіїль', 'Єз'],
+    27: ['Даниїл', 'Дан'], 28: ['Осія', 'Ос'], 29: ['Йоіл'], 30: ['Амос', 'Ам'], 31: ['Овдій', 'Ов'], 32: ['Йона'],
+    33: ['Михей', 'Мих'], 34: ['Наум'], 35: ['Авакум', 'Ав'], 36: ['Софонія', 'Соф'], 37: ['Огій', 'Ог'],
+    38: ['Захарія', 'Зах'], 39: ['Малахії', 'Малахія', 'Мал'], 40: ['Матвія', 'Матвій', 'Мт'],
+    41: ['Марка', 'Марк', 'Мр', 'Мк'], 42: ['Луки', 'Лука', 'Лк'], 43: ['Івана', 'Іван', 'Ів'], 44: ['Дії'],
+    45: ['Римлян', 'Рим'], 46: ['1 Коринтян', '1Кор'], 47: ['2 Коринтян', '2Кор'], 48: ['Галатів', 'Гал'],
+    49: ['Ефесян', 'Еф'], 50: ["Филип'ян", 'Флп'], 51: ['Колоссян', 'Кол'], 52: ['1 Солунян', '1Сол'],
+    53: ['2 Солунян', '2Сол'], 54: ['1 Тимофія', '1Тим'], 55: ['2 Тимофія', '2Тим'], 56: ['Тита', 'Тит'],
+    57: ['Филимона', 'Флм'], 58: ['Євреїв', 'Євр'], 59: ['Якова', 'Як'], 60: ['1 Петра', '1Пет'],
+    61: ['2 Петра', '2Пет'], 62: ['1 Івана', '1Ів'], 63: ['2 Івана', '2Ів'], 64: ['3 Івана', '3Ів'],
+    65: ['Юди', 'Юд'], 66: ["Об'явлення", 'Одкровення', 'Об']
+}
+
+# The book aliases by language code. Some abbreviations mean different books in different languages, e.g. "1Цар" is
+# 1 Samuel in Russian and 1 Kings in Ukrainian, so the aliases of the user interface language are preferred.
+BOOK_ALIASES = {'de': GERMAN_BOOK_ALIASES, 'ru': RUSSIAN_BOOK_ALIASES, 'uk': UKRAINIAN_BOOK_ALIASES}
+
+
+def get_interface_language():
+    """
+    Get the two letter code of the language of the user interface, e.g. "de", or an empty string if it is unknown.
+    """
+    try:
+        settings = Registry().get('settings') if Registry().has('settings') else None
+    except AttributeError:
+        # The registry has not been created yet
+        settings = None
+    if settings is None:
+        return ''
+    language = str(settings.value('core/language'))
+    if re.match(r'\[(.*)\]', language):
+        from PyQt5 import QtCore
+        language = QtCore.QLocale.system().name()
+    return language[:2].lower()
+
+
+def normalise_book_name(name):
+    """
+    Normalise a book name for a tolerant comparison: lower case, umlauts written out, without spaces, full stops and
+    apostrophes. E.g. "1. Mose" becomes "1mose", "Röm" becomes "roem" and "Об'явлення" becomes "обявлення".
+    """
+    name = name.lower()
+    for letter, replacement in (('ä', 'ae'), ('ö', 'oe'), ('ü', 'ue'), ('ß', 'ss'), ('ё', 'е'), ('ʼ', '')):
+        name = name.replace(letter, replacement)
+    return re.sub(r'[\W_]+', '', name)
+
+
+def find_book_ref_ids(book, bible, language=None):
+    """
+    Find a book tolerantly, by its German, Russian, Ukrainian, English or Bible specific name or abbreviation, or the
+    start of one of them. This is used when the book can't be found by the usual way.
+
+    :param str book: The typed book, e.g. "1mos", "1 Mo", "gen", "Röm", "Ин" or "Ів"
+    :param bible: The Bible database
+    :param str language: The preferred language of the aliases, the user interface language if None
+    :return: A list with the book reference id of the best matching book in the Bible, or an empty list
+    """
+    wanted = normalise_book_name(book)
+    if not wanted:
+        return []
+    if language is None:
+        language = get_interface_language()
+    from openlp.plugins.bibles.lib.db import BiblesResourcesDB
+    # The Bible specific and English names and the aliases of the interface language are preferred over other aliases
+    preferred_names = {book_id: list(aliases) for book_id, aliases in BOOK_ALIASES.get(language, {}).items()}
+    for resource_book in BiblesResourcesDB.get_books():
+        preferred_names.setdefault(resource_book['id'], []).extend([resource_book['name'],
+                                                                    resource_book['abbreviation']])
+    for bible_book in bible.get_books() or []:
+        preferred_names.setdefault(bible_book.book_reference_id, []).append(bible_book.name)
+    other_names = {}
+    for aliases_language, aliases in BOOK_ALIASES.items():
+        if aliases_language != language:
+            for book_id, book_aliases in aliases.items():
+                other_names.setdefault(book_id, []).extend(book_aliases)
+    name_groups = [{book_id: [normalise_book_name(name) for name in book_names if name]
+                    for book_id, book_names in names.items()} for names in (preferred_names, other_names)]
+    book_ids = sorted(set(preferred_names) | set(other_names))
+    in_bible = [book_id for book_id in book_ids if bible.get_book_by_book_ref_id(book_id)]
+    # An exact name or abbreviation wins over the start of a name, a preferred name over another alias, and the first
+    # book of the Bible over later ones
+    for is_match in (lambda name: name == wanted, lambda name: name.startswith(wanted)):
+        for names in name_groups:
+            for book_id in in_bible:
+                if any(is_match(name) for name in names.get(book_id, [])):
+                    return [book_id]
+    return []
+
+
+def normalise_reference(reference):
+    """
+    Make a typed reference more tolerant: chapter and verse can be separated by a space, as in "gen 3 4" or
+    "joh 3 16-18", which is turned into "gen 3,4" with the verse separator of the current language.
+
+    :param str reference: The typed reference
+    :return: The reference, with a verse separator if it was missing
+    """
+    if get_reference_match('full').match(reference):
+        return reference
+    match = re.match(r'^(?P<book>\s*\d*\.?\s*[^\d]+?)\s*(?P<chapter>\d+)\s+(?P<verse>\d+)(?P<rest>.*)$', reference)
+    if not match:
+        return reference
+    normalised = '{book} {chapter}{sep}{verse}{rest}'.format(sep=get_reference_separator('sep_v_display'),
+                                                             **match.groupdict())
+    return normalised if get_reference_match('full').match(normalised) else reference
+
+
 def update_reference_separators():
     """
     Updates separators and matches for parsing and formatting scripture references.
@@ -296,7 +456,8 @@ def parse_reference(reference, bible, language_selection, book_ref_id=False):
         log.debug('Matched reference {text}'.format(text=reference))
         book = match.group('book')
         if not book_ref_id:
-            book_ref_ids = bible.get_book_ref_id_by_localised_name(book, language_selection)
+            book_ref_ids = bible.get_book_ref_id_by_localised_name(book, language_selection) or \
+                find_book_ref_ids(book, bible)
         elif not bible.get_book_by_book_ref_id(book_ref_id):
             return []
         else:

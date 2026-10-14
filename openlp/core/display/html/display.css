@@ -112,7 +112,6 @@ body.transition .reveal .slide-background {
 section.text-slides.stack.present {
   text-align-last: unset !important;
 }
-
 #global-background {
   background-size: cover;
   background-position: 50% 50%;
@@ -174,6 +173,73 @@ section.text-slides.stack.present {
   will-change: transform;
 }
 
+
+/*********************************************
+ * Live video (cameras, capture cards, virtual cameras)
+ *********************************************/
+.live-video-feed {
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  object-fit: contain;
+}
+
+.live-video-feed.fit-cover {
+  object-fit: cover;
+}
+
+.live-video-feed.fit-fill {
+  object-fit: fill;
+}
+
+.live-video-feed.mirror {
+  transform: scaleX(-1);
+}
+
+section.live-video[data-live-video-state="noSignal"] .live-video-feed {
+  visibility: hidden;
+}
+
+/* Sizes are in px since the preview panels zoom the whole page down from the size of the screen */
+.live-video-status {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: sans-serif;
+  text-align: center;
+  text-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+section.live-video[data-live-video-state="connecting"] .live-video-status,
+section.live-video[data-live-video-state="noSignal"] .live-video-status {
+  opacity: 1;
+}
+
+section.live-video[data-live-video-state="connecting"] .live-video-status {
+  /* Only show "connecting" when it takes a moment, to avoid a flash on every start */
+  transition-delay: 1s;
+}
+
+.live-video-status-title {
+  font-size: 64px;
+  font-weight: bold;
+}
+
+.live-video-status-device {
+  font-size: 40px;
+  margin-top: 16px;
+  opacity: 0.7;
+}
 
 #alert-text.scrolling {
   box-sizing: border-box;

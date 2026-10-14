@@ -646,19 +646,19 @@ Möchten Sie dennoch fortfahren?</translation>
         <location filename="../../openlp/plugins/bibles/lib/__init__.py" line="140"/>
         <source>:</source>
         <comment>Verse identifier e.g. Genesis 1 : 1 = Genesis Chapter 1 Verse 1</comment>
-        <translation>:</translation>
+        <translation>,</translation>
     </message>
     <message>
         <location filename="../../openlp/plugins/bibles/lib/__init__.py" line="140"/>
         <source>v</source>
         <comment>Verse identifier e.g. Genesis 1 v 1 = Genesis Chapter 1 Verse 1</comment>
-        <translation>v</translation>
+        <translation>:</translation>
     </message>
     <message>
         <location filename="../../openlp/plugins/bibles/lib/__init__.py" line="140"/>
         <source>V</source>
         <comment>Verse identifier e.g. Genesis 1 V 1 = Genesis Chapter 1 Verse 1</comment>
-        <translation>V</translation>
+        <translation>Vers</translation>
     </message>
     <message>
         <location filename="../../openlp/plugins/bibles/lib/__init__.py" line="140"/>
@@ -688,7 +688,7 @@ Möchten Sie dennoch fortfahren?</translation>
         <location filename="../../openlp/plugins/bibles/lib/__init__.py" line="152"/>
         <source>,</source>
         <comment>connecting identifier e.g. Genesis 1 verse 1 - 2, 4 - 5 = Genesis Chapter 1 Verses 1 To 2 And Verses 4 To 5</comment>
-        <translation>,</translation>
+        <translation>.</translation>
     </message>
     <message>
         <location filename="../../openlp/plugins/bibles/lib/__init__.py" line="152"/>
@@ -924,7 +924,7 @@ Suchergebnis und Projektionsbildschirm:</translation>
     <message>
         <location filename="../../openlp/plugins/bibles/lib/biblestab.py" line="219"/>
         <source>English</source>
-        <translation>Deutsch</translation>
+        <translation>Englisch</translation>
     </message>
     <message>
         <location filename="../../openlp/plugins/bibles/lib/biblestab.py" line="221"/>
@@ -933,8 +933,8 @@ Suchergebnis und Projektionsbildschirm:</translation>
     </message>
     <message>
         <location filename="../../openlp/plugins/bibles/lib/biblestab.py" line="222"/>
-        <source>Reset search type to &quot;Text or Scripture Reference&quot; on startup</source>
-        <translation>Setzen Sie den Suchtyp beim Start auf &quot;Text oder Bibelstelle&quot; zurück</translation>
+        <source>Reset search type to &quot;Scripture Reference&quot; on startup</source>
+        <translation>Suchtyp beim Start auf &quot;Bibelstelle&quot; zurücksetzen</translation>
     </message>
     <message>
         <location filename="../../openlp/plugins/bibles/lib/biblestab.py" line="225"/>
@@ -1073,7 +1073,7 @@ minimum of {count} characters and a space for performance reasons)</source>
     <message>
         <location filename="../../openlp/plugins/bibles/forms/editbibledialog.py" line="152"/>
         <source>English</source>
-        <translation>Deutsch</translation>
+        <translation>Englisch</translation>
     </message>
     <message>
         <location filename="../../openlp/plugins/bibles/forms/editbibleform.py" line="93"/>
@@ -1447,6 +1447,16 @@ Es ist nicht möglich die Büchernamen anzupassen.</translation>
         <location filename="../../openlp/plugins/bibles/lib/mediaitem.py" line="314"/>
         <source>Scripture Reference</source>
         <translation>Bibelstelle</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/bibles/lib/mediaitem.py" line="284"/>
+        <source>Search Bible</source>
+        <translation>Bibel durchsuchen</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/bibles/lib/mediaitem.py" line="285"/>
+        <source>Jump to the Bible search field.</source>
+        <translation>Zum Bibel-Suchfeld springen.</translation>
     </message>
     <message>
         <location filename="../../openlp/plugins/bibles/lib/mediaitem.py" line="314"/>
@@ -1904,6 +1914,287 @@ Möchten Sie die anderen Bilder trotzdem hinzufügen?</translation>
     </message>
 </context>
 <context>
+    <name>LiveVideoPlugin</name>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/lib/__init__.py" line="57"/>
+        <source>Fit – show the whole picture</source>
+        <translation>Einpassen – ganzes Bild zeigen</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/lib/__init__.py" line="58"/>
+        <source>Fill – crop to the screen</source>
+        <translation>Füllen – auf den Bildschirm zuschneiden</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/lib/__init__.py" line="59"/>
+        <source>Stretch to the screen</source>
+        <translation>Auf den Bildschirm strecken</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/lib/__init__.py" line="166"/>
+        <source>Connecting...</source>
+        <translation>Verbindung wird hergestellt...</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/lib/__init__.py" line="167"/>
+        <source>No signal</source>
+        <translation>Kein Signal</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/lib/ui.py" line="35"/>
+        <source>Automatic (Full HD if available)</source>
+        <translation>Automatisch (Full HD, wenn verfügbar)</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/lib/ui.py" line="47"/>
+        <source>Automatic</source>
+        <translation>Automatisch</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/lib/ui.py" line="49"/>
+        <source>{frame_rate} fps</source>
+        <translation>{frame_rate} fps</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/livevideoplugin.py" line="76"/>
+        <source>&lt;strong&gt;Live Video Plugin&lt;/strong&gt;&lt;br /&gt;The live video plugin shows the picture of live video sources on the screen, such as USB and built-in cameras, HDMI capture cards and virtual cameras like the one of OBS Studio. Sources can be added to the service like any other item.</source>
+        <translation>&lt;strong&gt;Live-Video Erweiterung&lt;/strong&gt;&lt;br /&gt;Die Live-Video Erweiterung zeigt das Bild von Live-Video-Quellen auf dem Bildschirm an, zum Beispiel USB- und eingebaute Kameras, HDMI-Capture-Karten und virtuelle Kameras wie die von OBS Studio. Quellen können wie jedes andere Element zum Ablauf hinzugefügt werden.</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/livevideoplugin.py" line="94"/>
+        <source>Live Video</source>
+        <comment>name singular</comment>
+        <translation>Live-Video</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/livevideoplugin.py" line="95"/>
+        <source>Live Videos</source>
+        <comment>name plural</comment>
+        <translation>Live-Videos</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/livevideoplugin.py" line="99"/>
+        <source>Live Video</source>
+        <comment>container title</comment>
+        <translation>Live-Video</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/livevideoplugin.py" line="105"/>
+        <source>Add a new live video source.</source>
+        <translation>Füge eine neue Live-Video-Quelle hinzu.</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/livevideoplugin.py" line="106"/>
+        <source>Edit the selected live video source.</source>
+        <translation>Bearbeite die ausgewählte Live-Video-Quelle.</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/livevideoplugin.py" line="107"/>
+        <source>Delete the selected live video source.</source>
+        <translation>Lösche die ausgewählte Live-Video-Quelle.</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/livevideoplugin.py" line="108"/>
+        <source>Preview the selected live video source.</source>
+        <translation>Zeige die ausgewählte Live-Video-Quelle in der Vorschau.</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/livevideoplugin.py" line="109"/>
+        <source>Send the selected live video source live.</source>
+        <translation>Zeige die ausgewählte Live-Video-Quelle Live.</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/livevideoplugin.py" line="110"/>
+        <source>Add the selected live video source to the service.</source>
+        <translation>Füge die ausgewählte Live-Video-Quelle zum Ablauf hinzu.</translation>
+    </message>
+</context>
+<context>
+    <name>LiveVideoPlugin.LiveVideoTab</name>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/lib/livevideotab.py" line="113"/>
+        <source>Background</source>
+        <translation>Hintergrund</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/lib/livevideotab.py" line="114"/>
+        <source>Use blank theme</source>
+        <translation>Leeres Theme benutzen</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/lib/livevideotab.py" line="115"/>
+        <source>Custom theme</source>
+        <translation>Benutzerdefiniertes Theme</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/lib/livevideotab.py" line="116"/>
+        <source>Theme:</source>
+        <translation>Design:</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/lib/livevideotab.py" line="118"/>
+        <source>The background is visible around a picture that doesn&apos;t fill the screen, and when the screen is blanked to the theme.</source>
+        <translation>Der Hintergrund ist rund um ein Bild sichtbar, das den Bildschirm nicht ausfüllt, und wenn nur das Design angezeigt wird.</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/lib/livevideotab.py" line="120"/>
+        <source>Preview Panel</source>
+        <translation>Vorschau</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/lib/livevideotab.py" line="121"/>
+        <source>Show the live picture in the Preview panel</source>
+        <translation>Live-Bild in der Vorschau anzeigen</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/lib/livevideotab.py" line="124"/>
+        <source>When this is disabled, the Preview panel shows a still image of the source, which saves computing power.</source>
+        <translation>Wenn dies deaktiviert ist, zeigt die Vorschau ein Standbild der Quelle. Das spart Rechenleistung.</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/lib/livevideotab.py" line="126"/>
+        <source>New Sources</source>
+        <translation>Neue Quellen</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/lib/livevideotab.py" line="127"/>
+        <source>Resolution:</source>
+        <translation>Auflösung:</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/lib/livevideotab.py" line="128"/>
+        <source>Frame rate:</source>
+        <translation>Bildrate:</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/lib/livevideotab.py" line="129"/>
+        <source>Scaling:</source>
+        <translation>Skalierung:</translation>
+    </message>
+</context>
+<context>
+    <name>LiveVideoPlugin.MediaItem</name>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/lib/mediaitem.py" line="132"/>
+        <source>Automatic resolution</source>
+        <translation>Automatische Auflösung</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/lib/mediaitem.py" line="134"/>
+        <source>{resolution}, {frame_rate} fps</source>
+        <translation>{resolution}, {frame_rate} fps</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/lib/mediaitem.py" line="236"/>
+        <source>Are you sure you want to delete the {items:d} selected live video source(s)?</source>
+        <translation>Sollen die {items:d} ausgewählten Live-Video-Quellen wirklich gelöscht werden?</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/lib/mediaitem.py" line="254"/>
+        <source>copy</source>
+        <comment>For item cloning</comment>
+        <translation>Kopie</translation>
+    </message>
+</context>
+<context>
+    <name>LiveVideoPlugin.SourceForm</name>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/forms/sourcedialog.py" line="120"/>
+        <source>Live Video Source</source>
+        <translation>Live-Video-Quelle</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/forms/sourcedialog.py" line="121"/>
+        <source>&amp;Name:</source>
+        <translation>&amp;Name:</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/forms/sourcedialog.py" line="122"/>
+        <source>&amp;Video input:</source>
+        <translation>&amp;Videoeingang:</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/forms/sourcedialog.py" line="123"/>
+        <source>Search for video inputs again</source>
+        <translation>Erneut nach Videoeingängen suchen</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/forms/sourcedialog.py" line="124"/>
+        <source>&amp;Resolution:</source>
+        <translation>&amp;Auflösung:</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/forms/sourcedialog.py" line="125"/>
+        <source>&amp;Frame rate:</source>
+        <translation>&amp;Bildrate:</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/forms/sourcedialog.py" line="126"/>
+        <source>&amp;Scaling:</source>
+        <translation>&amp;Skalierung:</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/forms/sourcedialog.py" line="127"/>
+        <source>&amp;Mirror the picture</source>
+        <translation>Bild spiege&amp;ln</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/forms/sourceform.py" line="189"/>
+        <source>{device} (not connected)</source>
+        <translation>{device} (nicht verbunden)</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/forms/sourceform.py" line="194"/>
+        <source>No video input found</source>
+        <translation>Kein Videoeingang gefunden</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/forms/sourceform.py" line="196"/>
+        <source>Searching for video inputs...</source>
+        <translation>Suche nach Videoeingängen...</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/forms/sourceform.py" line="268"/>
+        <source>The video input delivers {width} × {height} at {frame_rate} fps.</source>
+        <translation>Der Videoeingang liefert {width} × {height} mit {frame_rate} fps.</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/forms/sourceform.py" line="272"/>
+        <source>The video input delivers {width} × {height}.</source>
+        <translation>Der Videoeingang liefert {width} × {height}.</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/forms/sourceform.py" line="283"/>
+        <source>The video input is not connected.</source>
+        <translation>Der Videoeingang ist nicht verbunden.</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/forms/sourceform.py" line="284"/>
+        <source>The video input is in use by another program.</source>
+        <translation>Der Videoeingang wird von einem anderen Programm verwendet.</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/forms/sourceform.py" line="285"/>
+        <source>Access to the video input was denied. Please check the camera privacy settings of your system.</source>
+        <translation>Der Zugriff auf den Videoeingang wurde verweigert. Bitte prüfen Sie die Datenschutzeinstellungen für die Kamera in Ihrem System.</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/forms/sourceform.py" line="288"/>
+        <source>The video input could not be started.</source>
+        <translation>Der Videoeingang konnte nicht gestartet werden.</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/forms/sourceform.py" line="297"/>
+        <source>You need to type in a name for the source.</source>
+        <translation>Bitte geben Sie einen Namen für die Quelle ein.</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/plugins/livevideo/forms/sourceform.py" line="302"/>
+        <source>You need to choose a video input.</source>
+        <translation>Bitte wählen Sie einen Videoeingang aus.</translation>
+    </message>
+</context>
+<context>
     <name>MediaPlugin</name>
     <message>
         <location filename="../../openlp/plugins/media/lib/mediaitem.py" line="139"/>
@@ -2214,6 +2505,36 @@ Möchten Sie die anderen Bilder trotzdem hinzufügen?</translation>
         <location filename="../../openlp/core/ui/media/mediatab.py" line="83"/>
         <source>Live Media</source>
         <translation>Live Medien</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/core/ui/media/mediatab.py" line="113"/>
+        <source>Audio Output</source>
+        <translation>Audio-Ausgabe</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/core/ui/media/mediatab.py" line="114"/>
+        <source>Live:</source>
+        <translation>Live:</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/core/ui/media/mediatab.py" line="115"/>
+        <source>Preview:</source>
+        <translation>Vorschau:</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/core/ui/media/mediatab.py" line="117"/>
+        <source>Choose where the sound of videos and background audio goes, e.g. the live sound to Dante Via or Dante Virtual Soundcard and the preview sound to your headphones.</source>
+        <translation>Legen Sie fest, wohin der Ton von Videos und Hintergrundmusik geht, z. B. der Live-Ton an Dante Via oder Dante Virtual Soundcard und der Vorschau-Ton auf Ihre Kopfhörer.</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/core/ui/media/mediatab.py" line="153"/>
+        <source>System default</source>
+        <translation>Systemstandard</translation>
+    </message>
+    <message>
+        <location filename="../../openlp/core/ui/media/mediatab.py" line="163"/>
+        <source>{device} (not connected)</source>
+        <translation>{device} (nicht verbunden)</translation>
     </message>
     <message>
         <location filename="../../openlp/core/ui/media/mediatab.py" line="84"/>
@@ -2618,7 +2939,15 @@ Programm erhalten haben. Wenn nicht, siehe &lt;a href=&quot;https://www.gnu.org/
     <message>
         <location filename="../../openlp/core/ui/aboutform.py" line="57"/>
         <source> build {version}</source>
-        <translation>Build {version}</translation>
+        <translation> Build {version}</translation>
+    </message>
+    <message>
+        <source>Source code and updates: {link}</source>
+        <translation>Quellcode und Updates: {link}</translation>
+    </message>
+    <message>
+        <source>This is a modified version of OpenLP {version}, with additions and changes which are not made or supported by the OpenLP developers.</source>
+        <translation>Dies ist eine modifizierte Version von OpenLP {version} mit Ergänzungen und Änderungen, die nicht von den OpenLP-Entwicklern stammen und von ihnen nicht unterstützt werden.</translation>
     </message>
 </context>
 <context>
@@ -3556,6 +3885,11 @@ in der Foliensteuerung:</translation>
         <translation>Medien – Abspielen von Audio- und Video-Dateien</translation>
     </message>
     <message>
+        <location filename="../../openlp/core/ui/firsttimewizard.py" line="347"/>
+        <source>Live Video – Show cameras, capture cards and virtual cameras</source>
+        <translation>Live-Video – Kameras, Capture-Karten und virtuelle Kameras anzeigen</translation>
+    </message>
+    <message>
         <location filename="../../openlp/core/ui/firsttimewizard.py" line="343"/>
         <source>Song Usage Monitor</source>
         <translation>Liederprotokollierungsüberischt</translation>
@@ -3751,6 +4085,22 @@ Klicken Sie auf die Schaltfläche „{back_button}“, um es erneut zu versuchen
         <location filename="../../openlp/core/pages/fontselect.py" line="204"/>
         <source>Shadow</source>
         <translation>Schatten</translation>
+    </message>
+    <message>
+        <source>Automatic size (fill the area)</source>
+        <translation>Automatische Größe (Fläche ausfüllen)</translation>
+    </message>
+    <message>
+        <source>The text of each slide is made as large as fits into the main area, between the smallest and the largest size. A slide is only split when its text does not fit even at the smallest size.</source>
+        <translation>Der Text jeder Folie wird so groß dargestellt, wie er in den Hauptbereich passt, zwischen der kleinsten und der größten Größe. Eine Folie wird nur geteilt, wenn ihr Text selbst in der kleinsten Größe nicht passt.</translation>
+    </message>
+    <message>
+        <source>Smallest size:</source>
+        <translation>Kleinste Größe:</translation>
+    </message>
+    <message>
+        <source>Largest size:</source>
+        <translation>Größte Größe:</translation>
     </message>
 </context>
 <context>
@@ -10479,6 +10829,14 @@ See log for details</source>
         <translation>Das HTML der Lied-Fußzeile konnte nicht gerendert werden. 
 Details in der Logdatei</translation>
     </message>
+    <message>
+        <source>Search Song</source>
+        <translation>Lied suchen</translation>
+    </message>
+    <message>
+        <source>Jump to the song search field.</source>
+        <translation>Zum Suchfeld der Lieder springen.</translation>
+    </message>
 </context>
 <context>
     <name>SongsPlugin.MediaShoutImport</name>
@@ -12344,6 +12702,49 @@ Sie können diese Warnmeldung in den Songeinstellungen deaktivieren</translation
         <source>Zulu</source>
         <comment>Language code: zu</comment>
         <translation>Zulu</translation>
+    </message>
+</context>
+<context>
+    <name>OpenLP.EditionUpdate</name>
+    <message>
+        <source>Update available</source>
+        <translation>Update verfügbar</translation>
+    </message>
+    <message>
+        <source>Version {new} of {edition} is available (you are using version {current}).
+
+Open its download page?</source>
+        <translation>Version {new} der {edition} ist verfügbar (installiert ist Version {current}).
+
+Download-Seite öffnen?</translation>
+    </message>
+    <message>
+        <source>Version {new} of {edition} is available (you are using version {current}).
+
+Download and install it now? OpenLP will be closed for this; your songs, Bibles, services and settings are kept.</source>
+        <translation>Version {new} der {edition} ist verfügbar (installiert ist Version {current}).
+
+Jetzt herunterladen und installieren? OpenLP wird dafür beendet; Lieder, Bibeln, Abläufe und Einstellungen bleiben erhalten.</translation>
+    </message>
+    <message>
+        <source>The setup could not be started. You can start it yourself: {path}</source>
+        <translation>Das Setup konnte nicht gestartet werden. Du kannst es selbst starten: {path}</translation>
+    </message>
+    <message>
+        <source>Downloading {name}...</source>
+        <translation>{name} wird heruntergeladen...</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Abbrechen</translation>
+    </message>
+    <message>
+        <source>The update could not be downloaded. Please check the internet connection and try again later.</source>
+        <translation>Das Update konnte nicht heruntergeladen werden. Bitte prüfe die Internetverbindung und versuche es später noch einmal.</translation>
+    </message>
+    <message>
+        <source>The downloaded update is damaged and was deleted. Please try again later.</source>
+        <translation>Das heruntergeladene Update ist beschädigt und wurde gelöscht. Bitte versuche es später noch einmal.</translation>
     </message>
 </context>
 </TS>

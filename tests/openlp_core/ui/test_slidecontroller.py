@@ -659,8 +659,9 @@ def test_add_service_item_without_song_edit(settings: Settings):
     """
     Test the add_service_item() method when song_edit is False
     """
-    # GIVEN: A slide controller and a new item to add
+    # GIVEN: A slide controller and a new item to add, which starts at its fourth slide
     mocked_item = MagicMock()
+    mocked_item.get_start_slide_index.return_value = 3
     mocked_process_item = MagicMock()
     slide_controller = SlideController(None)
     slide_controller._process_item = mocked_process_item
@@ -670,9 +671,9 @@ def test_add_service_item_without_song_edit(settings: Settings):
     # WHEN: The item is added to the service
     slide_controller.add_service_item(mocked_item)
 
-    # THEN: The item is processed, the slide number is correct, and the song is not editable (or something)
+    # THEN: The item is processed at its start slide, and the song is not editable (or something)
     assert slide_controller.song_edit is False, 'song_edit should be False'
-    mocked_process_item.assert_called_once_with(mocked_item, 0)
+    mocked_process_item.assert_called_once_with(mocked_item, 3)
 
 
 def test_replace_service_manager_item_different_items(settings: Settings):

@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>OpenLP 3.1.7 – Gemeinde-Paket: Dokumentation</title>
+<style>
+  @page { size: A4; margin: 18mm 17mm 18mm 17mm; }
+  :root { --accent: #1f4e79; --soft: #eef3f8; --line: #c9d6e3; --muted: #5a6470; }
+  body { font-family: "Segoe UI", Arial, sans-serif; font-size: 10.3pt; line-height: 1.45; color: #1d1f22; }
+  h1 { font-size: 23pt; color: var(--accent); margin: 0 0 4pt; }
+  h2 { font-size: 15pt; color: var(--accent); border-bottom: 1.5pt solid var(--accent); padding-bottom: 3pt;
+       margin: 22pt 0 8pt; page-break-after: avoid; }
+  h3 { font-size: 11.5pt; color: #263238; margin: 14pt 0 5pt; page-break-after: avoid; }
+  p { margin: 0 0 6pt; }
+  ul, ol { margin: 0 0 7pt; padding-left: 17pt; }
+  li { margin-bottom: 2.5pt; }
+  table { border-collapse: collapse; width: 100%; margin: 4pt 0 10pt; page-break-inside: avoid; font-size: 9.6pt; }
+  th, td { border: 0.6pt solid var(--line); padding: 4pt 6pt; text-align: left; vertical-align: top; }
+  th { background: var(--soft); color: #263238; font-weight: 600; }
+  kbd { font-family: "Segoe UI", Arial, sans-serif; font-size: 8.8pt; border: 0.7pt solid #9aa7b4;
+        border-bottom-width: 1.4pt; border-radius: 3pt; padding: 0 3.5pt; background: #fafbfc; white-space: nowrap; }
+  code { font-family: Consolas, "Courier New", monospace; font-size: 9pt; background: #f2f4f6; padding: 0 2.5pt;
+         border-radius: 2pt; }
+  .path { font-weight: 600; color: #263238; }
+  .box { border: 0.8pt solid var(--line); background: var(--soft); border-radius: 4pt; padding: 7pt 10pt;
+         margin: 6pt 0 10pt; page-break-inside: avoid; }
+  .warn { border-color: #e3b04b; background: #fdf6e6; }
+  .subtitle { color: var(--muted); font-size: 11pt; margin-bottom: 14pt; }
+  .toc { columns: 2; column-gap: 24pt; }
+  .toc li { margin-bottom: 1.5pt; }
+  .page-break { page-break-before: always; }
+  .small { font-size: 9pt; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<h1>OpenLP 3.1.7 – Gemeinde-Paket</h1>
+<div class="subtitle">Dokumentation aller Ergänzungen und Änderungen gegenüber dem offiziellen OpenLP 3.1.7 · Stand: 14.10.2026</div>
+
+<div class="box">
+  <strong>Inhalt dieses Ordners</strong>
+  <table style="margin-top:5pt">
+    <tr><th style="width:38%">Datei / Ordner</th><th>Zweck</th></tr>
+    <tr><td><code>OpenLP-3.1.7-Setup-x64.exe</code></td><td>Installationsprogramm (Windows 10/11, 64 Bit). Enthält alle benötigten Komponenten, auch VLC – auf dem Zielrechner muss nichts weiter installiert werden.</td></tr>
+    <tr><td><code>Liederbücher\Deutsch</code></td><td>1310 bereinigte deutsche Lieder im OpenLP-Format (OpenLyrics, eine Datei je Lied)</td></tr>
+    <tr><td><code>Liederbücher\Russisch</code></td><td>800 bereinigte russische Lieder im OpenLP-Format</td></tr>
+    <tr><td><code>Liederbücher\Bereinigungsbericht.txt</code></td><td>Protokoll der Bereinigung mit jeder einzelnen Korrektur</td></tr>
+    <tr><td>Diese Dokumentation</td><td>Installation, alle neuen Funktionen, Bedienung, Hinweise</td></tr>
+  </table>
+</div>
+
+<h3>Inhaltsverzeichnis</h3>
+<ol class="toc">
+  <li>Installation</li>
+  <li>Liederbücher importieren</li>
+  <li>Sprachen der Oberfläche</li>
+  <li>Neue Erweiterung „Live-Video“</li>
+  <li>Medien und Präsentationen</li>
+  <li>Schneller Bibel-Workflow</li>
+  <li>Schnelle Liedsuche</li>
+  <li>Automatische Textgröße</li>
+  <li>Die Liederbücher im Detail</li>
+  <li>Tastenkürzel im Überblick</li>
+  <li>Hinweise und bekannte Grenzen</li>
+  <li>Technischer Anhang</li>
+</ol>
+
+<h2>1. Installation</h2>
+<ol>
+  <li><strong>Setup starten:</strong> Doppelklick auf <code>OpenLP-3.1.7-Setup-x64.exe</code>. Es werden Administratorrechte benötigt (Windows-Abfrage bestätigen).</li>
+  <li><strong>Sprache des Installationsprogramms</strong> wählen: Englisch, Deutsch, Russisch oder Ukrainisch. Vorausgewählt ist die Sprache von Windows.</li>
+  <li>Lizenz bestätigen, Zielordner (Standard: <code>C:\Program Files\OpenLP</code>) und Zusatzaufgaben wählen:
+    <ul>
+      <li>Desktop-Verknüpfung anlegen</li>
+      <li>OpenLP-Ablaufdateien (<code>.osz</code>, <code>.oszl</code>) mit OpenLP öffnen</li>
+    </ul>
+  </li>
+  <li>Am Ende kann OpenLP direkt gestartet werden.</li>
+</ol>
+
+<div class="box warn">
+  <strong>Windows-Warnung „Unbekannter Herausgeber“:</strong> Das Setup ist (noch) nicht digital signiert. Windows SmartScreen zeigt deshalb beim ersten Start eine Warnung. Weiter mit <span class="path">Weitere Informationen → Trotzdem ausführen</span>.
+</div>
+
+<h3>Vorhandenes OpenLP wird ersetzt</h3>
+<ul>
+  <li>Ist bereits ein offizielles OpenLP installiert (egal ob als MSI- oder als älteres Setup-Paket), wird es vor der Installation <strong>automatisch und still deinstalliert</strong>.</li>
+  <li><strong>Lieder, Bibeln, Abläufe, Designs und Einstellungen bleiben erhalten.</strong> Sie liegen unabhängig vom Programm in <code>%APPDATA%\openlp</code>.</li>
+  <li>Deinstallieren lässt sich OpenLP ganz normal über <span class="path">Windows-Einstellungen → Apps → OpenLP</span>.</li>
+</ul>
+
+<h3>Erster Start</h3>
+<ul>
+  <li>OpenLP startet automatisch in der Sprache von Windows, sofern diese Deutsch, Russisch oder Ukrainisch ist – sonst auf Englisch (siehe Kapitel 3).</li>
+  <li>Beim allerersten Start erscheint der Einrichtungsassistent von OpenLP. Dort kann auch die Erweiterung <strong>Live-Video</strong> direkt angehakt werden.</li>
+</ul>
+
+<h2>2. Liederbücher importieren</h2>
+<p>Die bereinigten Liederbücher werden einmalig in OpenLP importiert:</p>
+<ol>
+  <li>In OpenLP <span class="path">Datei → Importieren → Lied</span> öffnen (Lied Importassistent).</li>
+  <li>Als Format <strong>„OpenLyrics oder OpenLP 2 exportierte Lieder“</strong> wählen.</li>
+  <li><strong>Dateien hinzufügen…</strong> klicken, in den Ordner <code>Liederbücher\Deutsch</code> wechseln, mit <kbd>Strg</kbd>+<kbd>A</kbd> alle Dateien markieren und öffnen. Dasselbe für <code>Liederbücher\Russisch</code>.</li>
+  <li>Mit <strong>Weiter</strong> den Import starten. Titel, Kennung (z. B. <code>D203</code>, <code>R47</code>), Liederbuch und Nummer, Strophen, Refrains und Strophenreihenfolge werden vollständig übernommen.</li>
+</ol>
+<div class="box warn">
+  <strong>Doppelte Lieder vermeiden:</strong> Wurden die SongBeamer-Lieder früher schon einmal (unbereinigt) importiert, diese alten Lieder vorher löschen – sonst sind sie doppelt vorhanden. Auf einem neuen Rechner ist nichts zu beachten.
+</div>
+
+<h2>3. Sprachen der Oberfläche</h2>
+<p>OpenLP ist vollständig in <strong>Englisch, Deutsch, Russisch und Ukrainisch</strong> verfügbar – einschließlich aller neuen Funktionen.</p>
+<ul>
+  <li>Umstellen: <span class="path">Einstellungen → Sprache</span>, gewünschte Sprache wählen, OpenLP neu starten.</li>
+  <li>Ukrainisch ist neu hinzugekommen (alle 2336 Texte). Die russische Übersetzung war unvollständig und wurde um rund 1000 Texte ergänzt.</li>
+  <li>Die Bibel-Suche versteht die üblichen Kurzformen der Bibelbücher auf Deutsch, Russisch und Ukrainisch (siehe Kapitel 6).</li>
+</ul>
+
+<h2>4. Neue Erweiterung „Live-Video“</h2>
+<p>Zeigt das Bild einer <strong>Live-Videoquelle</strong> auf der Leinwand – z. B. USB-Kamera, eingebaute Kamera, Kamera über HDMI-Capture-Karte, OBS Virtual Camera oder jede andere Quelle, die Windows als Kamera erkennt. Die Erweiterung zeigt nur Bild, keinen Ton.</p>
+
+<h3>Aktivieren</h3>
+<p>Live-Video ist nach der Installation zunächst ausgeschaltet. Einschalten im Einrichtungsassistenten oder über <span class="path">Einstellungen → Plugins verwalten → Live-Video → Status: aktiv</span>. Danach erscheint in der Bibliothek der Bereich <strong>Live-Video</strong>.</p>
+
+<h3>Quelle anlegen</h3>
+<ol>
+  <li>Im Bereich Live-Video auf <strong>Hinzufügen</strong> (+) klicken.</li>
+  <li>Im Dialog <strong>Live-Video-Quelle</strong>:
+    <table>
+      <tr><th style="width:24%">Feld</th><th>Bedeutung</th></tr>
+      <tr><td>Name</td><td>Frei wählbar, z. B. „Kamera Bühne“. Wird automatisch aus dem Gerät vorgeschlagen.</td></tr>
+      <tr><td>Videoeingang</td><td>Das Gerät. Über „Erneut nach Videoeingängen suchen“ werden neu angesteckte Geräte gefunden.</td></tr>
+      <tr><td>Auflösung</td><td>„Automatisch (Full HD, wenn verfügbar)“ oder eine feste Auflösung.</td></tr>
+      <tr><td>Bildrate</td><td>„Automatisch“ oder z. B. 25/30/50/60 fps.</td></tr>
+      <tr><td>Skalierung</td><td><em>Einpassen</em> (ganzes Bild zeigen), <em>Füllen</em> (auf den Bildschirm zuschneiden) oder <em>Strecken</em>.</td></tr>
+      <tr><td>Bild spiegeln</td><td>Spiegelt das Bild (z. B. für eine Kamera, die auf den Sprecher zeigt).</td></tr>
+    </table>
+  </li>
+  <li>Der Dialog zeigt sofort ein Vorschaubild und meldet, was der Eingang liefert (z. B. „1920 × 1080 mit 30 fps“), oder ob er nicht verbunden, von einem anderen Programm belegt oder durch die Windows-Kameraberechtigung gesperrt ist.</li>
+</ol>
+
+<h3>Verwenden</h3>
+<ul>
+  <li>Eine Quelle wird wie jedes andere Element bedient: in die <strong>Vorschau</strong>, <strong>Live</strong> oder in den <strong>Ablauf</strong>. Sie wird mit dem Ablauf gespeichert.</li>
+  <li><strong>Ausblenden</strong> (schwarz, Design, Desktop) funktioniert wie gewohnt.</li>
+  <li>Wird die Quelle getrennt, zeigt die Vorschau „Kein Signal“; sobald das Gerät wieder da ist, läuft das Bild von selbst weiter.</li>
+</ul>
+
+<h3>Einstellungen</h3>
+<p><span class="path">Einstellungen → Einstellungen… → Live-Video</span>:</p>
+<ul>
+  <li><strong>Hintergrund:</strong> leeres oder benutzerdefiniertes Design – sichtbar rund um ein Bild, das die Leinwand nicht ausfüllt.</li>
+  <li><strong>Live-Bild in der Vorschau anzeigen:</strong> ausgeschaltet zeigt die Vorschau nur ein Standbild und spart Rechenleistung.</li>
+  <li><strong>Neue Quellen:</strong> Voreinstellungen für Auflösung, Bildrate und Skalierung.</li>
+</ul>
+
+<h2>5. Medien und Präsentationen</h2>
+<h3>Audio-Ausgabe für Dante</h3>
+<p>Der Ton von Videos und Hintergrundmusik kann gezielt auf ein Audiogerät gelegt werden – z. B. der Live-Ton auf <strong>Dante Via</strong> bzw. die <strong>Dante Virtual Soundcard</strong> und von dort auf das Mischpult (z. B. Behringer Wing).</p>
+<ul>
+  <li>Einstellen: <span class="path">Einstellungen → Einstellungen… → Medien → Audio-Ausgabe</span>.</li>
+  <li>Getrennt für <strong>Live</strong> und <strong>Vorschau</strong> wählbar (z. B. Vorschau auf die Kopfhörer des Technikers).</li>
+  <li>„Systemstandard“ verwendet das Windows-Standardgerät. Ein gewähltes, aber gerade nicht angeschlossenes Gerät bleibt gespeichert und wird als „(nicht verbunden)“ angezeigt.</li>
+  <li>Die Wiedergabe läuft über das mitgelieferte VLC; auf dem Rechner muss VLC nicht installiert sein.</li>
+</ul>
+
+<h3>PowerPoint-Präsentationen</h3>
+<p>PowerPoint-Dateien (<code>.pptx</code>, <code>.ppt</code>) werden über die Erweiterung <strong>Präsentationen</strong> mit dem installierten Microsoft PowerPoint gezeigt.</p>
+<ul>
+  <li><strong>Behoben:</strong> Mit Microsoft 365 (Click-to-Run) ließen sich Präsentationen nicht öffnen – PowerPoint kann dort keine Vorschaubilder in den OpenLP-Datenordner unter <code>AppData</code> schreiben. OpenLP lässt PowerPoint die Vorschaubilder jetzt zuerst im Temp-Ordner erzeugen und legt sie dann selbst ab. Das funktioniert unabhängig davon, wie Office installiert ist.</li>
+  <li>Voraussetzung ist ein installiertes Microsoft PowerPoint. Ohne PowerPoint können Präsentationen auch über LibreOffice Impress oder als PDF gezeigt werden.</li>
+</ul>
+
+<h2>6. Schneller Bibel-Workflow</h2>
+<p>Ziel: Eine vom Prediger genannte Stelle in wenigen Sekunden auf der Leinwand – und dann frei im Kapitel weiterschalten.</p>
+
+<h3>Ablauf nur mit der Tastatur</h3>
+<table>
+  <tr><th style="width:26%">Taste</th><th>Wirkung</th></tr>
+  <tr><td><kbd>Strg</kbd>+<kbd>B</kbd></td><td>Springt von überall ins Bibel-Suchfeld (Text markiert, Tippen ersetzt ihn).</td></tr>
+  <tr><td>Stelle tippen, <kbd>Enter</kbd></td><td>Stelle in die <strong>Vorschau</strong>; der Cursor bleibt im Suchfeld.</td></tr>
+  <tr><td><kbd>Umschalt</kbd>+<kbd>Enter</kbd></td><td>Stelle direkt <strong>live</strong>; der Fokus springt in die Live-Versliste.</td></tr>
+  <tr><td><kbd>↑</kbd> / <kbd>↓</kbd></td><td>Verse vor- und zurückschalten – sofort, ohne Mausklick.</td></tr>
+</table>
+
+<h3>Das ganze Kapitel ist geladen</h3>
+<ul>
+  <li>Bei einer Suche wie „Joh 3,16-18“ wird das <strong>ganze Kapitel</strong> geladen und <strong>bei Vers 16 begonnen</strong>.</li>
+  <li>Mit den Pfeiltasten (oder per Mausklick in der Liste) kann jederzeit vor und zurück geschaltet werden, auch über den gesuchten Bereich hinaus.</li>
+  <li>Die Fußzeile zeigt immer den gerade sichtbaren Vers. Das gilt auch, wenn die Stelle aus dem Ablauf heraus live geschaltet wird.</li>
+</ul>
+
+<h3>Ein Vers steht immer ganz auf einer Folie</h3>
+<ul>
+  <li>Ein Bibelvers wird <strong>nie auf zwei Folien verteilt</strong> – in keinem Layout.</li>
+  <li>Mit <strong>Vergleichstext</strong> (zweite Übersetzung) steht der Vers in <strong>beiden Übersetzungen zusammen</strong> auf einer Folie.</li>
+  <li>Bei Layouts mit mehreren Versen pro Folie („Vers pro Zeile“, „Fortlaufend“, „Ganze Verse fortlaufend“) wird nur zwischen zwei Versen auf eine neue Folie gewechselt.</li>
+  <li>Ist ein Vers sehr lang, wird seine Schrift so weit verkleinert, dass er vollständig zu sehen ist (siehe Kapitel 8).</li>
+</ul>
+
+<h3>Tolerante Eingabe</h3>
+<table>
+  <tr><th style="width:34%">Eingabe</th><th>wird verstanden als</th></tr>
+  <tr><td><code>gen 3 4</code>, <code>1mos 3 4</code>, <code>1. Mose 3,4</code></td><td>1. Mose 3,4 – Leerzeichen statt Komma, deutsche und englische Abkürzungen</td></tr>
+  <tr><td><code>joh 3 16-18</code></td><td>Johannes 3,16–18</td></tr>
+  <tr><td><code>Röm</code>, <code>roem</code>, <code>rom</code></td><td>Römer – mit oder ohne Umlaut</td></tr>
+  <tr><td><code>Ин 3 16</code>, <code>Быт 1 1</code></td><td>Russische Kurzformen (Synodalübersetzung)</td></tr>
+  <tr><td><code>Ів 3 16</code>, <code>Бут 1 1</code></td><td>Ukrainische Kurzformen (Übersetzung Ohijenko)</td></tr>
+</table>
+<p>In der deutschen Oberfläche gilt die deutsche Schreibweise: <code>Joh 3,16-18</code> = Kapitel 3, Verse 16 bis 18; mehrere Bereiche werden mit Punkt getrennt. Bei mehrdeutigen Kurzformen (z. B. „1Цар“ = russisch 1. Samuel, ukrainisch 1. Könige) gilt die Sprache der Oberfläche.</p>
+
+<h3>Weitere Verbesserungen</h3>
+<ul>
+  <li>Beim Start ist immer der Suchtyp <strong>„Bibelstelle“</strong> eingestellt; „Textsuche“ und „Text oder Referenz“ lassen sich bei Bedarf umschalten (abschaltbar unter <span class="path">Einstellungen → Einstellungen… → Bibeln → Suchtyp beim Start auf „Bibelstelle“ zurücksetzen</span>).</li>
+  <li>Die Sprache der Buchnamen (Bibelsprache / Anwendungssprache / Englisch) wird jetzt sofort übernommen; die Vorschläge beim Tippen erscheinen in der gewählten Sprache.</li>
+</ul>
+
+<h2>7. Schnelle Liedsuche</h2>
+<p>Die Liedsuche arbeitet jetzt wie die Bibelsuche und ist auf die Navigation über Liednummern ausgelegt.</p>
+<table>
+  <tr><th style="width:26%">Taste / Eingabe</th><th>Wirkung</th></tr>
+  <tr><td><kbd>Strg</kbd>+<kbd>L</kbd></td><td>Springt von überall ins Lied-Suchfeld (Text markiert).</td></tr>
+  <tr><td><code>r47</code>, <code>d203</code></td><td>Sucht <strong>sofort beim Tippen</strong>. Das Lied mit genau dieser Kennung steht <strong>immer ganz oben</strong>, darunter weitere Treffer (bei <code>r47</code> z. B. R470–R479).</td></tr>
+  <tr><td><code>D0203</code>, <code>R 47</code>, <code>R047</code></td><td>Führende Nullen, Leerzeichen sowie Groß- und Kleinschreibung spielen keine Rolle.</td></tr>
+  <tr><td><code>47</code></td><td>Findet das Lied 47 in beiden Liederbüchern (D47 und R47).</td></tr>
+  <tr><td>Titel oder Liedtext</td><td>Wird ab 3 Buchstaben sofort mitgesucht.</td></tr>
+  <tr><td><kbd>Enter</kbd></td><td>Oberster Treffer in die <strong>Vorschau</strong>; Cursor bleibt im Suchfeld.</td></tr>
+  <tr><td><kbd>Umschalt</kbd>+<kbd>Enter</kbd></td><td>Oberster Treffer direkt <strong>live</strong>; Fokus in der Live-Liste, <kbd>↑</kbd>/<kbd>↓</kbd> schalten die Strophen.</td></tr>
+</table>
+<p>Beim Start ist immer der Suchtyp <strong>„Ganzes Lied“</strong> eingestellt; er durchsucht Kennung, Titel und Liedtext gleichzeitig.</p>
+
+<h2>8. Automatische Textgröße</h2>
+<p>Bibel- und Liedtexte sind unterschiedlich lang. Damit die Fläche immer optimal genutzt wird und der Text auch aus großer Entfernung lesbar ist, wählt OpenLP <strong>für jede Folie die größte Schrift</strong>, bei der der Text vollständig in den Textbereich passt – innerhalb einer Spanne, die im Design festgelegt wird.</p>
+
+<h3>Einstellen</h3>
+<p><span class="path">Designs → Design bearbeiten → Seite „Schriftschnitt und -farbe“</span>:</p>
+<table>
+  <tr><th style="width:34%">Einstellung</th><th>Bedeutung</th></tr>
+  <tr><td>Automatische Größe (Fläche ausfüllen)</td><td>Schaltet die Funktion ein. Für alle Designs standardmäßig eingeschaltet.</td></tr>
+  <tr><td>Größte Größe</td><td>So groß darf der Text höchstens werden (das bisherige Feld „Größe“).</td></tr>
+  <tr><td>Kleinste Größe</td><td>So klein darf der Text höchstens werden (Standard: 20 pt).</td></tr>
+</table>
+
+<h3>Verhalten</h3>
+<ul>
+  <li>Kurze Texte erscheinen in der größten Größe, lange werden verkleinert, bis sie passen.</li>
+  <li>Eine Folie wird erst dann auf mehrere Folien aufgeteilt, wenn der Text <strong>selbst in der kleinsten Größe</strong> nicht passt.</li>
+  <li><strong>Lieder und Sonderfolien:</strong> Jede vorgegebene Liedzeile bleibt <strong>eine Zeile</strong> – die Größe richtet sich auch nach der längsten Zeile. Nur wenn eine Zeile selbst in der kleinsten Größe zu lang ist, wird sie (in der kleinsten Größe) umbrochen.</li>
+  <li><strong>Bibeltexte</strong> dürfen als Fließtext umbrechen, um möglichst groß zu werden.</li>
+  <li><strong>Bibel – der ganze Vers muss zu sehen sein:</strong> Passt ein Vers (bzw. mit Vergleichstext der Vers in beiden Übersetzungen) selbst in der kleinsten Größe nicht auf die Folie, wird er auf dieser Folie <strong>unter die kleinste Größe</strong> verkleinert – gerade so weit, dass er vollständig sichtbar ist. Bei Bibeltexten ist die Spanne also ein Wunsch, der vollständige Vers ist Pflicht. Das gilt auch für Designs ohne automatische Größe.</li>
+</ul>
+<table>
+  <tr><th style="width:24%">Regel</th><th>Lieder</th><th>Bibel</th></tr>
+  <tr><td>Größe</td><td>innerhalb der Spanne</td><td>innerhalb der Spanne, wenn nötig kleiner</td></tr>
+  <tr><td>Umbruch</td><td>keine Liedzeile wird umbrochen</td><td>Fließtext darf umbrechen</td></tr>
+  <tr><td>Aufteilen</td><td>erst wenn der Text in der kleinsten Größe nicht passt</td><td>ein Vers wird nie geteilt; mit Vergleichstext bleiben beide Übersetzungen zusammen</td></tr>
+</table>
+<div class="box">
+  <strong>Tipp:</strong> Bei vorhandenen Designs steht die größte Größe noch auf dem bisherigen Wert (z. B. 40 pt) – kurze Texte werden dann nicht größer als vorher. Für eine gut gefüllte Leinwand die <strong>Größte Größe</strong> z. B. auf 100–120 pt setzen. Bei Liedern mit einer sehr langen Zeile kann unten Platz frei bleiben; dann hilft die vertikale Ausrichtung „Mitte“.
+</div>
+
+<h2 class="page-break">9. Die Liederbücher im Detail</h2>
+<p>Grundlage sind die SongBeamer-Liederbücher (1310 deutsche, 801 russische Dateien). Alle Lieder wurden automatisch bereinigt, geprüft und in das OpenLP-Format gebracht.</p>
+
+<h3>Titel und Kennung</h3>
+<ul>
+  <li><strong>Titel = Original-Dateiname</strong>, z. B. <code>D0203 Lasset uns mit Jesu ziehen</code> oder <code>R047_Я люблю Тебя, Боже, люблю всей душой,</code>. Die Liederliste ist dadurch nach Nummern sortiert.</li>
+  <li>Die <strong>Kennung</strong> (<code>D203</code>, <code>R47</code>) steht im Feld „Untertitel“ – darüber finden die Suche und das Suchfeld das Lied.</li>
+  <li>Zusätzlich ist jedes Lied dem Liederbuch <strong>„Deutsch“</strong> bzw. <strong>„Russisch“</strong> mit seiner Nummer zugeordnet; die Fußzeile zeigt z. B. „Deutsch #127“.</li>
+</ul>
+
+<h3>Entfernt (alles, was nicht Liedtext ist)</h3>
+<table>
+  <tr><th>Zusatz</th><th>Beispiele</th><th style="width:13%">Anzahl</th></tr>
+  <tr><td>Abschnittsnamen</td><td>„Strophe 3“, „Refrain“, „Припев:“</td><td>8211</td></tr>
+  <tr><td>Folienzähler, Endmarken</td><td>„1 / 6“, „1/6“, „***“</td><td>6472</td></tr>
+  <tr><td>Strophennummern im Text</td><td>„1. Взойдем на Голгофу …“</td><td>2249</td></tr>
+  <tr><td>Tonarten</td><td>„G-Dur“, „d-Moll“, auch Tippfehler wie „As-ur“, „Es-Du“</td><td>1813</td></tr>
+  <tr><td>Wiederholungszeichen</td><td>„[: … :]“, „||: … :||“</td><td>1188</td></tr>
+  <tr><td>Melodie-Hinweise, Stimmen, Wiederholungen</td><td>„(Bis hierher hat mich Gott gebracht) G-Dur“, „Solo:“, „Chor:“, „(3 mal)“</td><td>64</td></tr>
+</table>
+
+<h3>In Ordnung gebracht</h3>
+<ul>
+  <li><strong>Strophe und Refrain auf einer Folie</strong> werden getrennt.</li>
+  <li><strong>Gleiche Refrains</strong> werden zu einem zusammengefasst; die Reihenfolge ist hinterlegt (z. B. Strophe 1 – Refrain – Strophe 2 – Refrain …). Unterschiedliche Refrains bleiben getrennt.</li>
+  <li><strong>Strophen über mehrere Folien</strong> sind jetzt eine Strophe. Die ursprüngliche Folientrennung bleibt als optionaler Umbruch erhalten und wird nur genutzt, wenn der Text nicht auf eine Folie passt.</li>
+  <li><strong>Tonart und Melodie</strong> stehen im Feld „Kommentare“ des Liedes (nicht mehr auf der Leinwand).</li>
+  <li><strong>Tippfehler:</strong> 7 Buchstaben aus dem falschen Alphabet (z. B. kyrillisches „Д“ in „Дass“) und 3 Ziffern im Wort (z. B. „Scheiden7“) korrigiert.</li>
+  <li>Die Quellen enthalten keine Autoren; OpenLP trägt deshalb „Autor unbekannt“ bzw. „Автор не известен“ ein.</li>
+</ul>
+
+<h3>Besonderheiten der Quellen</h3>
+<ul>
+  <li>Deutsch Nr. 655 fehlt bereits in den Quellen.</li>
+  <li>Russisch Nr. 314 lag doppelt (identisch) vor und wurde einmal übernommen.</li>
+  <li>Der Dateiname von R267 enthält einen Tippfehler („…течет<strong>v</strong>“); er ist im Titel unverändert übernommen, der Liedtext ist korrekt.</li>
+</ul>
+
+<div style="page-break-inside: avoid">
+<h2>10. Tastenkürzel im Überblick</h2>
+<table>
+  <tr><th style="width:30%">Taste</th><th>Wirkung</th></tr>
+  <tr><td><kbd>Strg</kbd>+<kbd>B</kbd></td><td>Ins Bibel-Suchfeld springen</td></tr>
+  <tr><td><kbd>Strg</kbd>+<kbd>L</kbd></td><td>Ins Lied-Suchfeld springen</td></tr>
+  <tr><td><kbd>Enter</kbd> im Suchfeld</td><td>Treffer in die Vorschau (Bibel und Lieder)</td></tr>
+  <tr><td><kbd>Umschalt</kbd>+<kbd>Enter</kbd> im Suchfeld</td><td>Treffer direkt live, Fokus in der Live-Liste (Bibel und Lieder)</td></tr>
+  <tr><td><kbd>↑</kbd> / <kbd>↓</kbd></td><td>Verse bzw. Strophen schalten</td></tr>
+</table>
+<p class="small">Alle Kürzel lassen sich unter <span class="path">Einstellungen → Konfiguriere Tastenkürzel…</span> ändern.</p>
+</div>
+
+<h2>11. Hinweise und bekannte Grenzen</h2>
+<ul>
+  <li><strong>Übersetzungen:</strong> Die russische und die ukrainische Oberfläche sollten von Muttersprachlern durchgesehen werden, insbesondere Fachbegriffe (z. B. „Служение/Служіння“ für den Gottesdienstablauf).</li>
+  <li><strong>Zeilenumbrüche in den Liedquellen:</strong> Einige Lieder haben in den SongBeamer-Dateien falsch gesetzte Zeilenumbrüche (z. B. D1: „Cherubim und Seraphinen Stimmen / Dir ein Loblied an“). Diese lassen sich nicht automatisch erkennen und können bei Bedarf im Lied-Editor korrigiert werden.</li>
+  <li><strong>Suche nach Nummern:</strong> Die Suche findet alles, was die Kennung enthält; das exakt passende Lied steht immer oben.</li>
+  <li><strong>Signatur:</strong> Das Setup ist nicht digital signiert (SmartScreen-Warnung, siehe Kapitel 1).</li>
+  <li><strong>Lizenz:</strong> OpenLP steht unter der GNU General Public License Version 3. Wer diese angepasste Version weitergibt, muss den Empfängern auch den Quellcode der Änderungen zugänglich machen (z. B. per Download-Link).</li>
+</ul>
+
+<h2>12. Technischer Anhang</h2>
+<table>
+  <tr><th style="width:30%">Punkt</th><th>Details</th></tr>
+  <tr><td>Grundlage</td><td>OpenLP 3.1.7 (Python, PyQt5, QtWebEngine)</td></tr>
+  <tr><td>Paket</td><td>PyInstaller (Programmordner) und Inno Setup 6; enthält VLC 3.0.24 (64 Bit) und alle Bibliotheken</td></tr>
+  <tr><td>Installationsort</td><td><code>C:\Program Files\OpenLP</code></td></tr>
+  <tr><td>Benutzerdaten</td><td><code>%APPDATA%\openlp</code> (Lieder, Bibeln, Abläufe, Designs, Einstellungen)</td></tr>
+  <tr><td>Systemvoraussetzung</td><td>Windows 10 oder 11, 64 Bit</td></tr>
+  <tr><td>Live-Video</td><td>Kamerazugriff über die Chromium-Engine (nur für OpenLP-eigene Seiten freigegeben); Windows-Kameraberechtigung für Desktop-Apps muss erlaubt sein</td></tr>
+  <tr><td>Audio-Ausgabe</td><td>VLC über WASAPI; Gerät wird beim Laden jedes Mediums gesetzt</td></tr>
+  <tr><td>Qualitätssicherung</td><td>Automatische Tests: 2571 Python-Tests und 112 JavaScript-Tests; zusätzlich Prüfungen im laufenden Programm (Bibel- und Liedsuche, Tastatur-Workflow, Textgröße, ganze Verse mit Vergleichstext, PowerPoint-Präsentation, Live-Video, Audio, Sprachen)</td></tr>
+</table>
+
+</body>
+</html>

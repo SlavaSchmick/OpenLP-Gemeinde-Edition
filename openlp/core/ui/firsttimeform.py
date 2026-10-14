@@ -260,6 +260,8 @@ class FirstTimeForm(QtWidgets.QWizard, UiFirstTimeWizard, RegistryProperties):
             except Exception:
                 self.media_check_box.setEnabled(False)
             self.custom_check_box.setChecked(self.plugin_manager.get_plugin_by_name('custom').is_active())
+            live_video_plugin = self.plugin_manager.get_plugin_by_name('livevideo')
+            self.live_video_check_box.setChecked(bool(live_video_plugin and live_video_plugin.is_active()))
             self.song_usage_check_box.setChecked(self.plugin_manager.get_plugin_by_name('songusage').is_active())
             self.alert_check_box.setChecked(self.plugin_manager.get_plugin_by_name('alerts').is_active())
             # Add any existing themes to list.
@@ -315,6 +317,7 @@ class FirstTimeForm(QtWidgets.QWizard, UiFirstTimeWizard, RegistryProperties):
         self._set_plugin_status(self.presentation_check_box, 'presentations/status')
         self._set_plugin_status(self.image_check_box, 'images/status')
         self._set_plugin_status(self.media_check_box, 'media/status')
+        self._set_plugin_status(self.live_video_check_box, 'livevideo/status')
         self._set_plugin_status(self.custom_check_box, 'custom/status')
         self._set_plugin_status(self.song_usage_check_box, 'songusage/status')
         self._set_plugin_status(self.alert_check_box, 'alerts/status')

@@ -127,6 +127,25 @@ var AlertDelay = {
 };
 
 /**
+ * Live video state enumeration
+ */
+var LiveVideoState = {
+  Connecting: "connecting",
+  Playing: "playing",
+  NoSignal: "noSignal"
+};
+
+/**
+ * Live video retry delay, used when a source is not (yet) available
+ */
+var LIVE_VIDEO_RETRY_DELAY = 3000;
+
+/**
+ * The smallest font size (in pt) for a text which must be seen whole, e.g. a Bible verse
+ */
+var MIN_FIT_WHOLE_FONT_SIZE = 1;
+
+/**
  * Return an array of elements based on the selector query
  * @param {string} selector - The selector to find elements
  * @returns {array} An array of matching elements
@@ -230,6 +249,57 @@ function _prepareText(text) {
 }
 
 /**
+ * Find the largest font size within a range at which a text fits into an area, using a measuring element which has
+ * the width of the area and the text styles of the theme
+ * @private
+ * @param {HTMLElement} measure - The measuring element, which already contains the text
+ * @param {number} minSize - The smallest font size in pt
+ * @param {number} maxSize - The largest font size in pt
+ * @param {number} height - The height of the area in px
+ * @param {boolean} keepLines - The lines must not be broken, e.g. the lines of songs. If even at the smallest size a
+ *   line is too long, the smallest size is used and the long lines are broken, as few as possible.
+ * @param {boolean} fitWhole - The whole text must be visible, e.g. a Bible verse. If it doesn't fit even at the
+ *   smallest size, it gets the largest size below that at which it fits.
+ * @returns {number} The largest font size in pt at which the text fits, or minSize if it doesn't fit at all (unless
+ *   fitWhole is set)
+ */
+function _findLargestFittingFontSize(measure, minSize, maxSize, height, keepLines, fitWhole) {
+  // Without breaking lines, a line which is too long makes the text wider than the area
+  measure.style.whiteSpace = keepLines ? "nowrap" : "normal";
+  var fits = function (size) {
+    measure.style.fontSize = size + "pt";
+    return measure.scrollHeight <= height && measure.scrollWidth <= measure.clientWidth;
+  };
+  if (fits(maxSize)) {
+    return maxSize;
+  }
+  if (!fits(minSize)) {
+    if (!fitWhole || minSize <= MIN_FIT_WHOLE_FONT_SIZE) {
+      return minSize;
+    }
+    // Below the smallest size of the theme, as the whole text must be seen
+    measure.style.whiteSpace = "normal";
+    if (!fits(MIN_FIT_WHOLE_FONT_SIZE)) {
+      return MIN_FIT_WHOLE_FONT_SIZE;
+    }
+    maxSize = minSize;
+    minSize = MIN_FIT_WHOLE_FONT_SIZE;
+  }
+  // Binary search in whole points: lower always fits, upper never does
+  var lower = minSize, upper = maxSize;
+  while (upper - lower > 1) {
+    var middle = Math.floor((lower + upper) / 2);
+    if (fits(middle)) {
+      lower = middle;
+    }
+    else {
+      upper = middle;
+    }
+  }
+  return lower;
+}
+
+/**
  * Change a camelCaseString to a camel-case-string
  * @private
  * @param {string} text
@@ -288,6 +358,54 @@ function _fixFontName(fontName) {
 }
 
 /**
+ * Normalise a video device label for comparison. Chromium appends the USB vendor and product id to the label of USB
+ * devices, e.g. "HD Pro Webcam C920 (046d:082d)", so strip that off.
+ * @param {string} label - The device label
+ * @returns {string} The normalised label
+ */
+function _normaliseDeviceLabel(label) {
+  return (label || "").replace(/\s*\([0-9a-f]{4}:[0-9a-f]{4}\)\s*$/i, "").trim().toLowerCase();
+}
+
+/**
+ * Check if two video device labels refer to the same device
+ * @param {string} label - A device label
+ * @param {string} otherLabel - Another device label
+ * @returns {boolean} True if the labels match
+ */
+function _deviceLabelsMatch(label, otherLabel) {
+  label = _normaliseDeviceLabel(label);
+  otherLabel = _normaliseDeviceLabel(otherLabel);
+  if (!label || !otherLabel) {
+    return false;
+  }
+  return label == otherLabel || label.indexOf(otherLabel) === 0 || otherLabel.indexOf(label) === 0;
+}
+
+/**
+ * Find a video input device by its label. An exact match is preferred over a partial one.
+ * @param {MediaDeviceInfo[]} devices - The list of devices from navigator.mediaDevices.enumerateDevices()
+ * @param {string} label - The label of the device to find
+ * @returns {MediaDeviceInfo|null} The matching device, or null if it is not connected
+ */
+function _findVideoDevice(devices, label) {
+  var inputs = devices.filter(device => device.kind == "videoinput");
+  var wanted = _normaliseDeviceLabel(label);
+  var exact = inputs.find(device => _normaliseDeviceLabel(device.label) == wanted);
+  return exact || inputs.find(device => _deviceLabelsMatch(device.label, label)) || null;
+}
+
+/**
+ * Stop all the tracks of a media stream, which releases the device
+ * @param {MediaStream} stream - The stream to stop
+ */
+function _stopMediaStream(stream) {
+  if (stream) {
+    stream.getTracks().forEach(track => track.stop());
+  }
+}
+
+/**
  * The Display object is what we use from OpenLP
  */
 var Display = {
@@ -307,6 +425,13 @@ var Display = {
   _doItemTransitions: false,
   _skipNextTransition: false,
   _themeApplied: true,
+  _isDisplay: false,
+  _liveVideoFeeds: [],
+  _liveVideoDeviceIds: {},
+  _liveVideoObserver: null,
+  _liveVideoRetryTimer: null,
+  _isListeningForDeviceChanges: false,
+  _canRevealDeviceLabels: true,
   _revealConfig: {
     margin: 0.0,
     minScale: 1.0,
@@ -354,6 +479,7 @@ var Display = {
     Display._slidesContainer = $(".slides")[0];
     Display._footerContainer = $(".footer")[0];
     Display._backgroundsContainer = $(".backgrounds")[0];
+    Display._isDisplay = isDisplay;
     Display._doTransitions = isDisplay;
     Reveal.initialize(Display._revealConfig);
     Reveal.addEventListener('slidechanged', Display._onSlideChanged);
@@ -669,12 +795,17 @@ var Display = {
   /**
    * Set text slides.
    * @param {Object[]} slides - A list of slides to add as JS objects: {"verse": "v1", "text": "line 1\nline2"}
+   * @param {boolean} keepLines - The automatic font size must not break the lines, e.g. of songs
+   * @param {boolean} fitWhole - The whole text of each slide must be seen, e.g. a Bible verse, so its text is made
+   *   smaller than the smallest size of the theme if needed
    */
-  setTextSlides: function (slides) {
+  setTextSlides: function (slides, keepLines=false, fitWhole=false) {
     Display._clearSlidesList();
     var slide_html;
     var parentSection = document.createElement("section");
     parentSection.classList = "text-slides";
+    parentSection.dataset.keepLines = !!keepLines;
+    parentSection.dataset.fitWhole = !!fitWhole;
     slides.forEach(function (slide, index) {
       slide_html = Display._createTextSlide(slide.verse, slide.text);
       slide_html.setAttribute('data-slide', index);
@@ -710,9 +841,10 @@ var Display = {
       var html = _prepareText(text);
       if (slide.innerHTML != html) {
         slide.innerHTML = html;
+        Display._fitTextSlides(slide.parentElement);
       }
       if (!Display._themeApplied) {
-        Display.applyTheme(slide.parent);
+        Display.applyTheme(slide.parentElement);
       }
     } else {
       Display._clearSlidesList();
@@ -728,6 +860,83 @@ var Display = {
       Display._slidesContainer.prepend(parentSection);
       Display.reinit();
     }
+  },
+  /**
+   * Make the text of every slide as large as possible within the font size range of the theme, so the main area is
+   * used as much as possible. Each slide gets the largest size at which its text still fits, at least the smallest size
+   * of the theme. The lines of songs are not broken for this (see setTextSlides). When the theme has no automatic font
+   * size, the slides use the font size of the theme. A slide which must be seen whole (e.g. a Bible verse) is made
+   * smaller still when it doesn't fit, also without the automatic font size.
+   * @param {HTMLElement} parentSection - The section which contains the text slides
+   */
+  _fitTextSlides: function (parentSection) {
+    if (!parentSection) {
+      return;
+    }
+    var slides = Array.from(parentSection.children);
+    var theme = Display._theme;
+    var fitWhole = parentSection.dataset.fitWhole === "true";
+    if (!theme || (!theme.font_main_auto_size && !fitWhole)) {
+      slides.forEach(function (slide) {
+        slide.style.removeProperty("font-size");
+        slide.style.removeProperty("line-height");
+      });
+      return;
+    }
+    var maxSize = parseInt(theme.font_main_size, 10);
+    // Without the automatic font size the text has the size of the theme, unless it must be made smaller to be seen whole
+    var minSize = theme.font_main_auto_size ?
+      Math.min(parseInt(theme.font_main_min_size, 10) || maxSize, maxSize) : maxSize;
+    var height = theme.font_main_height;
+    if (theme.display_vertical_align == VerticalAlign.Bottom) {
+      // The main area has a padding at the bottom then, see applyTheme
+      height -= maxSize / 8;
+    }
+    var measure = Display._getTextMeasure();
+    measure.style.width = theme.font_main_width + "px";
+    measure.style.fontFamily = theme.font_main_name;
+    measure.style.fontStyle = !!theme.font_main_italics ? "italic" : "";
+    measure.style.fontWeight = !!theme.font_main_bold ? "bold" : "";
+    // A line height in % is turned into px where it is set, so the slides need their own one to follow their font size
+    var lineHeight = "" + (100 + theme.font_main_line_adjustment) + "%";
+    measure.style.lineHeight = lineHeight;
+    measure.style.letterSpacing = "" + theme.font_main_letter_adjustment + "px";
+    var keepLines = parentSection.dataset.keepLines === "true";
+    slides.forEach(function (slide) {
+      measure.innerHTML = slide.innerHTML;
+      // Like the slides, see display.css
+      measure.querySelectorAll("p").forEach(function (paragraph) { paragraph.style.margin = "0"; });
+      slide.style.fontSize = _findLargestFittingFontSize(measure, minSize, maxSize, height, keepLines, fitWhole) + "pt";
+      slide.style.lineHeight = lineHeight;
+    });
+    measure.innerHTML = "";
+    // A web font may not be loaded yet, which changes the size of the text, so measure again once (and only once) it is
+    if (document.fonts && document.fonts.status === "loading" && !parentSection._hasWaitedForFonts) {
+      parentSection._hasWaitedForFonts = true;
+      document.fonts.ready.then(function () {
+        Display._fitTextSlides(parentSection);
+      });
+    }
+  },
+  /**
+   * Get the hidden element which is used to measure the size of a text
+   * @returns {HTMLElement} The measuring element
+   */
+  _getTextMeasure: function () {
+    var measure = document.getElementById("text-measure");
+    if (!measure) {
+      measure = document.createElement("div");
+      measure.id = "text-measure";
+      measure.setAttribute("aria-hidden", "true");
+      var style = {"position": "absolute", "top": "0", "left": "-100000px", "visibility": "hidden",
+                   "pointer-events": "none", "padding": "0", "margin": "0", "border": "0",
+                   "word-wrap": "break-word", "white-space": "normal"};
+      for (var key in style) {
+        measure.style.setProperty(key, style[key]);
+      }
+      document.body.appendChild(measure);
+    }
+    return measure;
   },
   /**
    * Set image slides
@@ -853,6 +1062,290 @@ var Display = {
     if (videoElem.length == 1) {
       videoElem[0].muted = !videoElem[0].muted;
     }
+  },
+  /**
+   * Show a live video source, such as a camera, a capture card or a virtual camera.
+   *
+   * If the same source is already showing it keeps running, so sending it live again doesn't interrupt the picture.
+   * If the device is not connected a "no signal" notice is shown in the preview panels, and the source is picked up
+   * automatically as soon as the device becomes available. The device is released when the slide is removed.
+   *
+   * @param {Object} source - The source to show as a JS object:
+   *                          * {string} deviceLabel - The label of the video input device
+   *                          * {int} width          - The requested width, 0 for automatic
+   *                          * {int} height         - The requested height, 0 for automatic
+   *                          * {int} frameRate      - The requested frame rate, 0 for automatic
+   *                          * {string} scaleMode   - "contain", "cover" or "fill"
+   *                          * {bool} mirror        - Flip the picture horizontally
+   *                          * {Object} strings     - Translated status texts: {"connecting": "", "noSignal": ""}
+   */
+  setLiveVideo: function (source) {
+    var currentFeed = Display._getCurrentLiveVideoFeed();
+    if (currentFeed && Display._isSameLiveVideoSource(currentFeed.source, source)) {
+      currentFeed.source = source;
+      if (!Display._themeApplied) {
+        Display.applyTheme(currentFeed.parentSection, false);
+        Reveal.sync();
+      }
+      return;
+    }
+    Display._clearSlidesList();
+    var parentSection = document.createElement("section");
+    parentSection.classList.add("live-video");
+    var section = document.createElement("section");
+    section.setAttribute("id", 0);
+    section.setAttribute("style", "height: 100%; width: 100%;");
+    var videoElement = document.createElement("video");
+    videoElement.classList.add("live-video-feed", "fit-" + (source.scaleMode || "contain"));
+    if (source.mirror) {
+      videoElement.classList.add("mirror");
+    }
+    videoElement.autoplay = true;
+    videoElement.muted = true;
+    videoElement.playsInline = true;
+    videoElement.setAttribute("data-slide", 0);
+    section.appendChild(videoElement);
+    var feed = {
+      source: source,
+      parentSection: parentSection,
+      video: videoElement,
+      statusTitle: null,
+      stream: null,
+      isStarting: false,
+      isReleased: false
+    };
+    // The audience should never see technical messages, so status notices are only shown in the preview panels
+    if (!Display._isDisplay) {
+      var statusElement = document.createElement("div");
+      statusElement.classList.add("live-video-status");
+      feed.statusTitle = document.createElement("div");
+      feed.statusTitle.classList.add("live-video-status-title");
+      var statusDevice = document.createElement("div");
+      statusDevice.classList.add("live-video-status-device");
+      statusDevice.textContent = source.deviceLabel || "";
+      statusElement.appendChild(feed.statusTitle);
+      statusElement.appendChild(statusDevice);
+      section.appendChild(statusElement);
+    }
+    parentSection.appendChild(section);
+    parentSection.liveVideoFeed = feed;
+    Display._slides["0"] = 0;
+    Display._liveVideoFeeds.push(feed);
+    Display._watchLiveVideoFeeds();
+    Display._setLiveVideoState(feed, LiveVideoState.Connecting);
+    Display.replaceSlides(parentSection);
+    Display._startLiveVideoFeed(feed);
+  },
+  /**
+   * Stop all live video sources and release their devices
+   */
+  stopLiveVideo: function () {
+    Display._liveVideoFeeds.slice().forEach(feed => Display._releaseLiveVideoFeed(feed));
+  },
+  /**
+   * Return the live video feed of the current (newest) item, if it is a live video
+   */
+  _getCurrentLiveVideoFeed: function () {
+    var currentItem = Display._slidesContainer.firstElementChild;
+    if (currentItem && currentItem.liveVideoFeed && !currentItem.liveVideoFeed.isReleased) {
+      return currentItem.liveVideoFeed;
+    }
+    return null;
+  },
+  /**
+   * Check if two live video sources would produce the same picture
+   */
+  _isSameLiveVideoSource: function (source, otherSource) {
+    return ["deviceLabel", "width", "height", "frameRate", "scaleMode", "mirror"].every(
+      key => source[key] === otherSource[key]);
+  },
+  /**
+   * Release live video feeds as soon as their slides are removed, e.g. when the next item has finished its
+   * transition, so the device isn't kept busy.
+   */
+  _watchLiveVideoFeeds: function () {
+    if (Display._liveVideoObserver && Display._liveVideoObserver.target === Display._slidesContainer) {
+      return;
+    }
+    if (Display._liveVideoObserver) {
+      Display._liveVideoObserver.disconnect();
+    }
+    Display._liveVideoObserver = new MutationObserver(Display._releaseDetachedLiveVideoFeeds);
+    Display._liveVideoObserver.target = Display._slidesContainer;
+    Display._liveVideoObserver.observe(Display._slidesContainer, {childList: true});
+  },
+  _releaseDetachedLiveVideoFeeds: function () {
+    Display._liveVideoFeeds.slice().forEach(function (feed) {
+      if (!Display._slidesContainer.contains(feed.parentSection)) {
+        Display._releaseLiveVideoFeed(feed);
+      }
+    });
+  },
+  _releaseLiveVideoFeed: function (feed) {
+    feed.isReleased = true;
+    _stopMediaStream(feed.stream);
+    feed.stream = null;
+    feed.video.srcObject = null;
+    var index = Display._liveVideoFeeds.indexOf(feed);
+    if (index > -1) {
+      Display._liveVideoFeeds.splice(index, 1);
+    }
+  },
+  /**
+   * Update the state of a live video feed, which is used to show status notices
+   */
+  _setLiveVideoState: function (feed, state) {
+    feed.parentSection.setAttribute("data-live-video-state", state);
+    if (feed.statusTitle) {
+      var strings = feed.source.strings || {};
+      feed.statusTitle.textContent = (state == LiveVideoState.NoSignal ? strings.noSignal : strings.connecting) || "";
+    }
+  },
+  /**
+   * Open the device of a live video feed and connect it to the video element
+   */
+  _startLiveVideoFeed: function (feed) {
+    if (feed.isReleased || feed.isStarting || feed.stream) {
+      return;
+    }
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      Display._setLiveVideoState(feed, LiveVideoState.NoSignal);
+      return;
+    }
+    feed.isStarting = true;
+    Display._openLiveVideoStream(feed.source)
+      .then(function (stream) {
+        feed.isStarting = false;
+        if (feed.isReleased) {
+          _stopMediaStream(stream);
+          return;
+        }
+        feed.stream = stream;
+        stream.getVideoTracks().forEach(track => track.addEventListener("ended", function () {
+          Display._onLiveVideoFeedLost(feed);
+        }));
+        feed.video.srcObject = stream;
+        var playing = feed.video.play();
+        if (playing && playing.catch) {
+          playing.catch(function (error) {
+            // An AbortError only means that the feed was released before it started playing
+            if (error.name != "AbortError") {
+              console.warn("Unable to play live video: " + error);
+            }
+          });
+        }
+        Display._setLiveVideoState(feed, LiveVideoState.Playing);
+      })
+      .catch(function (error) {
+        feed.isStarting = false;
+        if (feed.isReleased) {
+          return;
+        }
+        console.warn("Live video source \"" + feed.source.deviceLabel + "\" is not available: " + error);
+        Display._setLiveVideoState(feed, LiveVideoState.NoSignal);
+        Display._scheduleLiveVideoRetry();
+      });
+  },
+  /**
+   * Find the device of a live video source and open it
+   * @returns {Promise<MediaStream>}
+   */
+  _openLiveVideoStream: function (source) {
+    var normalisedLabel = _normaliseDeviceLabel(source.deviceLabel);
+    var knownDeviceId = Display._liveVideoDeviceIds[normalisedLabel];
+    var openDevice = function (deviceId) {
+      var video = {deviceId: {exact: deviceId}};
+      if (source.width && source.height) {
+        video.width = {ideal: source.width};
+        video.height = {ideal: source.height};
+      }
+      if (source.frameRate) {
+        video.frameRate = {ideal: source.frameRate};
+      }
+      return navigator.mediaDevices.getUserMedia({audio: false, video: video}).then(function (stream) {
+        // Device ids can be reused by another device after unplugging, so double check that it's the right one
+        var track = stream.getVideoTracks()[0];
+        if (track && track.label && !_deviceLabelsMatch(track.label, source.deviceLabel)) {
+          _stopMediaStream(stream);
+          delete Display._liveVideoDeviceIds[normalisedLabel];
+          throw new Error("Device id now belongs to \"" + track.label + "\"");
+        }
+        Display._liveVideoDeviceIds[normalisedLabel] = deviceId;
+        return stream;
+      });
+    };
+    var findAndOpenDevice = function () {
+      return Display._findLiveVideoDevice(source.deviceLabel).then(function (device) {
+        if (!device) {
+          throw new Error("Device is not connected");
+        }
+        return openDevice(device.deviceId);
+      });
+    };
+    if (knownDeviceId) {
+      return openDevice(knownDeviceId).catch(findAndOpenDevice);
+    }
+    return findAndOpenDevice();
+  },
+  /**
+   * Find a video input device by label. Browsers only reveal device labels once video capture has been allowed, so
+   * if the labels are hidden a device is opened briefly to reveal them. To avoid flashing the light of a camera
+   * repeatedly while waiting for a missing device, this only happens again after a device has been plugged in.
+   * @returns {Promise<MediaDeviceInfo|null>}
+   */
+  _findLiveVideoDevice: function (label) {
+    return navigator.mediaDevices.enumerateDevices().then(function (devices) {
+      var device = _findVideoDevice(devices, label);
+      var hasHiddenLabels = devices.some(item => item.kind == "videoinput" && !item.label);
+      if (device || !hasHiddenLabels || !Display._canRevealDeviceLabels) {
+        return device;
+      }
+      Display._canRevealDeviceLabels = false;
+      return navigator.mediaDevices.getUserMedia({audio: false, video: true})
+        .then(function (stream) {
+          _stopMediaStream(stream);
+          return navigator.mediaDevices.enumerateDevices();
+        })
+        .then(revealedDevices => _findVideoDevice(revealedDevices, label));
+    });
+  },
+  /**
+   * Called when a device disappears while it is in use, e.g. because it was unplugged
+   */
+  _onLiveVideoFeedLost: function (feed) {
+    if (feed.isReleased) {
+      return;
+    }
+    _stopMediaStream(feed.stream);
+    feed.stream = null;
+    feed.video.srcObject = null;
+    Display._setLiveVideoState(feed, LiveVideoState.NoSignal);
+    Display._scheduleLiveVideoRetry();
+  },
+  /**
+   * Try again to start the feeds that have no signal, when a device is plugged in or after a short delay
+   */
+  _scheduleLiveVideoRetry: function () {
+    if (!Display._isListeningForDeviceChanges && navigator.mediaDevices && navigator.mediaDevices.addEventListener) {
+      navigator.mediaDevices.addEventListener("devicechange", Display._onLiveVideoDeviceChange);
+      Display._isListeningForDeviceChanges = true;
+    }
+    if (!Display._liveVideoRetryTimer) {
+      Display._liveVideoRetryTimer = setTimeout(Display._retryLiveVideoFeeds, LIVE_VIDEO_RETRY_DELAY);
+    }
+  },
+  _onLiveVideoDeviceChange: function () {
+    Display._canRevealDeviceLabels = true;
+    Display._retryLiveVideoFeeds();
+  },
+  _retryLiveVideoFeeds: function () {
+    clearTimeout(Display._liveVideoRetryTimer);
+    Display._liveVideoRetryTimer = null;
+    Display._liveVideoFeeds.forEach(function (feed) {
+      if (!feed.stream && !feed.isStarting) {
+        Display._startLiveVideoFeed(feed);
+      }
+    });
   },
   /**
    * Clear the background audio playlist
@@ -1332,6 +1825,7 @@ var Display = {
         Display._footerContainer.style.setProperty(footerKey, footerStyle[footerKey]);
       }
     }
+    Display._fitTextSlides(targetElement);
   },
   /**
    * Called whenever openlp wants to finish completely with the current text/image slides

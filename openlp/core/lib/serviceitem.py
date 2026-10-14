@@ -108,6 +108,8 @@ class ServiceItem(RegistryProperties):
         self.has_original_file_path = True
         self.sha256_file_hash = None
         self.stored_filename = None
+        # The verse tag of the slide to start at, e.g. a Bible passage that is shown together with its whole chapter
+        self.start_verse_tag = None
         self._new_item()
         self.metadata = []
 
@@ -195,6 +197,8 @@ class ServiceItem(RegistryProperties):
             self.icon = UiIcons().picture
         elif self.name == 'media':
             self.icon = UiIcons().video
+        elif self.name == 'livevideo':
+            self.icon = UiIcons().live_video
         else:
             self.icon = UiIcons().custom
 
@@ -431,7 +435,8 @@ class ServiceItem(RegistryProperties):
             'processor': self.processor,
             'metadata': self.metadata,
             'sha256_file_hash': self.sha256_file_hash,
-            'stored_filename': stored_filename
+            'stored_filename': stored_filename,
+            'start_verse_tag': self.start_verse_tag
         }
         for file_path, file_hash in self.background_audio:
             if lite_save:
@@ -535,6 +540,7 @@ class ServiceItem(RegistryProperties):
         self.metadata = header.get('item_meta_data', [])
         self.sha256_file_hash = header.get('sha256_file_hash', None)
         self.stored_filename = header.get('stored_filename', None)
+        self.start_verse_tag = header.get('start_verse_tag', None)
         if 'background_audio' in header and State().check_preconditions('media'):
             self.background_audio = []
             for file_str in header['background_audio']:
@@ -800,6 +806,17 @@ class ServiceItem(RegistryProperties):
             return self.slides[row]['path']
         else:
             return self.slides[row]['image']
+
+    def get_start_slide_index(self):
+        """
+        Returns the index of the slide to start at when the item is shown, which is the first slide unless the item
+        has a start verse. A verse can be rendered into several slides, so the index depends on the rendering.
+        """
+        if self.start_verse_tag and self.is_text():
+            for index, slide in enumerate(self.display_slides):
+                if slide['verse'] == self.start_verse_tag:
+                    return index
+        return 0
 
     def get_frame_title(self, row=0):
         """

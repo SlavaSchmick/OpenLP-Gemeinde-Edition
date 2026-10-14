@@ -202,6 +202,38 @@ def test_set_scale_initialised(display_window_env, mock_settings):
     display_window.run_in_display.assert_called_once_with('setScale', 50.0)
 
 
+@pytest.mark.parametrize('keep_lines', [True, False])
+def test_load_verses_keep_lines(display_window_env, mock_settings, keep_lines):
+    """
+    Test that the verses are sent to the display, telling it whether their lines may be broken
+    """
+    # GIVEN: A display window
+    display_window = DisplayWindow()
+    display_window.run_in_display = MagicMock()
+    verses = [{'verse': 'v1', 'text': 'Line 1\nLine 2'}]
+
+    # WHEN: The verses are loaded
+    display_window.load_verses(verses, keep_lines=keep_lines)
+
+    # THEN: The display gets the verses and whether to keep their lines
+    display_window.run_in_display.assert_called_once_with('setTextSlides', verses, keep_lines, False, is_sync=False)
+
+
+def test_load_verses_breaks_lines_by_default(display_window_env, mock_settings):
+    """
+    Test that the lines of verses may be broken unless asked otherwise, as for Bibles
+    """
+    # GIVEN: A display window
+    display_window = DisplayWindow()
+    display_window.run_in_display = MagicMock()
+
+    # WHEN: Verses are loaded without saying anything about their lines
+    display_window.load_verses([], is_sync=True)
+
+    # THEN: Their lines may be broken
+    display_window.run_in_display.assert_called_once_with('setTextSlides', [], False, False, is_sync=True)
+
+
 def test_set_display_custom_url_works_http(registry, display_window_env, mock_settings):
     """
     Test that setting a display custom url works with HTTP path
@@ -995,3 +1027,19 @@ def test_run_in_display_dumps_json(display_window_env, mock_settings):
     # THEN: The parameters should be correctly converted to JSON
     display_window._run_javascript.assert_called_once_with('requestAction(\'test_event\', 1.23, "a \\"string\", '
                                                            '[1, 2, "test"], {"test1": "test2"})', False)
+
+
+def test_load_verses_fit_whole(display_window_env, mock_settings):
+    """
+    Test that the display is told when the whole text of each slide must be seen, as for Bible verses
+    """
+    # GIVEN: A display window
+    display_window = DisplayWindow()
+    display_window.run_in_display = MagicMock()
+    verses = [{'verse': '1', 'text': 'In the beginning'}]
+
+    # WHEN: Bible verses are loaded
+    display_window.load_verses(verses, fit_whole=True)
+
+    # THEN: The display knows that each verse must be seen whole
+    display_window.run_in_display.assert_called_once_with('setTextSlides', verses, False, True, is_sync=False)

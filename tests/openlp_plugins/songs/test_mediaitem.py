@@ -26,7 +26,7 @@ from unittest.mock import MagicMock, patch
 
 from PyQt5 import QtCore
 
-from openlp.core.common.enum import SongFirstSlideMode
+from openlp.core.common.enum import SongFirstSlideMode, SongSearch
 from openlp.core.common.registry import Registry
 from openlp.core.lib.serviceitem import ServiceItem
 from openlp.plugins.songs.lib.db import AuthorType, Song
@@ -101,7 +101,8 @@ def media_item(settings):
     Registry().register('main_window', MagicMock())
     mocked_plugin = MagicMock()
     with patch('openlp.core.lib.mediamanageritem.MediaManagerItem._setup'), \
-            patch('openlp.plugins.songs.forms.editsongform.EditSongForm.__init__'):
+            patch('openlp.plugins.songs.forms.editsongform.EditSongForm.__init__'), \
+            patch.object(SongMediaItem, 'add_song_search_shortcut'):
         media_item = SongMediaItem(None, mocked_plugin)
         media_item.save_auto_select_id = MagicMock()
         media_item.list_view = MagicMock()
@@ -709,3 +710,199 @@ def test_song_first_slide_creation_works(mocked_get_verses, mocked__get_id_of_it
         assert service_item.slides[0]['text'] == service_item.footer_html
         # It needs to have empty footer as it's already shown on text
         assert service_item.slides[0]['footer_html'] == ''
+
+
+@pytest.fixture
+def song_id_db(media_item, tmp_path):
+    """
+    A real songs database with songs like the ones of the song books, found by ids like "R47" (alternate title)
+    """
+    from openlp.core.db.manager import DBManager
+    from openlp.plugins.songs.lib import clean_song
+    from openlp.plugins.songs.lib.db import SongBook, init_schema
+    manager = DBManager('songs', init_schema, db_file_path=tmp_path / 'songs.sqlite')
+    russian = SongBook(name='Russisch', publisher='')
+    german = SongBook(name='Deutsch', publisher='')
+    for book, prefix, number, name in ((russian, 'R', 47, 'Song 47'), (russian, 'R', 470, 'Song 470'),
+                                       (russian, 'R', 147, 'Song 147'), (german, 'D', 47, 'Lied 47'),
+                                       (german, 'D', 203, 'Lied 203'), (german, 'D', 2030, 'Lied 2030')):
+        song = Song()
+        song.title = '{}{:04d} {}'.format(prefix, number, name)
+        song.alternate_title = '{}{}'.format(prefix, number)
+        song.lyrics = '<song version="1.0"><lyrics><verse type="v" label="1"><![CDATA[{}]]></verse></lyrics></song>' \
+            .format(name)
+        song.verse_order = ''
+        song.search_title = ''
+        song.search_lyrics = ''
+        song.temporary = False
+        song.add_songbook_entry(book, str(number))
+        with patch('openlp.plugins.songs.lib.translate', side_effect=lambda context, text, *args: text):
+            clean_song(manager, song)
+        manager.save_object(song)
+    media_item.plugin.manager = manager
+    return manager
+
+
+@pytest.mark.parametrize('typed, expected', [
+    ('r47', ['R0047 Song 47']), ('R47', ['R0047 Song 47']), ('R 47', ['R0047 Song 47']),
+    ('r047', ['R0047 Song 47']), ('d203', ['D0203 Lied 203']), ('D0203', ['D0203 Lied 203']),
+    ('47', ['D0047 Lied 47', 'R0047 Song 47']), ('r4', []), ('Song', None)])
+def test_search_song_id(song_id_db, media_item, typed, expected):
+    """
+    Test that a song id finds exactly the song with that id, not songs whose id only contains it
+    """
+    # WHEN: A song id is searched
+    result = media_item.search_song_id(typed)
+
+    # THEN: Exactly the songs with that id are found
+    if expected is None:
+        assert result is None
+    else:
+        assert sorted(song.title for song in result) == expected
+
+
+def test_search_song_id_by_song_book(song_id_db, media_item):
+    """
+    Test that a song id also finds a song by the song book and number, when it has no alternate title
+    """
+    # GIVEN: A song with a song book number but without an alternate title
+    song = song_id_db.get_object_filtered(Song, Song.title == 'R0470 Song 470')
+    song.alternate_title = ''
+    song.search_title = 'r0470 song 470@'
+    song_id_db.save_object(song)
+
+    # WHEN: Its id is searched
+    result = media_item.search_song_id('r470')
+
+    # THEN: It is found by the song book "Russisch" and the number 470
+    assert [song.title for song in result] == ['R0470 Song 470']
+
+
+def test_song_id_is_shown_first(song_id_db, media_item):
+    """
+    Test that the song with the typed id comes first, before the other songs which contain the text
+    """
+    # GIVEN: The whole song search
+    media_item.search_text_edit = MagicMock(**{'displayText.return_value': 'r47',
+                                               'current_search_type.return_value': SongSearch.Entire})
+    with patch('openlp.plugins.songs.lib.mediaitem.QtWidgets.QListWidgetItem') as MockedQListWidgetItem:
+        # WHEN: "r47" is searched
+        media_item.on_search_text_button_clicked()
+
+    # THEN: R47 is first, then the other songs with "r47" in them
+    shown = [call[0][0] for call in MockedQListWidgetItem.call_args_list]
+    assert shown[0].startswith('R0047 Song 47')
+    assert any(text.startswith('R0470 Song 470') for text in shown[1:])
+
+
+@pytest.mark.parametrize('text, search_type, searches', [
+    ('r47', SongSearch.Entire, True), ('4', SongSearch.Entire, True), ('Gro', SongSearch.Entire, True),
+    ('Gr', SongSearch.Entire, False), ('r', SongSearch.Entire, False), ('r47', SongSearch.Titles, True)])
+def test_search_as_you_type_finds_ids_right_away(media_item, text, search_type, searches):
+    """
+    Test that a song id is searched while typing right away, other texts after a few letters
+    """
+    # GIVEN: Search as you type
+    media_item.is_search_as_you_type_enabled = True
+    media_item.search_text_edit = MagicMock(**{'current_search_type.return_value': search_type})
+    with patch.object(media_item, 'on_search_text_button_clicked') as mocked_search:
+        # WHEN: Something is typed
+        media_item.on_search_text_edit_changed(text)
+
+    # THEN: It is searched right away or not yet
+    assert mocked_search.called is searches
+
+
+def test_search_text_return_pressed_previews_the_first_song(media_item):
+    """
+    Test that Enter in the search field sends the first found song to the Preview and keeps the focus for the next
+    search
+    """
+    # GIVEN: A search which finds songs
+    media_item.search_text_edit = MagicMock()
+    media_item.list_view = MagicMock(**{'count.return_value': 2, 'selectedItems.return_value': []})
+    with patch.object(media_item, 'on_search_text_button_clicked') as mocked_search, \
+            patch.object(media_item, 'on_preview_click') as mocked_preview, \
+            patch.object(media_item, 'on_live_click') as mocked_live, \
+            patch('openlp.plugins.songs.lib.mediaitem.QtWidgets.QApplication.keyboardModifiers',
+                  return_value=QtCore.Qt.NoModifier):
+        # WHEN: Enter is pressed in the search field
+        media_item.on_search_text_return_pressed()
+
+    # THEN: The first song goes to the Preview and the search field keeps the focus
+    mocked_search.assert_called_once_with()
+    media_item.list_view.setCurrentRow.assert_called_once_with(0)
+    mocked_preview.assert_called_once_with(keep_focus=True)
+    mocked_live.assert_not_called()
+    media_item.search_text_edit.setFocus.assert_called_once_with()
+
+
+def test_search_text_shift_return_pressed_goes_live(media_item):
+    """
+    Test that Shift+Enter in the search field sends the found song live and gives the focus to the Live panel, so the
+    operator can go on with the arrow keys
+    """
+    # GIVEN: A search which finds a song, which is selected
+    media_item.search_text_edit = MagicMock()
+    media_item.list_view = MagicMock(**{'count.return_value': 1, 'selectedItems.return_value': [MagicMock()]})
+    live_controller = MagicMock()
+    Registry().register('live_controller', live_controller)
+    with patch.object(media_item, 'on_search_text_button_clicked'), \
+            patch.object(media_item, 'on_preview_click') as mocked_preview, \
+            patch.object(media_item, 'on_live_click') as mocked_live, \
+            patch('openlp.plugins.songs.lib.mediaitem.QtWidgets.QApplication.keyboardModifiers',
+                  return_value=QtCore.Qt.ShiftModifier):
+        # WHEN: Shift+Enter is pressed in the search field
+        media_item.on_search_text_return_pressed()
+
+    # THEN: The selected song goes live and the Live panel gets the focus
+    media_item.list_view.setCurrentRow.assert_not_called()
+    mocked_live.assert_called_once_with()
+    mocked_preview.assert_not_called()
+    live_controller.preview_widget.setFocus.assert_called_once_with()
+
+
+def test_search_text_return_pressed_without_results(media_item):
+    """
+    Test that Enter does nothing more than searching when nothing is found
+    """
+    # GIVEN: A search which finds nothing
+    media_item.search_text_edit = MagicMock()
+    media_item.list_view = MagicMock(**{'count.return_value': 0})
+    with patch.object(media_item, 'on_search_text_button_clicked'), \
+            patch.object(media_item, 'on_preview_click') as mocked_preview, \
+            patch.object(media_item, 'on_live_click') as mocked_live:
+        # WHEN: Enter is pressed in the search field
+        media_item.on_search_text_return_pressed()
+
+    # THEN: Nothing goes to the Preview or live
+    mocked_preview.assert_not_called()
+    mocked_live.assert_not_called()
+
+
+def test_song_search_shortcut(media_item):
+    """
+    Test that the song search shortcut (Ctrl+L) shows the songs and puts the cursor into the search field
+    """
+    # GIVEN: The songs in a hidden library
+    media_item.search_text_edit = MagicMock()
+    main_window = MagicMock(**{'media_manager_dock.isVisible.return_value': False})
+    Registry().remove('main_window')
+    Registry().register('main_window', main_window)
+
+    # WHEN: The shortcut is used
+    media_item.on_song_search_shortcut_triggered()
+
+    # THEN: The library shows the songs and the search field has the focus with its text selected
+    main_window.media_manager_dock.setVisible.assert_called_once_with(True)
+    main_window.media_tool_box.setCurrentWidget.assert_called_once_with(media_item)
+    media_item.search_text_edit.setFocus.assert_called_once_with()
+    media_item.search_text_edit.selectAll.assert_called_once_with()
+
+
+def test_song_search_shortcut_default(settings):
+    """
+    Test that the song search shortcut is Ctrl+L by default
+    """
+    from PyQt5 import QtGui
+    assert settings.value('shortcuts/songSearchShortcut') == [QtGui.QKeySequence('Ctrl+L')]

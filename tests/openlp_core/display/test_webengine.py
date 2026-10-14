@@ -21,3 +21,56 @@
 """
 Package to test the openlp.core.display.webengine package.
 """
+from unittest.mock import MagicMock
+
+from PyQt5 import QtCore, QtWebEngineWidgets
+
+from openlp.core.display.webengine import WebEnginePage
+
+
+def test_video_capture_is_granted_to_openlp_pages():
+    """
+    Test that OpenLP's own pages may use video devices, which is needed to show live video sources
+    """
+    # GIVEN: A page and an openlp:// origin
+    page = MagicMock()
+    origin = QtCore.QUrl('openlp://display/')
+
+    # WHEN: The page asks to capture video
+    WebEnginePage.on_feature_permission_requested(page, origin, QtWebEngineWidgets.QWebEnginePage.MediaVideoCapture)
+
+    # THEN: It should be allowed
+    page.setFeaturePermission.assert_called_once_with(origin, QtWebEngineWidgets.QWebEnginePage.MediaVideoCapture,
+                                                      QtWebEngineWidgets.QWebEnginePage.PermissionGrantedByUser)
+
+
+def test_video_capture_is_denied_to_other_pages():
+    """
+    Test that other pages, e.g. a custom display URL, may not use video devices
+    """
+    # GIVEN: A page and a web origin
+    page = MagicMock()
+    origin = QtCore.QUrl('https://example.com/')
+
+    # WHEN: The page asks to capture video
+    WebEnginePage.on_feature_permission_requested(page, origin, QtWebEngineWidgets.QWebEnginePage.MediaVideoCapture)
+
+    # THEN: It should be denied
+    page.setFeaturePermission.assert_called_once_with(origin, QtWebEngineWidgets.QWebEnginePage.MediaVideoCapture,
+                                                      QtWebEngineWidgets.QWebEnginePage.PermissionDeniedByUser)
+
+
+def test_other_features_are_denied_to_openlp_pages():
+    """
+    Test that OpenLP's own pages get nothing but video capture
+    """
+    # GIVEN: A page and an openlp:// origin
+    page = MagicMock()
+    origin = QtCore.QUrl('openlp://display/')
+
+    # WHEN: The page asks to capture audio
+    WebEnginePage.on_feature_permission_requested(page, origin, QtWebEngineWidgets.QWebEnginePage.MediaAudioCapture)
+
+    # THEN: It should be denied
+    page.setFeaturePermission.assert_called_once_with(origin, QtWebEngineWidgets.QWebEnginePage.MediaAudioCapture,
+                                                      QtWebEngineWidgets.QWebEnginePage.PermissionDeniedByUser)

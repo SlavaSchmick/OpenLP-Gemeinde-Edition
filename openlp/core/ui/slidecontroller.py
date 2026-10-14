@@ -779,9 +779,10 @@ class SlideController(QtWidgets.QWidget, LogMixin, RegistryProperties):
 
         :param item: The current service item
         """
-        slide_no = 0
         if self.song_edit:
             slide_no = self.selected_row
+        else:
+            slide_no = item.get_start_slide_index()
         self.song_edit = False
         self._process_item(item, slide_no)
 
@@ -809,7 +810,7 @@ class SlideController(QtWidgets.QWidget, LogMixin, RegistryProperties):
         # should reload the song or not
         slide_num = slide_no
         if slide_no == -1:
-            slide_num = 0
+            slide_num = item.get_start_slide_index()
         # If service item is the same as the current one, only change slide
         if slide_no >= 0 and item == self.service_item:
             self.preview_widget.change_slide(slide_num)
@@ -918,10 +919,15 @@ class SlideController(QtWidgets.QWidget, LogMixin, RegistryProperties):
         row = 0
         width = self.main_window.control_splitter.sizes()[self.split]
         if self.service_item.is_text():
-            self.preview_display.load_verses(self.service_item.rendered_slides)
+            # The lines of songs and custom slides are kept as they are, the text of Bibles flows, but a Bible verse
+            # must always be seen whole
+            keep_lines = self.service_item.is_capable(ItemCapabilities.CanSoftBreak)
+            fit_whole = self.service_item.name == 'bibles'
+            self.preview_display.load_verses(self.service_item.rendered_slides, keep_lines=keep_lines,
+                                             fit_whole=fit_whole)
             self.preview_display.show()
             for display in self.displays:
-                display.load_verses(self.service_item.rendered_slides)
+                display.load_verses(self.service_item.rendered_slides, keep_lines=keep_lines, fit_whole=fit_whole)
             # Replace the song menu so the verses match the song and are not cumulative
             if self.is_live:
                 self.toolbar.remove_widget('song_menu')

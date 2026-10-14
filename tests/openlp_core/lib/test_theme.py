@@ -365,4 +365,6 @@ def check_theme(theme):
     assert 0 == theme.display_vertical_align, 'display_vertical_align should be 0'
     assert theme.font_footer_bold is False, 'font_footer_bold should be False'
     assert 'Arial' == theme.font_main_name, 'font_main_name should be "Arial"'
-    assert 57 == len(theme.__dict__), 'The theme should have 57 attributes'
+    assert theme.font_main_auto_size is True, 'font_main_auto_size should be True'
+    assert 20 == theme.font_main_min_size, 'font_main_min_size should be 20'
+    assert 59 == len(theme.__dict__), 'The theme should have 59 attributes'

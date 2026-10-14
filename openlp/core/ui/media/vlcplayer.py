@@ -34,6 +34,7 @@ from PyQt5 import QtCore, QtWidgets
 from openlp.core.common.i18n import translate
 from openlp.core.common.mixins import LogMixin
 from openlp.core.common.platform import is_linux, is_win
+from openlp.core.common.registry import Registry
 from openlp.core.display.window import DisplayWindow
 from openlp.core.lib.ui import critical_error_message_box
 from openlp.core.ui.slidecontroller import SlideController
@@ -68,6 +69,93 @@ def get_vlc():
     if is_vlc_available:
         return sys.modules['vlc']
     return None
+
+
+def _decode_vlc_string(value):
+    """
+    VLC returns strings as UTF-8 encoded bytes
+    """
+    if isinstance(value, bytes):
+        return value.decode('utf-8', errors='replace')
+    return value or ''
+
+
+def enumerate_audio_output_devices(media_player):
+    """
+    List the audio output devices a VLC media player can use, such as speakers, sound cards or the virtual sound cards
+    of Dante Via and Dante Virtual Soundcard. The system default device is not included.
+
+    :param media_player: A VLC media player
+    :return: A list of (device id, device name) tuples
+    """
+    vlc = get_vlc()
+    devices = []
+    device_list = media_player.audio_output_device_enum()
+    item = device_list
+    while item:
+        device_id = _decode_vlc_string(item.contents.device)
+        if device_id:
+            devices.append((device_id, _decode_vlc_string(item.contents.description)))
+        item = item.contents.next
+    if device_list:
+        vlc.libvlc_audio_output_device_list_release(device_list)
+    return devices
+
+
+def get_audio_output_devices():
+    """
+    List the audio output devices VLC can use, see :func:`enumerate_audio_output_devices`
+
+    :return: A list of (device id, device name) tuples, empty if VLC is not available
+    """
+    vlc = get_vlc()
+    if vlc is None:
+        return []
+    instance = vlc.Instance('--no-video')
+    if not instance:
+        return []
+    media_player = instance.media_player_new()
+    try:
+        return enumerate_audio_output_devices(media_player)
+    finally:
+        media_player.release()
+        instance.release()
+
+
+def get_audio_output_setting(controller):
+    """
+    :param controller: The slide controller
+    :return: The settings key of the audio output of the controller
+    """
+    return 'media/live audio device' if controller.is_live else 'media/preview audio device'
+
+
+def set_audio_output_device(controller):
+    """
+    Send the sound of a slide controller to the audio output chosen in the settings, e.g. the live sound to Dante and
+    the preview sound to the headphones. This is done before playing starts, so no sound goes to the wrong output.
+
+    A device is found by its id, or else by its name, since the id can change when a driver is reinstalled. If the
+    device is not available, the sound goes to the system default.
+
+    :param controller: The slide controller, which has a VLC media player
+    """
+    media_player = getattr(controller, 'vlc_media_player', None)
+    if media_player is None:
+        return
+    setting = Registry().get('settings').value(get_audio_output_setting(controller))
+    if not isinstance(setting, dict):
+        setting = {}
+    wanted_id, wanted_name = setting.get('id', ''), setting.get('name', '')
+    device_id = ''
+    if wanted_id:
+        devices = enumerate_audio_output_devices(media_player)
+        device_id = next((dev_id for dev_id, _ in devices if dev_id == wanted_id), None) or \
+            next((dev_id for dev_id, name in devices if name == wanted_name), '')
+        if not device_id:
+            log.warning('Audio output "{name}" is not available, using the system default'.format(name=wanted_name))
+    # An empty device id selects the system default
+    media_player.audio_output_device_set(None, device_id)
 
 
 # On linux we need to initialise X threads, but not when running tests.
@@ -160,6 +248,7 @@ class VlcPlayer(MediaPlayer, LogMixin):
         if not controller.vlc_instance:
             return False
         self.log_debug('load video in VLC Controller')
+        set_audio_output_device(controller)
         self.add_display(controller)
         path = None
         if file and not controller.media_info.media_type == MediaType.Stream:

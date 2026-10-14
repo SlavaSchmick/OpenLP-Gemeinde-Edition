@@ -46,164 +46,143 @@ def test_worker_init():
     assert worker.current_version == current_version
 
 
-@patch('openlp.core.version.platform')
+RELEASE_JSON = '''{"tag_name": "v3.1.7+gemeinde.2", "html_url": "https://github.com/gemeinde/openlp/releases/tag/v3",
+ "draft": false, "prerelease": false,
+ "assets": [{"name": "OpenLP-Gemeinde-Edition-3.1.7-gemeinde.2-Setup-x64.exe",
+             "browser_download_url": "https://github.com/gemeinde/openlp/releases/download/v3/setup.exe",
+             "digest": "sha256:abc123"}]}'''
+EXPECTED_URL = 'https://api.github.com/repos/gemeinde/openlp/releases/latest'
+EXPECTED_HEADERS = {'User-Agent': 'OpenLP/3.1.7+gemeinde.1 Linux/4.12.0-1-amd64; ',
+                    'Accept': 'application/vnd.github+json'}
+CURRENT_VERSION = {'full': '3.1.7+gemeinde.1', 'version': '3.1.7', 'build': 'gemeinde.1'}
+
+
+@pytest.fixture
+def worker_env():
+    """The platform and the GitHub repository of the edition, for the version worker"""
+    with patch('openlp.core.version.platform') as mock_platform, \
+            patch('openlp.core.edition.EDITION_REPOSITORY', 'gemeinde/openlp'):
+        mock_platform.system.return_value = 'Linux'
+        mock_platform.release.return_value = '4.12.0-1-amd64'
+        yield
+
+
 @patch('openlp.core.version.get_web_page')
-def test_worker_start(mock_get_web_page, mock_platform):
+def test_worker_start(mock_get_web_page, worker_env):
     """
-    Test the VersionWorkder.start() method
+    Test that the worker finds a newer release of the edition on GitHub
     """
-    # GIVEN: A last check date, current version, and an instance of worker
-    last_check_date = '1970-01-01'
-    current_version = {'full': '2.0', 'version': '2.0', 'build': None}
-    mock_platform.system.return_value = 'Linux'
-    mock_platform.release.return_value = '4.12.0-1-amd64'
-    mock_get_web_page.return_value = '2.4.6'
-    worker = VersionWorker(last_check_date, current_version)
+    # GIVEN: A newer release on GitHub
+    mock_get_web_page.return_value = RELEASE_JSON
+    worker = VersionWorker('1970-01-01', CURRENT_VERSION)
 
     # WHEN: The worker is run
     with patch.object(worker, 'new_version') as mock_new_version, \
             patch.object(worker, 'quit') as mock_quit:
         worker.start()
 
-    # THEN: The check completes and the signal is emitted
-    expected_download_url = 'https://get.openlp.org/versions/version.txt'
-    expected_headers = {'User-Agent': 'OpenLP/2.0 Linux/4.12.0-1-amd64; '}
-    mock_get_web_page.assert_called_once_with(expected_download_url, headers=expected_headers)
-    mock_new_version.emit.assert_called_once_with('2.4.6')
+    # THEN: The release with its setup is announced
+    mock_get_web_page.assert_called_once_with(EXPECTED_URL, headers=EXPECTED_HEADERS)
+    release = mock_new_version.emit.call_args[0][0]
+    assert release.version == '3.1.7+gemeinde.2'
+    assert release.setup_url == 'https://github.com/gemeinde/openlp/releases/download/v3/setup.exe'
+    assert release.setup_sha256 == 'abc123'
     mock_quit.emit.assert_called_once_with()
 
 
-@patch('openlp.core.version.platform')
 @patch('openlp.core.version.get_web_page')
-def test_worker_start_fail(mock_get_web_page, mock_platform):
+def test_worker_start_same_version(mock_get_web_page, worker_env):
     """
-    Test the Version Workder.start() method with no response
+    Test that the running release is not announced again
     """
-    # GIVEN: A last check date, current version, and an instance of worker
-    last_check_date = '1970-01-01'
-    current_version = {'full': '2.0', 'version': '2.0', 'build': None}
-    mock_platform.system.return_value = 'Linux'
-    mock_platform.release.return_value = '4.12.0-1-amd64'
+    # GIVEN: The running release is the latest one
+    mock_get_web_page.return_value = RELEASE_JSON.replace('gemeinde.2', 'gemeinde.1')
+    worker = VersionWorker('1970-01-01', CURRENT_VERSION)
+
+    # WHEN: The worker is run
+    with patch.object(worker, 'new_version') as mock_new_version, \
+            patch.object(worker, 'quit'):
+        worker.start()
+
+    # THEN: Nothing is announced
+    mock_new_version.emit.assert_not_called()
+
+
+@patch('openlp.core.version.get_web_page')
+def test_worker_start_fail(mock_get_web_page, worker_env):
+    """
+    Test that nothing is announced without an answer
+    """
+    # GIVEN: No answer from GitHub
     mock_get_web_page.return_value = None
-    worker = VersionWorker(last_check_date, current_version)
+    worker = VersionWorker('1970-01-01', CURRENT_VERSION)
 
     # WHEN: The worker is run
     with patch.object(worker, 'new_version') as mock_new_version, \
             patch.object(worker, 'quit') as mock_quit:
         worker.start()
 
-    # THEN: The check completes and the signal is emitted
-    expected_download_url = 'https://get.openlp.org/versions/version.txt'
-    expected_headers = {'User-Agent': 'OpenLP/2.0 Linux/4.12.0-1-amd64; '}
-    mock_get_web_page.assert_called_once_with(expected_download_url, headers=expected_headers)
+    # THEN: Nothing is announced
+    mock_get_web_page.assert_called_once_with(EXPECTED_URL, headers=EXPECTED_HEADERS)
     mock_new_version.emit.assert_not_called()
     mock_quit.emit.assert_called_once_with()
 
 
-@patch('openlp.core.version.platform')
 @patch('openlp.core.version.get_web_page')
-def test_worker_start_dev_version(mock_get_web_page, mock_platform):
+def test_worker_invalid_answer(mock_get_web_page, worker_env):
     """
-    Test the VersionWorkder.start() method for dev versions
+    Test that an answer which isn't JSON is ignored
     """
-    # GIVEN: A last check date, current version, and an instance of worker
-    last_check_date = '1970-01-01'
-    current_version = {'full': '2.1.3', 'version': '2.1.3', 'build': None}
-    mock_platform.system.return_value = 'Linux'
-    mock_platform.release.return_value = '4.12.0-1-amd64'
-    mock_get_web_page.return_value = '2.4.6'
-    worker = VersionWorker(last_check_date, current_version)
+    # GIVEN: An answer which isn't JSON
+    mock_get_web_page.return_value = '<html>Not found</html>'
+    worker = VersionWorker('1970-01-01', CURRENT_VERSION)
 
     # WHEN: The worker is run
     with patch.object(worker, 'new_version') as mock_new_version, \
             patch.object(worker, 'quit') as mock_quit:
         worker.start()
 
-    # THEN: The check completes and the signal is emitted
-    expected_download_url = 'https://get.openlp.org/versions/dev_version.txt'
-    expected_headers = {'User-Agent': 'OpenLP/2.1.3 Linux/4.12.0-1-amd64; '}
-    mock_get_web_page.assert_called_once_with(expected_download_url, headers=expected_headers)
-    mock_new_version.emit.assert_called_once_with('2.4.6')
+    # THEN: Nothing is announced and the worker finishes
+    mock_new_version.emit.assert_not_called()
     mock_quit.emit.assert_called_once_with()
 
 
-@patch('openlp.core.version.platform')
 @patch('openlp.core.version.get_web_page')
-def test_worker_start_nightly_version(mock_get_web_page, mock_platform):
+def test_worker_without_repository(mock_get_web_page):
     """
-    Test the VersionWorkder.start() method for nightlies
+    Test that there is no update check without a GitHub repository, and never one on openlp.org
     """
-    # GIVEN: A last check date, current version, and an instance of worker
-    last_check_date = '1970-01-01'
-    current_version = {'full': '2.1.0+git2345', 'version': '2.1', 'build': '2345'}
-    mock_platform.system.return_value = 'Linux'
-    mock_platform.release.return_value = '4.12.0-1-amd64'
-    mock_get_web_page.return_value = '2.4.6'
-    worker = VersionWorker(last_check_date, current_version)
+    # GIVEN: No repository for the edition
+    worker = VersionWorker('1970-01-01', CURRENT_VERSION)
 
     # WHEN: The worker is run
-    with patch.object(worker, 'new_version') as mock_new_version, \
+    with patch('openlp.core.edition.EDITION_REPOSITORY', ''), \
+            patch.object(worker, 'new_version') as mock_new_version, \
             patch.object(worker, 'quit') as mock_quit:
         worker.start()
 
-    # THEN: The check completes and the signal is emitted
-    expected_download_url = 'https://get.openlp.org/versions/nightly_version.txt'
-    expected_headers = {'User-Agent': 'OpenLP/2.1.0+git2345 Linux/4.12.0-1-amd64; '}
-    mock_get_web_page.assert_called_once_with(expected_download_url, headers=expected_headers)
-    mock_new_version.emit.assert_called_once_with('2.4.6')
+    # THEN: Nothing is downloaded or announced
+    mock_get_web_page.assert_not_called()
+    mock_new_version.emit.assert_not_called()
     mock_quit.emit.assert_called_once_with()
 
 
-@patch('openlp.core.version.platform')
 @patch('openlp.core.version.get_web_page')
-def test_worker_empty_response(mock_get_web_page, mock_platform):
-    """
-    Test the VersionWorkder.start() method for empty responses
-    """
-    # GIVEN: A last check date, current version, and an instance of worker
-    last_check_date = '1970-01-01'
-    current_version = {'full': '2.1+git2345', 'version': '2.1', 'build': '2345'}
-    mock_platform.system.return_value = 'Linux'
-    mock_platform.release.return_value = '4.12.0-1-amd64'
-    mock_get_web_page.return_value = '\n'
-    worker = VersionWorker(last_check_date, current_version)
-
-    # WHEN: The worker is run
-    with patch.object(worker, 'new_version') as mock_new_version, \
-            patch.object(worker, 'quit') as mock_quit:
-        worker.start()
-
-    # THEN: The check completes and the signal is emitted
-    expected_download_url = 'https://get.openlp.org/versions/nightly_version.txt'
-    expected_headers = {'User-Agent': 'OpenLP/2.1+git2345 Linux/4.12.0-1-amd64; '}
-    mock_get_web_page.assert_called_once_with(expected_download_url, headers=expected_headers)
-    assert mock_new_version.emit.call_count == 0
-    mock_quit.emit.assert_called_once_with()
-
-
-@patch('openlp.core.version.platform')
-@patch('openlp.core.version.get_web_page')
-def test_worker_start_connection_error(mock_get_web_page, mock_platform):
+def test_worker_start_connection_error(mock_get_web_page, worker_env):
     """
     Test the VersionWorkder.start() method when a ConnectionError happens
     """
-    # GIVEN: A last check date, current version, and an instance of worker
-    last_check_date = '1970-01-01'
-    current_version = {'full': '2.0', 'version': '2.0', 'build': None}
-    mock_platform.system.return_value = 'Linux'
-    mock_platform.release.return_value = '4.12.0-1-amd64'
+    # GIVEN: GitHub can't be reached
     mock_get_web_page.side_effect = ConnectionError('Could not connect')
-    worker = VersionWorker(last_check_date, current_version)
+    worker = VersionWorker('1970-01-01', CURRENT_VERSION)
 
     # WHEN: The worker is run
     with patch.object(worker, 'no_internet') as mocked_no_internet, \
             patch.object(worker, 'quit') as mocked_quit:
         worker.start()
 
-    # THEN: The check completes and the signal is emitted
-    expected_download_url = 'https://get.openlp.org/versions/version.txt'
-    expected_headers = {'User-Agent': 'OpenLP/2.0 Linux/4.12.0-1-amd64; '}
-    mock_get_web_page.assert_called_with(expected_download_url, headers=expected_headers)
+    # THEN: It is tried three times, and the check completes
+    mock_get_web_page.assert_called_with(EXPECTED_URL, headers=EXPECTED_HEADERS)
     assert mock_get_web_page.call_count == 3
     mocked_no_internet.emit.assert_called_once_with()
     mocked_quit.emit.assert_called_once_with()

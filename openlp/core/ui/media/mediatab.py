@@ -29,6 +29,7 @@ from openlp.core.common.i18n import translate
 from openlp.core.lib.settingstab import SettingsTab
 from openlp.core.lib.ui import critical_error_message_box
 from openlp.core.ui.icons import UiIcons
+from openlp.core.ui.media.vlcplayer import get_audio_output_devices
 
 VLC_ARGUMENT_BLACKLIST = [' -h ', ' --help ', ' -H ', '--full-help ', ' --longhelp ', ' --help-verbose ', ' -l ',
                           ' --list ', ' --list-verbose ']
@@ -72,6 +73,32 @@ class MediaTab(SettingsTab):
         self.vlc_arguments_layout.addRow(self.vlc_arguments_label, self.vlc_arguments_edit)
         self.left_layout.addWidget(self.vlc_arguments_group_box)
         self.left_layout.addStretch()
+        # Audio outputs, e.g. live to Dante and preview to the headphones
+        self.audio_output_group_box = QtWidgets.QGroupBox(self.right_column)
+        self.audio_output_group_box.setObjectName('audio_output_group_box')
+        self.audio_output_layout = QtWidgets.QFormLayout(self.audio_output_group_box)
+        self.audio_output_layout.setObjectName('audio_output_layout')
+        self.live_audio_label = QtWidgets.QLabel(self.audio_output_group_box)
+        self.live_audio_label.setObjectName('live_audio_label')
+        self.live_audio_combo_box = QtWidgets.QComboBox(self.audio_output_group_box)
+        self.live_audio_combo_box.setObjectName('live_audio_combo_box')
+        self.live_audio_combo_box.setSizeAdjustPolicy(
+            QtWidgets.QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon)
+        self.live_audio_label.setBuddy(self.live_audio_combo_box)
+        self.audio_output_layout.addRow(self.live_audio_label, self.live_audio_combo_box)
+        self.preview_audio_label = QtWidgets.QLabel(self.audio_output_group_box)
+        self.preview_audio_label.setObjectName('preview_audio_label')
+        self.preview_audio_combo_box = QtWidgets.QComboBox(self.audio_output_group_box)
+        self.preview_audio_combo_box.setObjectName('preview_audio_combo_box')
+        self.preview_audio_combo_box.setSizeAdjustPolicy(
+            QtWidgets.QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon)
+        self.preview_audio_label.setBuddy(self.preview_audio_combo_box)
+        self.audio_output_layout.addRow(self.preview_audio_label, self.preview_audio_combo_box)
+        self.audio_output_info_label = QtWidgets.QLabel(self.audio_output_group_box)
+        self.audio_output_info_label.setObjectName('audio_output_info_label')
+        self.audio_output_info_label.setWordWrap(True)
+        self.audio_output_layout.addRow(self.audio_output_info_label)
+        self.right_layout.addWidget(self.audio_output_group_box)
         self.right_layout.addStretch()
         # Connect vlc_arguments_edit content validator
         self.vlc_arguments_edit.editingFinished.connect(self.on_vlc_arguments_edit_finished)
@@ -84,6 +111,13 @@ class MediaTab(SettingsTab):
         self.vlc_arguments_group_box.setTitle(translate('MediaPlugin.MediaTab', 'VLC (requires restart)'))
         self.vlc_arguments_label.setText(translate('MediaPlugin.MediaTab', 'Extra arguments:'))
         self.auto_start_check_box.setText(translate('MediaPlugin.MediaTab', 'Start Live items automatically'))
+        self.audio_output_group_box.setTitle(translate('MediaPlugin.MediaTab', 'Audio Output'))
+        self.live_audio_label.setText(translate('MediaPlugin.MediaTab', 'Live:'))
+        self.preview_audio_label.setText(translate('MediaPlugin.MediaTab', 'Preview:'))
+        self.audio_output_info_label.setText(
+            translate('MediaPlugin.MediaTab', 'Choose where the sound of videos and background audio goes, e.g. the '
+                                              'live sound to Dante Via or Dante Virtual Soundcard and the preview '
+                                              'sound to your headphones.'))
 
     def load(self):
         """
@@ -91,6 +125,47 @@ class MediaTab(SettingsTab):
         """
         self.auto_start_check_box.setChecked(self.settings.value('media/media auto start'))
         self.vlc_arguments_edit.setText(self.settings.value('media/vlc arguments'))
+        # The audio outputs are listed when the tab is shown, as asking VLC for them takes a moment
+        self.has_audio_outputs = False
+        if self.isVisible():
+            self.tab_visible()
+
+    def tab_visible(self):
+        """
+        List the audio outputs when the tab is shown for the first time
+        """
+        if self.has_audio_outputs:
+            return
+        devices = get_audio_output_devices()
+        for combo_box, key in ((self.live_audio_combo_box, 'media/live audio device'),
+                               (self.preview_audio_combo_box, 'media/preview audio device')):
+            self.fill_audio_output_combo_box(combo_box, devices, self.settings.value(key) or {})
+        self.has_audio_outputs = True
+
+    @staticmethod
+    def fill_audio_output_combo_box(combo_box, devices, selected):
+        """
+        Fill a combo box with the audio outputs. The chosen output stays in the list when it is not connected.
+
+        :param QtWidgets.QComboBox combo_box: The combo box to fill
+        :param list[(str, str)] devices: The audio outputs as (id, name) tuples
+        :param dict selected: The chosen output, {'id': '', 'name': ''} for the system default
+        """
+        combo_box.clear()
+        combo_box.addItem(translate('MediaPlugin.MediaTab', 'System default'), {'id': '', 'name': ''})
+        for device_id, name in devices:
+            combo_box.addItem(name, {'id': device_id, 'name': name})
+        selected_id = selected.get('id', '')
+        index = next((i for i in range(combo_box.count()) if combo_box.itemData(i)['id'] == selected_id), -1)
+        if index == -1:
+            # Fall back to the name, since the id can change when a driver is reinstalled
+            index = next((i for i in range(1, combo_box.count())
+                          if combo_box.itemData(i)['name'] == selected.get('name')), -1)
+        if index == -1:
+            combo_box.addItem(translate('MediaPlugin.MediaTab', '{device} (not connected)').format(
+                device=selected.get('name') or selected_id), dict(selected))
+            index = combo_box.count() - 1
+        combo_box.setCurrentIndex(index)
 
     def save(self):
         """
@@ -100,6 +175,9 @@ class MediaTab(SettingsTab):
         if self.settings.value(setting_key) != self.auto_start_check_box.checkState():
             self.settings.setValue(setting_key, self.auto_start_check_box.checkState())
         self.settings.setValue('media/vlc arguments', self.vlc_arguments_edit.text())
+        if self.has_audio_outputs:
+            self.settings.setValue('media/live audio device', self.live_audio_combo_box.currentData())
+            self.settings.setValue('media/preview audio device', self.preview_audio_combo_box.currentData())
 
     def post_set_up(self, post_update=False):
         """

@@ -32,13 +32,14 @@ from openlp.core.common.registry import Registry
 from openlp.core.lib import ServiceItemContext
 from openlp.core.lib.mediamanageritem import MediaManagerItem
 from openlp.core.lib.serviceitem import ItemCapabilities
-from openlp.core.lib.ui import create_horizontal_adjusting_combo_box, critical_error_message_box, \
+from openlp.core.lib.plugin import StringContent
+from openlp.core.lib.ui import create_action, create_horizontal_adjusting_combo_box, critical_error_message_box, \
     find_and_set_in_combo_box, set_case_insensitive_completer
 from openlp.core.ui.icons import UiIcons
 from openlp.core.widgets.edits import SearchEdit
 from openlp.plugins.bibles.forms.bibleimportform import BibleImportForm
 from openlp.plugins.bibles.forms.editbibleform import EditBibleForm
-from openlp.plugins.bibles.lib import get_reference_match, get_reference_separator
+from openlp.plugins.bibles.lib import get_reference_match, get_reference_separator, normalise_reference
 from openlp.plugins.bibles.lib.versereferencelist import VerseReferenceList
 
 log = logging.getLogger(__name__)
@@ -127,7 +128,10 @@ class BibleMediaItem(MediaManagerItem):
         self.has_search = True
         self.search_results = []
         self.second_search_results = []
+        # Results of a reference search are shown together with their whole chapter, so you can move through it
+        self.are_results_references = False
         Registry().register_function('bibles_load_list', self.reload_bibles)
+        self.add_bible_search_shortcut()
 
     def required_icons(self):
         """
@@ -252,7 +256,7 @@ class BibleMediaItem(MediaManagerItem):
         self.save_results_button.clicked.connect(self.on_save_results_button_clicked)
         self.search_button.clicked.connect(self.on_search_button_clicked)
         # Other stuff
-        self.search_edit.returnPressed.connect(self.on_search_button_clicked)
+        self.search_edit.returnPressed.connect(self.on_search_edit_return_pressed)
         self.search_tab_bar.currentChanged.connect(self.on_search_tab_bar_current_changed)
         self.results_view_tab.currentChanged.connect(self.on_results_view_tab_current_changed)
         self.search_edit.textChanged.connect(self.on_search_edit_text_changed)
@@ -271,6 +275,31 @@ class BibleMediaItem(MediaManagerItem):
         self.save_results_button.setToolTip(
             translate('BiblesPlugin.MediaItem', 'Add the search results to the saved list.'))
         self.search_button.setText(UiStrings().Search)
+
+    def add_bible_search_shortcut(self):
+        """
+        Add a shortcut (Ctrl+B by default) which jumps to the Bible search field from anywhere in the main window, so a
+        passage can be typed in right away. It can be changed in the shortcut settings like the other shortcuts.
+        """
+        self.bible_search_shortcut_action = create_action(
+            self.main_window, 'bibleSearchShortcut', can_shortcuts=True,
+            text=translate('BiblesPlugin.MediaItem', 'Search Bible'),
+            tooltip=translate('BiblesPlugin.MediaItem', 'Jump to the Bible search field.'),
+            category=self.plugin.get_string(StringContent.VisibleName)['title'],
+            triggers=self.on_bible_search_shortcut_triggered)
+        self.main_window.addAction(self.bible_search_shortcut_action)
+
+    def on_bible_search_shortcut_triggered(self):
+        """
+        Show the Bibles in the library and put the cursor into the search field, with its text selected so that typing
+        replaces it
+        """
+        if not self.main_window.media_manager_dock.isVisible():
+            self.main_window.media_manager_dock.setVisible(True)
+        self.main_window.media_tool_box.setCurrentWidget(self)
+        self.search_tab_bar.setCurrentIndex(SearchTabs.Search)
+        self.search_edit.setFocus()
+        self.search_edit.selectAll()
 
     def on_focus(self):
         """
@@ -322,8 +351,9 @@ class BibleMediaItem(MediaManagerItem):
                 translate('BiblesPlugin.MediaItem', 'Text Search'),
                 translate('BiblesPlugin.MediaItem', 'Search Text...'))
         ])
+        # The setting keeps its old name, but now starts with the search for a passage, which is what is needed most
         if self.settings.value('bibles/reset to combined quick search'):
-            self.search_edit.set_current_search_type(BibleSearch.Combined)
+            self.search_edit.set_current_search_type(BibleSearch.Reference)
         self.config_update()
         log.debug('bible manager initialise complete')
 
@@ -365,6 +395,9 @@ class BibleMediaItem(MediaManagerItem):
         log.debug('Reloading Bibles')
         self.plugin.manager.reload_bibles()
         self.populate_bible_combo_boxes()
+        # The book names depend on the language setting, which may have changed even if the Bible stays the same
+        self.initialise_advanced_bible(self.select_book_combo_box.currentData())
+        self.update_auto_completer()
 
     def get_common_books(self, first_bible, second_bible=None):
         """
@@ -719,6 +752,23 @@ class BibleMediaItem(MediaManagerItem):
         self.results_view_tab.setCurrentIndex(ResultsTab.Search)
         self.application.set_normal_cursor()
 
+    def on_search_edit_return_pressed(self):
+        """
+        Enter in the search field searches and sends the found verses straight to the Preview, Shift+Enter sends them
+        straight live, so a passage the preacher mentions is on the screen as quickly as possible. After Enter the
+        search field keeps the focus for the next search, after Shift+Enter the verses of the Live panel get it, so the
+        operator can go on with the arrow keys straight away (Ctrl+B goes back to the search field).
+        """
+        go_live = bool(QtWidgets.QApplication.keyboardModifiers() & QtCore.Qt.ShiftModifier)
+        self.on_search_button_clicked()
+        if self.list_view.selectedItems():
+            if go_live:
+                self.on_live_click()
+                self.live_controller.preview_widget.setFocus()
+            else:
+                self.on_preview_click(keep_focus=True)
+                self.search_edit.setFocus()
+
     def select_search(self):
         """
         Preform a search using the passage selected on the `Select` tab
@@ -731,6 +781,7 @@ class BibleMediaItem(MediaManagerItem):
         self.search_results = self.plugin.manager.get_verses(self.bible.name, verse_range, False)
         if self.second_bible:
             self.second_search_results = self.plugin.manager.get_verses(self.second_bible.name, verse_range, False)
+        self.are_results_references = True
         self.display_results()
 
     def text_reference_search(self, search_text):
@@ -745,6 +796,7 @@ class BibleMediaItem(MediaManagerItem):
         self.search_results = self.plugin.manager.get_verses(self.bible.name, verse_refs, True)
         if self.second_bible and self.search_results:
             self.second_search_results = self.plugin.manager.get_verses(self.second_bible.name, verse_refs, True)
+        self.are_results_references = True
         self.display_results()
 
     def on_text_search(self, text):
@@ -755,6 +807,7 @@ class BibleMediaItem(MediaManagerItem):
         self.search_results = self.plugin.manager.verse_search(self.bible.name, text)
         if self.search_results is None:
             return
+        self.are_results_references = False
         if self.second_bible and self.search_results:
             filtered_search_results = []
             not_found_count = 0
@@ -787,7 +840,7 @@ class BibleMediaItem(MediaManagerItem):
         """
         self.search_results = []
         log.debug('text_search called')
-        text = self.search_edit.text()
+        text = normalise_reference(self.search_edit.text())
         if text == '':
             self.display_results()
             return
@@ -880,6 +933,8 @@ class BibleMediaItem(MediaManagerItem):
         for count, verse in enumerate(search_results):
             data = {
                 'book': verse.book.get_name(language_selection),
+                'book_ref_id': verse.book.book_reference_id,
+                'is_reference': self.are_results_references,
                 'chapter': verse.chapter,
                 'verse': verse.verse,
                 'bible': self.bible.name,
@@ -936,14 +991,33 @@ class BibleMediaItem(MediaManagerItem):
             items = self.list_view.selectedItems()
         if not items:
             return False
+        selected_verses = [bitem.data(QtCore.Qt.UserRole) for bitem in items]
+        verses = VerseReferenceList()
+        for data in selected_verses:
+            verses.add(
+                data['book'], data['chapter'], data['verse'], data['version'], data['copyright'], data['permissions'])
+        # A passage that was looked up by its reference is shown with its whole chapter, one verse per slide, starting
+        # at the first selected verse. This allows moving freely through the chapter, like through a song.
+        slide_verses, start_index = selected_verses, None
+        is_verse_per_slide = selected_verses[0]['second_bible'] or \
+            self.settings_tab.layout_style == LayoutStyle.VersePerSlide
+        if is_verse_per_slide and all(data.get('is_reference') for data in selected_verses):
+            slide_verses, start_index = self.expand_to_chapters(selected_verses)
+        versions = VerseReferenceList()
+        data = selected_verses[0]
+        versions.add_version(data['version'], data['copyright'], data['permissions'])
+        if data['second_bible']:
+            versions.add_version(data['second_version'], data['second_copyright'], data['second_permissions'])
         bible_text = ''
         old_chapter = -1
         raw_slides = []
-        verses = VerseReferenceList()
-        for bitem in items:
-            data = bitem.data(QtCore.Qt.UserRole)
-            verses.add(
-                data['book'], data['chapter'], data['verse'], data['version'], data['copyright'], data['permissions'])
+        slide_footers = []
+        for data in slide_verses:
+            if start_index is not None:
+                verse_reference = VerseReferenceList()
+                verse_reference.add(data['book'], data['chapter'], data['verse'], data['version'], data['copyright'],
+                                    data['permissions'])
+                slide_footers.append('<br>'.join([verse_reference.format_verses(), versions.format_versions()]))
             verse_text = self.format_verse(old_chapter, data['chapter'], data['verse'])
             # We only support 'Verse Per Slide' when using a scond bible
             if data['second_bible']:
@@ -960,11 +1034,10 @@ class BibleMediaItem(MediaManagerItem):
             # If we are 'Verse Per Line' then force a new line.
             elif self.settings_tab.layout_style == LayoutStyle.VersePerLine:
                 bible_text = '{bible} {verse}{data[text]}\n'.format(bible=bible_text, verse=verse_text, data=data)
-            elif self.settings_tab.layout_style == LayoutStyle.WholeVerseContinuous:
-                bible_text = '{bible} {verse}{data[text]}\n'.format(bible=bible_text, verse=verse_text, data=data)
-            # We have to be 'Continuous'.
+            # 'Continuous' too: the verses are separated by lines, so that a slide is only split between verses. The
+            # lines are not shown, see NoLineBreaks below.
             else:
-                bible_text = '{bible} {verse}{data[text]}'.format(bible=bible_text, verse=verse_text, data=data)
+                bible_text = '{bible} {verse}{data[text]}\n'.format(bible=bible_text, verse=verse_text, data=data)
             bible_text = bible_text.strip(' ')
             old_chapter = data['chapter']
         # Add service item data (handy things for http api)
@@ -992,16 +1065,12 @@ class BibleMediaItem(MediaManagerItem):
         service_item.raw_footer.append(verses.format_versions())
         # If there are no more items we check whether we have to add bible_text.
         if bible_text:
-            raw_slides.append(bible_text.lstrip())
-        # Service Item: Capabilities
-        if self.settings_tab.layout_style == LayoutStyle.Continuous and not data['second_bible']:
-            # Split the line but do not replace line breaks in renderer.
+            raw_slides.append(bible_text.strip())
+        # Service Item: Capabilities. A verse is never split over slides (no CanWordSplit), see the renderer.
+        if self.settings_tab.layout_style in (LayoutStyle.Continuous, LayoutStyle.WholeVerseContinuous) and \
+                not data['second_bible']:
+            # Split the slides between verses, but show the verses as continuous text
             service_item.add_capability(ItemCapabilities.NoLineBreaks)
-        if self.settings_tab.layout_style == LayoutStyle.WholeVerseContinuous:
-            if not data['second_bible']:
-                service_item.add_capability(ItemCapabilities.NoLineBreaks)
-        else:
-            service_item.add_capability(ItemCapabilities.CanWordSplit)
         service_item.add_capability(ItemCapabilities.CanPreview)
         service_item.add_capability(ItemCapabilities.CanLoop)
         service_item.add_capability(ItemCapabilities.CanEditTitle)
@@ -1010,9 +1079,49 @@ class BibleMediaItem(MediaManagerItem):
         # Service Item: Theme
         if self.settings_tab.bible_theme:
             service_item.theme = self.settings_tab.bible_theme
-        for slide in raw_slides:
-            service_item.add_from_text(slide)
+        for index, slide in enumerate(raw_slides):
+            footer_html = slide_footers[index] if index < len(slide_footers) else None
+            service_item.add_from_text(slide, footer_html=footer_html)
+        if start_index is not None:
+            # Slides without a verse tag are numbered from 1
+            service_item.start_verse_tag = str(start_index + 1)
         return True
+
+    def expand_to_chapters(self, selected_verses):
+        """
+        Get all the verses of the chapters of the selected verses, so that the whole chapter can be shown
+
+        :param list[dict] selected_verses: The data of the selected verses
+        :return: A tuple of the data of all the verses of the chapters, and the index of the first selected verse.
+            If a chapter can't be read, the selected verses are returned unchanged with the index 0.
+        """
+        first = selected_verses[0]
+        chapters = []
+        for data in selected_verses:
+            chapter = (data.get('book_ref_id'), data['chapter'])
+            if chapter not in chapters:
+                chapters.append(chapter)
+        chapter_verses = []
+        for book_ref_id, chapter in chapters:
+            if book_ref_id is None:
+                return selected_verses, 0
+            verses = self.plugin.manager.get_verses(first['bible'], [(book_ref_id, chapter, 1, -1)], False)
+            if not verses:
+                return selected_verses, 0
+            second_texts = {}
+            if first['second_bible']:
+                second_verses = self.plugin.manager.get_verses(first['second_bible'], [(book_ref_id, chapter, 1, -1)],
+                                                               False) or []
+                second_texts = {verse.verse: verse.text for verse in second_verses}
+            book = next(data['book'] for data in selected_verses
+                        if (data.get('book_ref_id'), data['chapter']) == (book_ref_id, chapter))
+            for verse in verses:
+                chapter_verses.append(dict(first, book=book, book_ref_id=book_ref_id, chapter=verse.chapter,
+                                           verse=verse.verse, text=verse.text,
+                                           second_text=second_texts.get(verse.verse, '')))
+        start_index = next((index for index, data in enumerate(chapter_verses)
+                            if (data['chapter'], data['verse']) == (first['chapter'], first['verse'])), 0)
+        return chapter_verses, start_index
 
     def format_verse(self, old_chapter, chapter, verse):
         """

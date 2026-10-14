@@ -79,6 +79,97 @@ def test_show_error_msg(get_thumbnail_folder):
                                                                  'present it.')
 
 
+def make_slides(hidden=()):
+    """Mocked PowerPoint slides, which write a file when they are exported"""
+    exported = []
+
+    def make_slide(number):
+        slide = MagicMock()
+        slide.SlideShowTransition.Hidden = number in hidden
+
+        def export(path, *args):
+            exported.append(Path(path))
+            Path(path).write_bytes(b'png')
+        slide.Export.side_effect = export
+        return slide
+    slides = [make_slide(number) for number in (1, 2, 3)]
+    presentation = MagicMock()
+    presentation.Slides.side_effect = lambda number: slides[number - 1]
+    presentation.Slides.Count = len(slides)
+    return presentation, exported
+
+
+def test_create_thumbnails_exports_through_the_temporary_folder(get_thumbnail_folder, tmp_path):
+    """
+    Test that the slides are exported into the temporary folder and then moved to the thumbnail folder, as some
+    PowerPoint installations can't export into folders below AppData
+    """
+    # GIVEN: A document with three slides of which the second is hidden, and no thumbnails yet
+    doc = PowerpointDocument(MagicMock(), MagicMock())
+    doc.presentation, exported = make_slides(hidden=(2,))
+    thumbnail_folder = tmp_path / 'thumbnails' / 'abc'
+    doc.get_thumbnail_folder = MagicMock(return_value=thumbnail_folder)
+
+    # WHEN: Creating the thumbnails
+    with patch('openlp.plugins.presentations.lib.presentationcontroller.PresentationDocument.check_thumbnails',
+               return_value=False):
+        doc.create_thumbnails()
+
+    # THEN: PowerPoint exported into a temporary folder outside the thumbnail folder, which is removed again, and the
+    #       thumbnails of the visible slides are in the thumbnail folder
+    assert all(thumbnail_folder not in path.parents for path in exported)
+    assert all(not path.parent.exists() for path in exported)
+    assert sorted(path.name for path in thumbnail_folder.iterdir()) == ['slide1.png', 'slide2.png']
+    assert doc.index_map == {1: 1, 2: 3}
+    assert doc.slide_count == 2
+
+
+def test_create_thumbnails_without_export_when_they_exist(get_thumbnail_folder, tmp_path):
+    """
+    Test that existing thumbnails are not exported again, but the slides are still counted
+    """
+    # GIVEN: A document with thumbnails
+    doc = PowerpointDocument(MagicMock(), MagicMock())
+    doc.presentation, exported = make_slides()
+    doc.get_thumbnail_folder = MagicMock(return_value=tmp_path)
+
+    # WHEN: Creating the thumbnails
+    with patch('openlp.plugins.presentations.lib.presentationcontroller.PresentationDocument.check_thumbnails',
+               return_value=True):
+        doc.create_thumbnails()
+
+    # THEN: Nothing is exported, but the slides are known
+    assert exported == []
+    assert doc.slide_count == 3
+
+
+def test_create_thumbnails_cleans_up_after_an_error(get_thumbnail_folder, tmp_path):
+    """
+    Test that the temporary export folder is removed when PowerPoint fails to export
+    """
+    # GIVEN: A document whose export fails
+    doc = PowerpointDocument(MagicMock(), MagicMock())
+    doc.presentation, exported = make_slides()
+    doc.presentation.Slides(1).Export.side_effect = OSError('export failed')
+    doc.get_thumbnail_folder = MagicMock(return_value=tmp_path / 'thumbnails')
+    created = []
+    real_mkdtemp = __import__('tempfile').mkdtemp
+
+    def mkdtemp(**kwargs):
+        created.append(Path(real_mkdtemp(**kwargs)))
+        return str(created[-1])
+
+    # WHEN: Creating the thumbnails
+    with patch('openlp.plugins.presentations.lib.presentationcontroller.PresentationDocument.check_thumbnails',
+               return_value=False), \
+            patch('openlp.plugins.presentations.lib.powerpointcontroller.tempfile.mkdtemp', side_effect=mkdtemp), \
+            pytest.raises(OSError):
+        doc.create_thumbnails()
+
+    # THEN: The temporary folder is gone
+    assert created and not created[0].exists()
+
+
 def test_create_titles_and_notes(get_thumbnail_folder):
     """
     Test creating the titles from PowerPoint

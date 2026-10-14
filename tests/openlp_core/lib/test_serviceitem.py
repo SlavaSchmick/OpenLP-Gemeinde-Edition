@@ -1195,3 +1195,47 @@ def test_update_theme(registry: Registry, is_text: bool, is_clear_called: bool):
         service_item._clear_slides_cache.assert_called_once()
     else:
         service_item._clear_slides_cache.assert_not_called()
+
+
+def test_start_slide_index(settings):
+    """Test that a service item starts at the slide of its start verse, also when a verse spans several slides"""
+    # GIVEN: A text item whose second verse is rendered into two slides, starting at the third verse
+    renderer = MagicMock()
+    renderer.format_slide.side_effect = lambda text, item: [text + ' a', text + ' b'] if text == 'Verse 2' else [text]
+    Registry().register('renderer', renderer)
+    service_item = ServiceItem()
+    for text in ('Verse 1', 'Verse 2', 'Verse 3'):
+        service_item.add_from_text(text)
+    service_item.start_verse_tag = '3'
+
+    # WHEN: Getting the index of the start slide
+    index = service_item.get_start_slide_index()
+
+    # THEN: The fourth slide is the first slide of the third verse
+    assert index == 3
+
+
+def test_start_slide_index_default(settings):
+    """Test that a service item without a start verse starts at the first slide"""
+    assert ServiceItem().get_start_slide_index() == 0
+
+
+def test_start_verse_tag_is_saved_with_the_service(settings, state_media):
+    """Test that the start verse is saved in the service file and loaded again"""
+    # GIVEN: A text item with a start verse
+    Registry().register('renderer', MagicMock(**{'format_slide.side_effect': lambda text, item: [text]}))
+    service_item = ServiceItem()
+    service_item.name = 'bibles'
+    service_item.add_from_text('Verse 1')
+    service_item.add_from_text('Verse 2')
+    service_item.start_verse_tag = '2'
+
+    # WHEN: Saving and loading the item
+    representation = service_item.get_service_repr(True)
+    loaded_item = ServiceItem()
+    loaded_item.set_from_service({'serviceitem': representation})
+
+    # THEN: The start verse should be kept
+    assert representation['header']['start_verse_tag'] == '2'
+    assert loaded_item.start_verse_tag == '2'
+    assert loaded_item.get_start_slide_index() == 1

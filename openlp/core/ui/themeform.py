@@ -69,6 +69,8 @@ class ThemeForm(QtWidgets.QWizard, Ui_ThemeWizard, RegistryProperties):
         Registry().register_function('theme_line_count', self.update_lines_text)
         self.main_area_page.font_name_changed.connect(self.calculate_lines)
         self.main_area_page.font_size_changed.connect(self.calculate_lines)
+        self.main_area_page.is_auto_size_enabled_changed.connect(self.calculate_lines)
+        self.main_area_page.min_font_size_changed.connect(self.calculate_lines)
         self.main_area_page.line_spacing_changed.connect(self.calculate_lines)
         self.main_area_page.letter_spacing_changed.connect(self.calculate_lines)
         self.main_area_page.is_outline_enabled_changed.connect(self.on_outline_toggled)
@@ -286,6 +288,8 @@ class ThemeForm(QtWidgets.QWizard, Ui_ThemeWizard, RegistryProperties):
         self.main_area_page.font_name = self.theme.font_main_name
         self.main_area_page.font_color = self.theme.font_main_color
         self.main_area_page.font_size = self.theme.font_main_size
+        self.main_area_page.min_font_size = self.theme.font_main_min_size
+        self.main_area_page.is_auto_size_enabled = self.theme.font_main_auto_size
         self.main_area_page.line_spacing = self.theme.font_main_line_adjustment
         self.main_area_page.letter_spacing = self.theme.font_main_letter_adjustment
         self.main_area_page.is_outline_enabled = self.theme.font_main_outline
@@ -377,6 +381,8 @@ class ThemeForm(QtWidgets.QWizard, Ui_ThemeWizard, RegistryProperties):
         self.theme.font_main_name = self.main_area_page.font_name
         self.theme.font_main_color = self.main_area_page.font_color
         self.theme.font_main_size = self.main_area_page.font_size
+        self.theme.font_main_auto_size = self.main_area_page.is_auto_size_enabled
+        self.theme.font_main_min_size = self.main_area_page.min_font_size
         self.theme.font_main_line_adjustment = self.main_area_page.line_spacing
         self.theme.font_main_letter_adjustment = self.main_area_page.letter_spacing
         self.theme.font_main_outline = self.main_area_page.is_outline_enabled

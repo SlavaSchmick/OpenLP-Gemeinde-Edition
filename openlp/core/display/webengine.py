@@ -48,6 +48,27 @@ class WebEnginePage(QtWebEngineWidgets.QWebEnginePage):
     """
     A custom WebEngine page to capture Javascript console logging
     """
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.featurePermissionRequested.connect(self.on_feature_permission_requested)
+
+    def on_feature_permission_requested(self, security_origin, feature):
+        """
+        Allow OpenLP's own pages (the openlp:// scheme) to capture video, which is needed to show live video sources
+        such as cameras and capture cards. Everything else is denied so that requests don't hang forever.
+
+        :param QtCore.QUrl security_origin: The origin requesting the feature
+        :param QtWebEngineWidgets.QWebEnginePage.Feature feature: The requested feature
+        """
+        if feature == QtWebEngineWidgets.QWebEnginePage.MediaVideoCapture and \
+                security_origin.scheme() == OpenLPScheme.scheme_name.decode('utf-8'):
+            policy = QtWebEngineWidgets.QWebEnginePage.PermissionGrantedByUser
+        else:
+            log.warning('Denied web feature {feature} for {origin}'.format(feature=feature,
+                                                                           origin=security_origin.toString()))
+            policy = QtWebEngineWidgets.QWebEnginePage.PermissionDeniedByUser
+        self.setFeaturePermission(security_origin, feature, policy)
+
     def javaScriptConsoleMessage(self, level, message, line_number, source_id):
         """
         Override the parent method in order to log the messages in OpenLP
@@ -82,6 +103,8 @@ class WebEngineView(QtWebEngineWidgets.QWebEngineView):
         self.page().settings().setAttribute(QtWebEngineWidgets.QWebEngineSettings.LocalStorageEnabled, True)
         self.page().settings().setAttribute(QtWebEngineWidgets.QWebEngineSettings.LocalContentCanAccessFileUrls, True)
         self.page().settings().setAttribute(QtWebEngineWidgets.QWebEngineSettings.LocalContentCanAccessRemoteUrls, True)
+        # Live video and other media is started by OpenLP, never by a click inside the page
+        self.page().settings().setAttribute(QtWebEngineWidgets.QWebEngineSettings.PlaybackRequiresUserGesture, False)
         self.setContextMenuPolicy(QtCore.Qt.PreventContextMenu)
 
     def eventFilter(self, obj, ev):

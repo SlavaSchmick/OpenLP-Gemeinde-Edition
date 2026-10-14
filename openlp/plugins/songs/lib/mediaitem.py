@@ -22,6 +22,7 @@ from collections import namedtuple
 import logging
 import mako
 import os
+import re
 from shutil import copyfile
 from typing import Any
 
@@ -37,8 +38,9 @@ from openlp.core.common.registry import Registry
 from openlp.core.lib import ServiceItemContext, check_item_selected, create_separated_list
 from openlp.core.lib.mediamanageritem import MediaManagerItem
 from openlp.core.lib.plugin import PluginStatus
+from openlp.core.lib.plugin import StringContent
 from openlp.core.lib.serviceitem import ItemCapabilities
-from openlp.core.lib.ui import create_widget_action, critical_error_message_box
+from openlp.core.lib.ui import create_action, create_widget_action, critical_error_message_box
 from openlp.core.ui.icons import UiIcons
 from openlp.core.ui.confirmationform import ConfirmationForm
 from openlp.plugins.songs.forms.editsongform import EditSongForm
@@ -52,6 +54,10 @@ from openlp.plugins.songs.lib.ui import SongStrings
 
 
 log = logging.getLogger(__name__)
+
+# The id of a song, made of a song book letter and the number, e.g. "r47", "D203", "d0203" or "R 47". The letter can be
+# left out ("47").
+SONG_ID_SEARCH = re.compile(r'^\s*(?P<book>[^\W\d_]*)\s*0*(?P<number>\d+)\s*$')
 
 
 class SongMediaItem(MediaManagerItem):
@@ -78,6 +84,7 @@ class SongMediaItem(MediaManagerItem):
         self.edit_item = None
         self.quick_preview_allowed = True
         self.has_search = True
+        self.add_song_search_shortcut()
 
     def _update_background_audio(self, song, item):
         song.media_files = []
@@ -159,21 +166,101 @@ class SongMediaItem(MediaManagerItem):
                 translate('SongsPlugin.MediaItem', 'CCLI number'),
                 translate('SongsPlugin.MediaItem', 'Search CCLI number...'))
         ])
+        # Like the Bible search, which always starts with the Scripture reference: the whole song finds a song by its
+        # id, its title and its lyrics
+        self.search_text_edit.set_current_search_type(SongSearch.Entire)
         self.config_update()
+        # Enter sends the found song straight to the Preview, Shift+Enter straight live, like in the Bible search
+        self.search_text_edit.returnPressed.disconnect(self.on_search_text_button_clicked)
+        self.search_text_edit.returnPressed.connect(self.on_search_text_return_pressed)
+
+    def add_song_search_shortcut(self):
+        """
+        Add a shortcut (Ctrl+L by default) which jumps to the song search field from anywhere in the main window, so a
+        song can be looked up right away. It can be changed in the shortcut settings like the other shortcuts.
+        """
+        self.song_search_shortcut_action = create_action(
+            self.main_window, 'songSearchShortcut', can_shortcuts=True,
+            text=translate('SongsPlugin.MediaItem', 'Search Song'),
+            tooltip=translate('SongsPlugin.MediaItem', 'Jump to the song search field.'),
+            category=self.plugin.get_string(StringContent.VisibleName)['title'],
+            triggers=self.on_song_search_shortcut_triggered)
+        self.main_window.addAction(self.song_search_shortcut_action)
+
+    def on_song_search_shortcut_triggered(self):
+        """
+        Show the songs in the library and put the cursor into the search field, with its text selected so that typing
+        replaces it
+        """
+        if not self.main_window.media_manager_dock.isVisible():
+            self.main_window.media_manager_dock.setVisible(True)
+        self.main_window.media_tool_box.setCurrentWidget(self)
+        self.search_text_edit.setFocus()
+        self.search_text_edit.selectAll()
+
+    def search_song_id(self, search_keywords):
+        """
+        Find the songs with an id like "r47" or "D203" exactly: by their alternate title (e.g. "R47") or by their number
+        in a song book whose name starts with the letter (e.g. "Russisch" #47). Without a letter ("47") the number has
+        to match in any song book.
+
+        :param str search_keywords: The typed text
+        :return: The songs with this id, or None if the text is not a song id
+        """
+        match = SONG_ID_SEARCH.match(search_keywords)
+        if not match:
+            return None
+        book = match.group('book').lower()
+        number = match.group('number')
+        # The alternate title is the part of the search title after the "@", see clean_song()
+        candidates = self.plugin.manager.get_all_objects(Song, Song.search_title.like('%@{book}%{number}'.format(
+            book=book, number=number)))
+        id_pattern = re.compile(r'{book}[^\W\d_]*0*{number}'.format(book=re.escape(book), number=number)
+                                if book else r'[^\W\d_]*0*{number}'.format(number=number))
+        songs = [song for song in candidates if id_pattern.fullmatch(song.search_title.rpartition('@')[2])]
+        entries = (self.plugin.manager.session.query(Song).join(SongBookEntry).join(SongBook)
+                   .filter(SongBookEntry.entry == number))
+        if book:
+            entries = entries.filter(SongBook.name.ilike('{book}%'.format(book=book)))
+        songs += [song for song in entries.all() if song not in songs]
+        return [song for song in songs if not song.temporary]
+
+    def on_search_text_return_pressed(self):
+        """
+        Enter in the search field sends the first found song straight to the Preview, Shift+Enter sends it straight
+        live, like in the Bible search. After Enter the search field keeps the focus for the next search, after
+        Shift+Enter the slides of the Live panel get it, so the operator can go on with the arrow keys straight away
+        (Ctrl+L goes back to the search field).
+        """
+        go_live = bool(QtWidgets.QApplication.keyboardModifiers() & QtCore.Qt.ShiftModifier)
+        self.on_search_text_button_clicked()
+        if not self.list_view.count():
+            return
+        if not self.list_view.selectedItems():
+            self.list_view.setCurrentRow(0)
+        if go_live:
+            self.on_live_click()
+            self.live_controller.preview_widget.setFocus()
+        else:
+            self.on_preview_click(keep_focus=True)
+            self.search_text_edit.setFocus()
 
     def on_search_text_button_clicked(self):
         # Reload the list considering the new search type.
         search_keywords = str(self.search_text_edit.displayText())
         search_type = self.search_text_edit.current_search_type()
+        # A song id like "r47" finds exactly that song first, then the other songs which match
+        exact_results = self.search_song_id(search_keywords) \
+            if search_type in (SongSearch.Entire, SongSearch.Titles) else None
         if search_type == SongSearch.Entire:
             log.debug('Entire Song Search')
             search_results = self.search_entire(search_keywords)
-            self.display_results_song(search_results)
+            self.display_results_song(search_results, exact_results)
         elif search_type == SongSearch.Titles:
             log.debug('Titles Search')
             search_string = '%{text}%'.format(text=clean_string(search_keywords))
             search_results = self.plugin.manager.get_all_objects(Song, Song.search_title.like(search_string))
-            self.display_results_song(search_results)
+            self.display_results_song(search_results, exact_results)
         elif search_type == SongSearch.Lyrics:
             log.debug('Lyrics Search')
             search_string = '%{text}%'.format(text=clean_string(search_keywords))
@@ -246,11 +333,12 @@ class SongMediaItem(MediaManagerItem):
         self.on_search_text_button_clicked()
         log.debug('on_song_list_load - finished')
 
-    def display_results_song(self, search_results):
+    def display_results_song(self, search_results, first_results=None):
         """
         Display the song search results in the media manager list
 
         :param search_results: A list of db Song objects
+        :param first_results: Songs to show first, e.g. the song with the typed id, before the other results
         :return: None
         """
         def get_song_key(song):
@@ -260,8 +348,10 @@ class SongMediaItem(MediaManagerItem):
         log.debug('display results Song')
         self.save_auto_select_id()
         self.list_view.clear()
+        first_results = sorted(first_results or [], key=get_song_key)
+        search_results = [song for song in search_results if song not in first_results]
         search_results.sort(key=get_song_key)
-        for song in search_results:
+        for song in first_results + search_results:
             # Do not display temporary songs
             if song.temporary:
                 continue
@@ -423,10 +513,11 @@ class SongMediaItem(MediaManagerItem):
         if self.is_search_as_you_type_enabled:
             search_length = 1
             if self.search_text_edit.current_search_type() == SongSearch.Entire:
-                search_length = 4
+                search_length = 2
             elif self.search_text_edit.current_search_type() == SongSearch.Lyrics:
                 search_length = 3
-            if len(text) > search_length:
+            # A song id like "r47" or "47" is searched right away, for the other texts a few letters are needed
+            if len(text) > search_length or SONG_ID_SEARCH.match(text):
                 self.on_search_text_button_clicked()
             elif not text:
                 self.on_clear_text_button_click()

@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<title>OpenLP 3.1.7 – Gemeinde-Paket: Dokumentation</title>
+<title>OpenLP Gemeinde-Edition: Dokumentation</title>
 <style>
   @page { size: A4; margin: 18mm 17mm 18mm 17mm; }
   :root { --accent: #1f4e79; --soft: #eef3f8; --line: #c9d6e3; --muted: #5a6470; }
@@ -34,14 +34,16 @@
 </head>
 <body>
 
-<h1>OpenLP 3.1.7 – Gemeinde-Paket</h1>
-<div class="subtitle">Dokumentation aller Ergänzungen und Änderungen gegenüber dem offiziellen OpenLP 3.1.7 · Stand: 14.10.2026</div>
+<h1>OpenLP Gemeinde-Edition</h1>
+<div class="subtitle">Version 3.1.7+gemeinde.1 · eine modifizierte Version von OpenLP 3.1.7 · Dokumentation aller Ergänzungen und Änderungen · Stand: 14.10.2026</div>
+
+<p>Die <strong>OpenLP Gemeinde-Edition</strong> ist eine modifizierte Version von OpenLP. Ihre Ergänzungen und Änderungen stammen nicht von den OpenLP-Entwicklern und werden von ihnen nicht unterstützt. Quellcode und Updates: <a href="https://github.com/SlavaSchmick/OpenLP-Gemeinde-Edition">github.com/SlavaSchmick/OpenLP-Gemeinde-Edition</a></p>
 
 <div class="box">
   <strong>Inhalt dieses Ordners</strong>
   <table style="margin-top:5pt">
     <tr><th style="width:38%">Datei / Ordner</th><th>Zweck</th></tr>
-    <tr><td><code>OpenLP-3.1.7-Setup-x64.exe</code></td><td>Installationsprogramm (Windows 10/11, 64 Bit). Enthält alle benötigten Komponenten, auch VLC – auf dem Zielrechner muss nichts weiter installiert werden.</td></tr>
+    <tr><td><code>OpenLP-Gemeinde-Edition-3.1.7-gemeinde.1-Setup-x64.exe</code></td><td>Installationsprogramm (Windows 10/11, 64 Bit). Enthält alle benötigten Komponenten, auch VLC – auf dem Zielrechner muss nichts weiter installiert werden.</td></tr>
     <tr><td><code>Liederbücher\Deutsch</code></td><td>1310 bereinigte deutsche Lieder im OpenLP-Format (OpenLyrics, eine Datei je Lied)</td></tr>
     <tr><td><code>Liederbücher\Russisch</code></td><td>800 bereinigte russische Lieder im OpenLP-Format</td></tr>
     <tr><td><code>Liederbücher\Bereinigungsbericht.txt</code></td><td>Protokoll der Bereinigung mit jeder einzelnen Korrektur</td></tr>
@@ -62,12 +64,13 @@
   <li>Die Liederbücher im Detail</li>
   <li>Tastenkürzel im Überblick</li>
   <li>Hinweise und bekannte Grenzen</li>
+  <li>Updates</li>
   <li>Technischer Anhang</li>
 </ol>
 
 <h2>1. Installation</h2>
 <ol>
-  <li><strong>Setup starten:</strong> Doppelklick auf <code>OpenLP-3.1.7-Setup-x64.exe</code>. Es werden Administratorrechte benötigt (Windows-Abfrage bestätigen).</li>
+  <li><strong>Setup starten:</strong> Doppelklick auf <code>OpenLP-Gemeinde-Edition-3.1.7-gemeinde.1-Setup-x64.exe</code>. Es werden Administratorrechte benötigt (Windows-Abfrage bestätigen).</li>
   <li><strong>Sprache des Installationsprogramms</strong> wählen: Englisch, Deutsch, Russisch oder Ukrainisch. Vorausgewählt ist die Sprache von Windows.</li>
   <li>Lizenz bestätigen, Zielordner (Standard: <code>C:\Program Files\OpenLP</code>) und Zusatzaufgaben wählen:
     <ul>
@@ -173,14 +176,14 @@
 <h2>6. Schneller Bibel-Workflow</h2>
 <p>Ziel: Eine vom Prediger genannte Stelle in wenigen Sekunden auf der Leinwand – und dann frei im Kapitel weiterschalten.</p>
 
-<h3>Ablauf nur mit der Tastatur</h3>
+<div style="page-break-inside: avoid"><h3>Ablauf nur mit der Tastatur</h3>
 <table>
   <tr><th style="width:26%">Taste</th><th>Wirkung</th></tr>
   <tr><td><kbd>Strg</kbd>+<kbd>B</kbd></td><td>Springt von überall ins Bibel-Suchfeld (Text markiert, Tippen ersetzt ihn).</td></tr>
   <tr><td>Stelle tippen, <kbd>Enter</kbd></td><td>Stelle in die <strong>Vorschau</strong>; der Cursor bleibt im Suchfeld.</td></tr>
   <tr><td><kbd>Umschalt</kbd>+<kbd>Enter</kbd></td><td>Stelle direkt <strong>live</strong>; der Fokus springt in die Live-Versliste.</td></tr>
   <tr><td><kbd>↑</kbd> / <kbd>↓</kbd></td><td>Verse vor- und zurückschalten – sofort, ohne Mausklick.</td></tr>
-</table>
+</table></div>
 
 <h3>Das ganze Kapitel ist geladen</h3>
 <ul>
@@ -197,7 +200,7 @@
   <li>Ist ein Vers sehr lang, wird seine Schrift so weit verkleinert, dass er vollständig zu sehen ist (siehe Kapitel 8).</li>
 </ul>
 
-<h3>Tolerante Eingabe</h3>
+<div style="page-break-inside: avoid"><h3>Tolerante Eingabe</h3>
 <table>
   <tr><th style="width:34%">Eingabe</th><th>wird verstanden als</th></tr>
   <tr><td><code>gen 3 4</code>, <code>1mos 3 4</code>, <code>1. Mose 3,4</code></td><td>1. Mose 3,4 – Leerzeichen statt Komma, deutsche und englische Abkürzungen</td></tr>
@@ -205,7 +208,7 @@
   <tr><td><code>Röm</code>, <code>roem</code>, <code>rom</code></td><td>Römer – mit oder ohne Umlaut</td></tr>
   <tr><td><code>Ин 3 16</code>, <code>Быт 1 1</code></td><td>Russische Kurzformen (Synodalübersetzung)</td></tr>
   <tr><td><code>Ів 3 16</code>, <code>Бут 1 1</code></td><td>Ukrainische Kurzformen (Übersetzung Ohijenko)</td></tr>
-</table>
+</table></div>
 <p>In der deutschen Oberfläche gilt die deutsche Schreibweise: <code>Joh 3,16-18</code> = Kapitel 3, Verse 16 bis 18; mehrere Bereiche werden mit Punkt getrennt. Bei mehrdeutigen Kurzformen (z. B. „1Цар“ = russisch 1. Samuel, ukrainisch 1. Könige) gilt die Sprache der Oberfläche.</p>
 
 <h3>Weitere Verbesserungen</h3>
@@ -268,7 +271,7 @@
   <li>Zusätzlich ist jedes Lied dem Liederbuch <strong>„Deutsch“</strong> bzw. <strong>„Russisch“</strong> mit seiner Nummer zugeordnet; die Fußzeile zeigt z. B. „Deutsch #127“.</li>
 </ul>
 
-<h3>Entfernt (alles, was nicht Liedtext ist)</h3>
+<div style="page-break-inside: avoid"><h3>Entfernt (alles, was nicht Liedtext ist)</h3>
 <table>
   <tr><th>Zusatz</th><th>Beispiele</th><th style="width:13%">Anzahl</th></tr>
   <tr><td>Abschnittsnamen</td><td>„Strophe 3“, „Refrain“, „Припев:“</td><td>8211</td></tr>
@@ -277,7 +280,7 @@
   <tr><td>Tonarten</td><td>„G-Dur“, „d-Moll“, auch Tippfehler wie „As-ur“, „Es-Du“</td><td>1813</td></tr>
   <tr><td>Wiederholungszeichen</td><td>„[: … :]“, „||: … :||“</td><td>1188</td></tr>
   <tr><td>Melodie-Hinweise, Stimmen, Wiederholungen</td><td>„(Bis hierher hat mich Gott gebracht) G-Dur“, „Solo:“, „Chor:“, „(3 mal)“</td><td>64</td></tr>
-</table>
+</table></div>
 
 <h3>In Ordnung gebracht</h3>
 <ul>
@@ -315,20 +318,40 @@
   <li><strong>Zeilenumbrüche in den Liedquellen:</strong> Einige Lieder haben in den SongBeamer-Dateien falsch gesetzte Zeilenumbrüche (z. B. D1: „Cherubim und Seraphinen Stimmen / Dir ein Loblied an“). Diese lassen sich nicht automatisch erkennen und können bei Bedarf im Lied-Editor korrigiert werden.</li>
   <li><strong>Suche nach Nummern:</strong> Die Suche findet alles, was die Kennung enthält; das exakt passende Lied steht immer oben.</li>
   <li><strong>Signatur:</strong> Das Setup ist nicht digital signiert (SmartScreen-Warnung, siehe Kapitel 1).</li>
-  <li><strong>Lizenz:</strong> OpenLP steht unter der GNU General Public License Version 3. Wer diese angepasste Version weitergibt, muss den Empfängern auch den Quellcode der Änderungen zugänglich machen (z. B. per Download-Link).</li>
+  <li><strong>Lizenz:</strong> OpenLP steht unter der GNU General Public License Version 3. Wer diese angepasste Version weitergibt, muss den Empfängern auch den Quellcode zugänglich machen – er liegt öffentlich auf GitHub (siehe Kapitel 12).</li>
 </ul>
 
-<h2>12. Technischer Anhang</h2>
+<h2>12. Updates</h2>
+<p>Die Gemeinde-Edition bekommt ihre Updates aus ihrem eigenen GitHub-Repository – <strong>nicht</strong> von openlp.org. So kann niemand versehentlich das offizielle OpenLP installieren, das alle Ergänzungen dieser Edition entfernen würde.</p>
+<h3>So läuft ein Update</h3>
+<ol>
+  <li>Beim Start prüft OpenLP (einmal am Tag), ob es auf <a href="https://github.com/SlavaSchmick/OpenLP-Gemeinde-Edition/releases">github.com/SlavaSchmick/OpenLP-Gemeinde-Edition/releases</a> eine neuere Version gibt.</li>
+  <li>Wenn ja, erscheint die Frage <em>„Version … der OpenLP Gemeinde-Edition ist verfügbar … Jetzt herunterladen und installieren?“</em></li>
+  <li>Bei <strong>Ja</strong> wird das Setup heruntergeladen (mit Fortschritt, abbrechbar) und mit der Prüfsumme von GitHub kontrolliert – eine beschädigte Datei wird nicht gestartet.</li>
+  <li>Windows fragt nach Administratorrechten, OpenLP wird geschlossen, das Update installiert und OpenLP danach <strong>automatisch wieder gestartet</strong>.</li>
+</ol>
+<ul>
+  <li><strong>Lieder, Bibeln, Abläufe, Designs und Einstellungen bleiben erhalten.</strong></li>
+  <li>Bei <strong>Nein</strong> passiert nichts; am nächsten Tag wird wieder gefragt.</li>
+  <li>Ausschalten lässt sich die Prüfung unter <span class="path">Einstellungen → Einstellungen… → Allgemein → „OpenLP auf Updates überprüfen“</span>.</li>
+  <li>VLC ist Teil des Setups und wird mit einem Update der Edition ebenfalls aktualisiert; ein auf dem Rechner installiertes VLC hat keinen Einfluss.</li>
+</ul>
+<h3>Version</h3>
+<p>Die Version steht im Info-Dialog (<span class="path">Hilfe → Info über OpenLP</span>), z. B. <code>3.1.7 Build gemeinde.1</code>: 3.1.7 ist die zugrunde liegende OpenLP-Version, <code>gemeinde.1</code> die Ausgabe der Gemeinde-Edition.</p>
+
+<h2 class="page-break">13. Technischer Anhang</h2>
 <table>
   <tr><th style="width:30%">Punkt</th><th>Details</th></tr>
   <tr><td>Grundlage</td><td>OpenLP 3.1.7 (Python, PyQt5, QtWebEngine)</td></tr>
+  <tr><td>Version</td><td>3.1.7+gemeinde.1 (OpenLP Gemeinde-Edition)</td></tr>
+  <tr><td>Quellcode</td><td><a href="https://github.com/SlavaSchmick/OpenLP-Gemeinde-Edition">github.com/SlavaSchmick/OpenLP-Gemeinde-Edition</a> – das offizielle OpenLP 3.1.7 als Basis (Tag <code>openlp-3.1.7</code>), die Änderungen als eigene Commits</td></tr>
   <tr><td>Paket</td><td>PyInstaller (Programmordner) und Inno Setup 6; enthält VLC 3.0.24 (64 Bit) und alle Bibliotheken</td></tr>
   <tr><td>Installationsort</td><td><code>C:\Program Files\OpenLP</code></td></tr>
   <tr><td>Benutzerdaten</td><td><code>%APPDATA%\openlp</code> (Lieder, Bibeln, Abläufe, Designs, Einstellungen)</td></tr>
   <tr><td>Systemvoraussetzung</td><td>Windows 10 oder 11, 64 Bit</td></tr>
   <tr><td>Live-Video</td><td>Kamerazugriff über die Chromium-Engine (nur für OpenLP-eigene Seiten freigegeben); Windows-Kameraberechtigung für Desktop-Apps muss erlaubt sein</td></tr>
   <tr><td>Audio-Ausgabe</td><td>VLC über WASAPI; Gerät wird beim Laden jedes Mediums gesetzt</td></tr>
-  <tr><td>Qualitätssicherung</td><td>Automatische Tests: 2571 Python-Tests und 112 JavaScript-Tests; zusätzlich Prüfungen im laufenden Programm (Bibel- und Liedsuche, Tastatur-Workflow, Textgröße, ganze Verse mit Vergleichstext, PowerPoint-Präsentation, Live-Video, Audio, Sprachen)</td></tr>
+  <tr><td>Qualitätssicherung</td><td>Automatische Tests: 2604 Python-Tests und 112 JavaScript-Tests; zusätzlich Prüfungen im laufenden Programm (Bibel- und Liedsuche, Tastatur-Workflow, Textgröße, ganze Verse mit Vergleichstext, PowerPoint-Präsentation, Update über GitHub, Live-Video, Audio, Sprachen)</td></tr>
 </table>
 
 </body>

@@ -1,0 +1,46 @@
+# Änderungen der OpenLP Gemeinde-Edition
+
+Alle Versionen der Gemeinde-Edition, die neueste oben. Die Änderungen des offiziellen OpenLP stehen in `CHANGELOG.rst`.
+Downloads: [Releases](https://github.com/SlavaSchmick/OpenLP-Gemeinde-Edition/releases)
+
+## 3.1.7+gemeinde.2 – 14.10.2026
+
+### Neu
+
+- **Liedstatistik „Meistgesungene Lieder“** (*Extras → Protokollierung → Statistik anzeigen*): Tabelle aller gesungenen
+  Lieder mit Platz, Nummer und Anzahl, das meistgesungene oben. Zeitraum (letzte 4 Wochen, 3 Monate, 12 Monate, dieses
+  Jahr, gesamt, benutzerdefiniert), Liederbuch (D/R) und Suche (z. B. `d203`) wählbar; speichern als PDF oder CSV.
+  Ein Lied zählt pro Tag einmal.
+
+### Geändert
+
+- Die **Liedprotokollierung ist von Anfang an eingeschaltet**. Auf Rechnern, auf denen sie bisher aus war, wird sie beim
+  ersten Start nach dem Update einmalig eingeschaltet; danach bleibt die Wahl des Benutzers (F4) erhalten.
+
+## 3.1.7+gemeinde.1 – 14.10.2026
+
+Erste Ausgabe der Gemeinde-Edition, auf Grundlage von OpenLP 3.1.7.
+
+### Neu
+
+- **Live-Video:** neue Erweiterung für Kameras, HDMI-Capture und virtuelle Kameras (z. B. OBS) auf der Leinwand.
+- **Audio-Ausgabe** für Live und Vorschau getrennt wählbar, z. B. Dante Via.
+- **Bibel:** ganzes Kapitel ab dem gesuchten Vers, tolerante Eingabe (deutsch, russisch, ukrainisch), Enter = Vorschau,
+  Umschalt+Enter = live mit Fokus in der Live-Liste, Strg+B; ein Vers steht immer ganz auf einer Folie, auch mit
+  Vergleichstext.
+- **Lieder:** Suche beim Tippen, Kennungen wie `r47`/`d203` mit exaktem Treffer oben, Enter/Umschalt+Enter, Strg+L.
+- **Automatische Textgröße:** größte passende Schrift je Folie innerhalb einer Spanne im Design; Liedzeilen werden nicht
+  umbrochen.
+- **Sprachen:** Ukrainisch neu, Russisch vervollständigt.
+- **Liederbücher** Deutsch (1310) und Russisch (800), bereinigt und im OpenLP-Format.
+- **Updates** aus diesem GitHub-Repository statt von openlp.org; Download mit Prüfsumme und automatischer Installation.
+- **Windows-Setup** mit VLC; ersetzt ein vorhandenes offizielles OpenLP.
+
+### Behoben
+
+- PowerPoint-Präsentationen lassen sich mit Microsoft 365 (Click-to-Run) öffnen.
+- Leere Bibeln aus fehlgeschlagenen Importen werden aufgeräumt.
+
+### Geändert
+
+- Name „OpenLP Gemeinde-Edition“ im Fenstertitel und Hinweis auf die modifizierte Version im Info-Dialog.

@@ -24,6 +24,9 @@ Die ausführliche Beschreibung aller Ergänzungen für Anwender steht in
 
 ## Ergänzungen und Änderungen im Überblick
 
+Was sich von Version zu Version geändert hat, steht in
+[`CHANGELOG-Gemeinde-Edition.md`](CHANGELOG-Gemeinde-Edition.md).
+
 - **Live-Video:** neue Erweiterung, zeigt Kameras, HDMI-Capture und virtuelle Kameras (z. B. OBS) auf der Leinwand
   (`openlp/plugins/livevideo`).
 - **Audio-Ausgabe:** Ton von Videos getrennt für Live und Vorschau auf ein Gerät legen, z. B. Dante Via.
@@ -78,6 +81,7 @@ bieten es zum Herunterladen und Installieren an. Dafür muss in `openlp/core/edi
 sein (`EDITION_REPOSITORY = 'besitzer/name'`) und das Repository öffentlich sein.
 
 1. Version in `openlp/.version` erhöhen, z. B. `3.1.7+gemeinde.2`.
+   Die Änderungen in `CHANGELOG-Gemeinde-Edition.md` eintragen.
 2. Tests laufen lassen und das Setup bauen (siehe oben).
 3. Committen, taggen und hochladen:
    ```powershell

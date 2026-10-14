@@ -12758,56 +12758,24 @@ Jetzt herunterladen und installieren? OpenLP wird dafür beendet; Lieder, Bibeln
 <context>
     <name>SongUsagePlugin.SongUsageStatisticsForm</name>
     <message>
-        <source>Song Statistics</source>
-        <translation>Liedstatistik</translation>
+        <source>Most Sung Songs</source>
+        <translation>Meistgesungene Lieder</translation>
     </message>
     <message>
-        <source>Save as &amp;PDF...</source>
-        <translation>Als &amp;PDF speichern...</translation>
+        <source>&amp;Period:</source>
+        <translation>&amp;Zeitraum:</translation>
     </message>
     <message>
-        <source>Save as &amp;Web Page...</source>
-        <translation>Als &amp;Webseite speichern...</translation>
+        <source>Last 4 weeks</source>
+        <translation>Letzte 4 Wochen</translation>
     </message>
     <message>
-        <source>song_statistics</source>
-        <translation>Liedstatistik</translation>
+        <source>Last 3 months</source>
+        <translation>Letzte 3 Monate</translation>
     </message>
     <message>
-        <source>Save as PDF</source>
-        <translation>Als PDF speichern</translation>
-    </message>
-    <message>
-        <source>PDF files</source>
-        <translation>PDF-Dateien</translation>
-    </message>
-    <message>
-        <source>Save as Web Page</source>
-        <translation>Als Webseite speichern</translation>
-    </message>
-    <message>
-        <source>Web pages</source>
-        <translation>Webseiten</translation>
-    </message>
-    <message>
-        <source>Saving Failed</source>
-        <translation>Speichern fehlgeschlagen</translation>
-    </message>
-    <message>
-        <source>The statistics could not be saved as {file}.</source>
-        <translation>Die Statistik konnte nicht als {file} gespeichert werden.</translation>
-    </message>
-    <message>
-        <source>4 weeks</source>
-        <translation>4 Wochen</translation>
-    </message>
-    <message>
-        <source>3 months</source>
-        <translation>3 Monate</translation>
-    </message>
-    <message>
-        <source>12 months</source>
-        <translation>12 Monate</translation>
+        <source>Last 12 months</source>
+        <translation>Letzte 12 Monate</translation>
     </message>
     <message>
         <source>This year</source>
@@ -12818,52 +12786,92 @@ Jetzt herunterladen und installieren? OpenLP wird dafür beendet; Lieder, Bibeln
         <translation>Gesamt</translation>
     </message>
     <message>
-        <source>Period</source>
-        <translation>Zeitraum</translation>
+        <source>Custom</source>
+        <translation>Benutzerdefiniert</translation>
     </message>
     <message>
-        <source>All songbooks</source>
-        <translation>Alle Liederbücher</translation>
+        <source>to</source>
+        <translation>bis</translation>
+    </message>
+    <message>
+        <source>Song&amp;book:</source>
+        <translation>&amp;Liederbuch:</translation>
     </message>
     <message>
         <source>Search song or number, e.g. d203</source>
         <translation>Lied oder Nummer suchen, z. B. d203</translation>
     </message>
     <message>
-        <source>Most sung songs</source>
-        <translation>Meistgesungene Lieder</translation>
+        <source>Rank</source>
+        <translation>Platz</translation>
     </message>
     <message>
-        <source>No songs in this period.</source>
-        <translation>Keine Lieder in diesem Zeitraum.</translation>
+        <source>No.</source>
+        <translation>Nr.</translation>
     </message>
     <message>
         <source>Song</source>
         <translation>Lied</translation>
     </message>
     <message>
-        <source>Times sung</source>
+        <source>Times Sung</source>
         <translation>Wie oft</translation>
     </message>
     <message>
-        <source>{from} to {to}</source>
-        <translation>{from} bis {to}</translation>
+        <source>Save as &amp;PDF...</source>
+        <translation>Als &amp;PDF speichern...</translation>
+    </message>
+    <message>
+        <source>Save as &amp;CSV...</source>
+        <translation>Als &amp;CSV speichern...</translation>
+    </message>
+    <message>
+        <source>All songbooks</source>
+        <translation>Alle Liederbücher</translation>
+    </message>
+    <message>
+        <source>No songs have been sung yet. Every song which is shown live is counted.</source>
+        <translation>Noch keine Lieder gesungen. Jedes Lied, das live gezeigt wird, wird gezählt.</translation>
+    </message>
+    <message>
+        <source>No songs in this period.</source>
+        <translation>Keine Lieder in diesem Zeitraum.</translation>
     </message>
     <message>
         <source>Songbook {book}</source>
         <translation>Liederbuch {book}</translation>
     </message>
     <message>
-        <source>Search: {query}</source>
-        <translation>Suche: {query}</translation>
+        <source>Search: {search}</source>
+        <translation>Suche: {search}</translation>
     </message>
     <message>
-        <source>No songs have been sung yet</source>
-        <translation>Noch keine Lieder gesungen</translation>
+        <source>most_sung_songs</source>
+        <translation>Meistgesungene_Lieder</translation>
     </message>
     <message>
-        <source>Every song which is shown live is counted.</source>
-        <translation>Jedes Lied, das live gezeigt wird, wird gezählt.</translation>
+        <source>Saving Failed</source>
+        <translation>Speichern fehlgeschlagen</translation>
+    </message>
+    <message>
+        <source>The list could not be saved as {file}.</source>
+        <translation>Die Liste konnte nicht als {file} gespeichert werden.</translation>
+    </message>
+    <message>
+        <source>Save as PDF</source>
+        <translation>Als PDF speichern</translation>
+    </message>
+    <message>
+        <source>PDF files</source>
+        <translation>PDF-Dateien</translation>
+    </message>
+    <message>
+        <source>Save as CSV</source>
+        <translation>Als CSV speichern</translation>
+    </message>
+    <message>
+        <source>CSV files</source>
+        <translation>CSV-Dateien</translation>
     </message>
 </context>
 </TS>

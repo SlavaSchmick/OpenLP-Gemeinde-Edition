@@ -33,7 +33,7 @@ Die ausführliche Beschreibung aller Ergänzungen für Anwender steht in
 - **Lieder:** Suche während der Eingabe, Kennungen wie `r47` / `d203` mit exaktem Treffer oben,
   Enter / Umschalt+Enter, Strg+L.
 - **Liedstatistik:** Rangliste der meistgesungenen Lieder (Zeitraum, Liederbuch, Suche), speicherbar als PDF oder
-  Webseite; die Liedprotokollierung ist von Anfang an eingeschaltet.
+  CSV; die Liedprotokollierung ist von Anfang an eingeschaltet.
 - **Automatische Textgröße:** größte passende Schrift je Folie innerhalb einer Spanne im Design; Liedzeilen werden
   nicht umbrochen, Bibelverse immer ganz gezeigt.
 - **Präsentationen:** PowerPoint funktioniert auch mit Microsoft 365 (Click-to-Run).

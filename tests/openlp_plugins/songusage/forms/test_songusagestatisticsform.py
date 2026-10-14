@@ -19,132 +19,133 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>. #
 ##########################################################################
 """
-Test the song usage statistics window in openlp.plugins.songusage.forms.songusagestatisticsform
+Test the song statistics window in openlp.plugins.songusage.forms.songusagestatisticsform
 """
-import json
-import re
-from datetime import date, time
-from pathlib import Path
+from datetime import date, time, timedelta
 from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
 import pytest
-from PyQt5 import QtWidgets
+from PyQt5 import QtCore
 
 from openlp.plugins.songusage.forms import songusagestatisticsform
-from openlp.plugins.songusage.forms.songusagestatisticsform import SongUsageStatisticsForm, statistics_texts
+from openlp.plugins.songusage.forms.songusagestatisticsform import SongUsageStatisticsForm
+from openlp.plugins.songusage.lib.statistics import Period
 
-PLUGINS_DIR = Path(songusagestatisticsform.__file__).parents[2]
-PAGE_PATH = PLUGINS_DIR / 'songusage' / 'html' / 'statistics.html'
+TODAY = date.today()
 
 
-class FakeWebView(QtWidgets.QWidget):
-    """
-    A web view which records what it shows, as the browser engine isn't needed for these tests
-    """
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.setHtml = MagicMock()
-        self.setUrl = MagicMock()
-        self.page = MagicMock()
+def usage(days_ago, title):
+    return SimpleNamespace(usagedate=TODAY - timedelta(days=days_ago), usagetime=time(10), title=title, authors='')
 
 
 @pytest.fixture
 def form(settings):
     plugin = MagicMock()
     plugin.manager.get_all_objects.return_value = [
-        SimpleNamespace(usagedate=date(2026, 10, 4), usagetime=time(10), title='D0203 Großer Gott', authors='A'),
-        SimpleNamespace(usagedate=date(2026, 10, 11), usagetime=time(10), title='R047_Тебе поём', authors='B')]
-    with patch.object(songusagestatisticsform.QtWebEngineWidgets, 'QWebEngineView', FakeWebView), \
-            patch.object(songusagestatisticsform.AppLocation, 'get_directory', return_value=PLUGINS_DIR):
-        statistics_form = SongUsageStatisticsForm(plugin, None)
-        yield statistics_form
+        usage(400, 'D0001 Großer Gott'), usage(14, 'D0001 Großer Gott'), usage(14, 'R047_Тебе поём'),
+        usage(7, 'D0001 Großer Gott'), usage(7, 'D0005 Nun danket'), usage(0, 'R047_Тебе поём')]
+    statistics_form = SongUsageStatisticsForm(plugin, None)
+    statistics_form.load_statistics()
+    yield statistics_form
     statistics_form.close()
 
 
-def page_value(page, name):
-    return json.loads(re.search(r'var {name} = (.*);'.format(name=name), page).group(1))
+def table(form):
+    return [[form.song_table.item(row, column).text() for column in range(4)]
+            for row in range(form.song_table.rowCount())]
 
 
-def test_page_texts_are_translated():
+def test_most_sung_songs(form):
     """
-    Test that every text of the statistics page is in the translated texts
+    Test that the songs of the last 12 months are shown, the most sung first
     """
-    # GIVEN: The statistics page
-    page = PAGE_PATH.read_text(encoding='utf-8')
+    # GIVEN: The statistics window with song usage
+    # WHEN: It is shown
+    # THEN: The songs of the last 12 months are listed by how often they were sung
+    assert form.period_combo_box.currentIndex() == Period.TwelveMonths
+    assert table(form) == [['1.', 'D1', 'Großer Gott', '2'], ['1.', 'R47', 'Тебе поём', '2'],
+                           ['3.', 'D5', 'Nun danket', '1']]
+    assert [form.book_combo_box.itemData(index) for index in range(form.book_combo_box.count())] == ['', 'D', 'R']
+    assert form.pdf_button.isEnabled() and form.csv_button.isEnabled()
 
-    # WHEN: The texts of the page are collected, also those which are split over several lines
-    calls = re.findall(r"\bt\(((?:'[^']*'\s*\+\s*)*'[^']*')", page)
-    texts = {''.join(re.findall(r"'([^']*)'", call)) for call in calls}
 
-    # THEN: All of them are translated, and there are no unused translations
-    assert texts == set(statistics_texts())
-
-
-def test_load_statistics(form):
+def test_filters(form):
     """
-    Test that the statistics window shows the song usage
+    Test that the period, the song book and the search filter the songs
     """
-    # GIVEN: The statistics window, with song usage in the database
-    # WHEN: The statistics are loaded
-    with patch.object(songusagestatisticsform.LanguageManager, 'get_language', return_value='en_GB'):
-        form.load_statistics()
+    # GIVEN: The statistics window with song usage
+    # WHEN: All song usage is selected
+    form.period_combo_box.setCurrentIndex(Period.All)
 
-    # THEN: The page is shown with the data, the texts and the settings
-    page = form.web_view.setHtml.call_args[0][0]
-    assert page_value(page, 'DATA')['events'] == [['2026-10-04', 0], ['2026-10-11', 1]]
-    assert page_value(page, 'TEXTS')['Most sung songs'] == 'Most sung songs'
-    settings = page_value(page, 'SETTINGS')
-    assert settings['language'] == 'en-GB'
-    assert settings['today'] == date.today().isoformat()
-    form.web_view.setUrl.assert_not_called()
+    # THEN: The older song usage is counted too
+    assert table(form)[0] == ['1.', 'D1', 'Großer Gott', '3']
+    assert form.from_date_edit.date().toPyDate() == TODAY - timedelta(days=400)
+
+    # WHEN: Only song book R is selected, and then a song is searched in all song books
+    form.book_combo_box.setCurrentIndex(form.book_combo_box.findData('R'))
+    assert [row[1] for row in table(form)] == ['R47']
+    form.book_combo_box.setCurrentIndex(0)
+    form.search_edit.setText('d5')
+
+    # THEN: Only the matching songs are listed
+    assert [row[1] for row in table(form)] == ['D5']
 
 
-def test_load_large_statistics(form, tmp_path):
+def test_changed_day_makes_a_custom_period(form):
     """
-    Test that a large page is shown from a file, as it is too large to be shown directly
+    Test that changing a day selects a custom period
     """
-    # GIVEN: The statistics window, with a small limit for the page size
-    # WHEN: The statistics are loaded
-    with patch.object(songusagestatisticsform, 'MAX_HTML_SIZE', 100), \
-            patch.object(songusagestatisticsform.AppLocation, 'get_section_data_path', return_value=tmp_path):
-        form.load_statistics()
+    # GIVEN: The statistics window with song usage
+    # WHEN: The first day is changed to the last week
+    form.from_date_edit.setDate(QtCore.QDate(TODAY - timedelta(days=7)))
 
-    # THEN: The page is shown from a file
-    form.web_view.setHtml.assert_not_called()
-    assert (tmp_path / 'statistics.html').read_text(encoding='utf-8') == form.page_html
-    form.web_view.setUrl.assert_called_once()
+    # THEN: The period is custom, and only its songs are listed
+    assert form.period_combo_box.currentIndex() == Period.Custom
+    assert [row[1] for row in table(form)] == ['D1', 'D5', 'R47']
 
 
-def test_save_html(form, tmp_path):
+def test_no_songs(form):
     """
-    Test that the statistics are saved as a web page with light colours
+    Test that a message is shown instead of an empty list
     """
-    # GIVEN: The statistics window with its statistics
-    form.load_statistics()
+    # GIVEN: The statistics window with song usage
+    form.show()
 
-    # WHEN: The statistics are saved
-    with patch.object(songusagestatisticsform.FileDialog, 'getSaveFileName',
-                      return_value=(tmp_path / 'statistik', '')):
-        form.on_save_html()
+    # WHEN: A song which wasn't sung is searched
+    form.search_edit.setText('d999')
 
-    # THEN: The page is saved, with the html suffix, in light colours
-    page = (tmp_path / 'statistik.html').read_text(encoding='utf-8')
-    assert page_value(page, 'DATA')['songs'][1]['name'] == 'Тебе поём'
-    assert page_value(page, 'SETTINGS')['dark'] is False
+    # THEN: The message is shown instead of the list, and nothing can be saved
+    assert form.song_table.isHidden()
+    assert form.empty_label.isVisible()
+    assert not form.pdf_button.isEnabled()
+
+
+def test_save_csv(form, tmp_path):
+    """
+    Test that the list is saved as a CSV file for spreadsheets
+    """
+    # GIVEN: The statistics window with song usage
+    # WHEN: The list is saved without a suffix
+    with patch.object(songusagestatisticsform.FileDialog, 'getSaveFileName', return_value=(tmp_path / 'liste', '')):
+        form.on_save_csv()
+
+    # THEN: The file has the list, and the folder is remembered
+    text = (tmp_path / 'liste.csv').read_text(encoding='utf-8-sig')
+    assert text.splitlines() == ['Rank;No.;Song;Times Sung', '1;D1;Großer Gott;2', '1;R47;Тебе поём;2',
+                                 '3;D5;Nun danket;1']
     assert form.settings.value('songusage/last directory export') == tmp_path
 
 
-def test_save_html_cancelled(form, tmp_path):
+def test_save_cancelled(form, tmp_path):
     """
     Test that nothing is saved when the file dialog is cancelled
     """
-    # GIVEN: The statistics window with its statistics
-    form.load_statistics()
-
+    # GIVEN: The statistics window with song usage
     # WHEN: Saving is cancelled
     with patch.object(songusagestatisticsform.FileDialog, 'getSaveFileName', return_value=(None, '')):
-        form.on_save_html()
+        form.on_save_csv()
+        form.on_save_pdf()
 
     # THEN: Nothing is saved
     assert list(tmp_path.iterdir()) == []
@@ -152,29 +153,30 @@ def test_save_html_cancelled(form, tmp_path):
 
 def test_save_pdf(form, tmp_path):
     """
-    Test that the statistics are printed to a PDF
+    Test that the list is saved as a PDF
     """
-    # GIVEN: The statistics window with its statistics
-    form.load_statistics()
-
-    # WHEN: The statistics are saved as a PDF
+    # GIVEN: The statistics window with song usage
+    # WHEN: The list is saved as a PDF
     with patch.object(songusagestatisticsform.FileDialog, 'getSaveFileName',
-                      return_value=(tmp_path / 'statistik.pdf', '')):
+                      return_value=(tmp_path / 'liste.pdf', '')):
         form.on_save_pdf()
 
-    # THEN: The page is printed to the file
-    form.web_view.page().printToPdf.assert_called_once_with(str(tmp_path / 'statistik.pdf'))
+    # THEN: The PDF is written, with the songs in the document
+    assert (tmp_path / 'liste.pdf').read_bytes()[:4] == b'%PDF'
+    assert 'Тебе поём' in form.statistics_html()
+    assert '<td>D5</td><td>Nun danket</td>' in form.statistics_html()
 
 
 @patch.object(songusagestatisticsform, 'critical_error_message_box')
-def test_save_pdf_failed(mocked_message_box, form):
+def test_save_csv_failed(mocked_message_box, form, tmp_path):
     """
-    Test that a failed PDF is reported
+    Test that a failed saving is reported
     """
-    # GIVEN: The statistics window
-    # WHEN: Printing the PDF failed
-    form._on_pdf_finished('C:/statistik.pdf', False)
+    # GIVEN: The statistics window, and a folder which doesn't exist
+    # WHEN: The list is saved there
+    with patch.object(songusagestatisticsform.FileDialog, 'getSaveFileName',
+                      return_value=(tmp_path / 'missing' / 'liste.csv', '')):
+        form.on_save_csv()
 
     # THEN: The error is shown
     mocked_message_box.assert_called_once()
-    assert 'C:/statistik.pdf' in mocked_message_box.call_args[0][1]

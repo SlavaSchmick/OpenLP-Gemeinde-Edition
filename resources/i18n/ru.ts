@@ -12763,56 +12763,24 @@ Download and install it now? OpenLP will be closed for this; your songs, Bibles,
 <context>
     <name>SongUsagePlugin.SongUsageStatisticsForm</name>
     <message>
-        <source>Song Statistics</source>
-        <translation>Статистика песен</translation>
+        <source>Most Sung Songs</source>
+        <translation>Самые исполняемые песни</translation>
     </message>
     <message>
-        <source>Save as &amp;PDF...</source>
-        <translation>Сохранить как &amp;PDF...</translation>
+        <source>&amp;Period:</source>
+        <translation>&amp;Период:</translation>
     </message>
     <message>
-        <source>Save as &amp;Web Page...</source>
-        <translation>Сохранить как &amp;веб-страницу...</translation>
+        <source>Last 4 weeks</source>
+        <translation>Последние 4 недели</translation>
     </message>
     <message>
-        <source>song_statistics</source>
-        <translation>статистика_песен</translation>
+        <source>Last 3 months</source>
+        <translation>Последние 3 месяца</translation>
     </message>
     <message>
-        <source>Save as PDF</source>
-        <translation>Сохранить как PDF</translation>
-    </message>
-    <message>
-        <source>PDF files</source>
-        <translation>Файлы PDF</translation>
-    </message>
-    <message>
-        <source>Save as Web Page</source>
-        <translation>Сохранить как веб-страницу</translation>
-    </message>
-    <message>
-        <source>Web pages</source>
-        <translation>Веб-страницы</translation>
-    </message>
-    <message>
-        <source>Saving Failed</source>
-        <translation>Не удалось сохранить</translation>
-    </message>
-    <message>
-        <source>The statistics could not be saved as {file}.</source>
-        <translation>Не удалось сохранить статистику в файл {file}.</translation>
-    </message>
-    <message>
-        <source>4 weeks</source>
-        <translation>4 недели</translation>
-    </message>
-    <message>
-        <source>3 months</source>
-        <translation>3 месяца</translation>
-    </message>
-    <message>
-        <source>12 months</source>
-        <translation>12 месяцев</translation>
+        <source>Last 12 months</source>
+        <translation>Последние 12 месяцев</translation>
     </message>
     <message>
         <source>This year</source>
@@ -12823,52 +12791,92 @@ Download and install it now? OpenLP will be closed for this; your songs, Bibles,
         <translation>Всё время</translation>
     </message>
     <message>
-        <source>Period</source>
-        <translation>Период</translation>
+        <source>Custom</source>
+        <translation>Произвольный</translation>
     </message>
     <message>
-        <source>All songbooks</source>
-        <translation>Все сборники</translation>
+        <source>to</source>
+        <translation>по</translation>
+    </message>
+    <message>
+        <source>Song&amp;book:</source>
+        <translation>&amp;Сборник:</translation>
     </message>
     <message>
         <source>Search song or number, e.g. d203</source>
         <translation>Поиск песни или номера, напр. r47</translation>
     </message>
     <message>
-        <source>Most sung songs</source>
-        <translation>Самые исполняемые песни</translation>
+        <source>Rank</source>
+        <translation>Место</translation>
     </message>
     <message>
-        <source>No songs in this period.</source>
-        <translation>В этом периоде песен нет.</translation>
+        <source>No.</source>
+        <translation>№</translation>
     </message>
     <message>
         <source>Song</source>
         <translation>Песня</translation>
     </message>
     <message>
-        <source>Times sung</source>
+        <source>Times Sung</source>
         <translation>Сколько раз</translation>
     </message>
     <message>
-        <source>{from} to {to}</source>
-        <translation>с {from} по {to}</translation>
+        <source>Save as &amp;PDF...</source>
+        <translation>Сохранить как &amp;PDF...</translation>
+    </message>
+    <message>
+        <source>Save as &amp;CSV...</source>
+        <translation>Сохранить как &amp;CSV...</translation>
+    </message>
+    <message>
+        <source>All songbooks</source>
+        <translation>Все сборники</translation>
+    </message>
+    <message>
+        <source>No songs have been sung yet. Every song which is shown live is counted.</source>
+        <translation>Песни ещё не исполнялись. Учитывается каждая песня, показанная в прямом эфире.</translation>
+    </message>
+    <message>
+        <source>No songs in this period.</source>
+        <translation>В этом периоде песен нет.</translation>
     </message>
     <message>
         <source>Songbook {book}</source>
         <translation>Сборник {book}</translation>
     </message>
     <message>
-        <source>Search: {query}</source>
-        <translation>Поиск: {query}</translation>
+        <source>Search: {search}</source>
+        <translation>Поиск: {search}</translation>
     </message>
     <message>
-        <source>No songs have been sung yet</source>
-        <translation>Песни ещё не исполнялись</translation>
+        <source>most_sung_songs</source>
+        <translation>самые_исполняемые_песни</translation>
     </message>
     <message>
-        <source>Every song which is shown live is counted.</source>
-        <translation>Учитывается каждая песня, показанная в прямом эфире.</translation>
+        <source>Saving Failed</source>
+        <translation>Не удалось сохранить</translation>
+    </message>
+    <message>
+        <source>The list could not be saved as {file}.</source>
+        <translation>Не удалось сохранить список в файл {file}.</translation>
+    </message>
+    <message>
+        <source>Save as PDF</source>
+        <translation>Сохранить как PDF</translation>
+    </message>
+    <message>
+        <source>PDF files</source>
+        <translation>Файлы PDF</translation>
+    </message>
+    <message>
+        <source>Save as CSV</source>
+        <translation>Сохранить как CSV</translation>
+    </message>
+    <message>
+        <source>CSV files</source>
+        <translation>Файлы CSV</translation>
     </message>
 </context>
 </TS>

@@ -6,7 +6,18 @@ unterstützt werden. Wie OpenLP steht sie unter der GNU General Public License V
 Die englische Original-Beschreibung von OpenLP steht in `README.rst`.
 
 Repository, Quellcode und Updates: <https://github.com/SlavaSchmick/OpenLP-Gemeinde-Edition>
-(Downloads unter [Releases](https://github.com/SlavaSchmick/OpenLP-Gemeinde-Edition/releases)).
+
+## Download und Installation
+
+Unter [Releases](https://github.com/SlavaSchmick/OpenLP-Gemeinde-Edition/releases/latest) beim neuesten Release
+unter *Assets*:
+
+- **`OpenLP-Gemeinde-Edition-…-Setup-x64.exe`** – das Setup (Windows 10/11, 64 Bit, VLC enthalten). Ein vorhandenes
+  OpenLP wird ersetzt; Lieder, Bibeln, Designs und Einstellungen bleiben erhalten.
+- **`OpenLP-Gemeinde-Edition-Liederbuecher.zip`** – die Liederbücher Deutsch (1310 Lieder) und Russisch (800 Lieder).
+  Entpacken, dann in OpenLP *Datei → Importieren → Lied → „OpenLyrics oder OpenLP 2 exportierte Lieder“*, mit
+  *Hinzufügen...* alle Dateien der Ordner `Deutsch` und `Russisch` wählen (Strg+A). Nur einmal importieren.
+  Danach findet die Liedsuche die Lieder z. B. mit `d203` oder `r47`.
 
 Die ausführliche Beschreibung aller Ergänzungen für Anwender steht in
 [`documentation/gemeinde-edition/dokumentation.html`](documentation/gemeinde-edition/dokumentation.html).
@@ -73,7 +84,8 @@ sein (`EDITION_REPOSITORY = 'besitzer/name'`) und das Repository öffentlich sei
    git push origin main --tags
    ```
 4. Auf GitHub unter **Releases → Draft a new release** den Tag `v3.1.7+gemeinde.2` wählen, die Setup-Datei
-   (`…-Setup-x64.exe`) als Datei anhängen und **veröffentlichen** – nicht als Entwurf und nicht als Vorabversion,
+   (`…-Setup-x64.exe`) und die Liederbücher (`OpenLP-Gemeinde-Edition-Liederbuecher.zip`, aus `sources/OpenLP`)
+   als Dateien anhängen und **veröffentlichen** – nicht als Entwurf und nicht als Vorabversion,
    sonst wird es nicht als Update angeboten.
 
 Die Versionen werden so verglichen: `3.1.7+gemeinde.2` ist neuer als `3.1.7+gemeinde.1`, und `3.1.8+gemeinde.1` ist

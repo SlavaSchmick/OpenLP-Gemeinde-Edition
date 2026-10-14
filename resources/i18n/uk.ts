@@ -12800,10 +12800,6 @@ Download and install it now? OpenLP will be closed for this; your songs, Bibles,
         <translation>Не вдалося зберегти статистику у файл {file}.</translation>
     </message>
     <message>
-        <source>Song statistics</source>
-        <translation>Статистика пісень</translation>
-    </message>
-    <message>
         <source>4 weeks</source>
         <translation>4 тижні</translation>
     </message>
@@ -12836,60 +12832,8 @@ Download and install it now? OpenLP will be closed for this; your songs, Bibles,
         <translation>Пошук пісні або номера, напр. r47</translation>
     </message>
     <message>
-        <source>Days with songs</source>
-        <translation>Дні з піснями</translation>
-    </message>
-    <message>
-        <source>Songs sung</source>
-        <translation>Виконано пісень</translation>
-    </message>
-    <message>
-        <source>Different songs</source>
-        <translation>Різних пісень</translation>
-    </message>
-    <message>
-        <source>Songs per day</source>
-        <translation>Пісні за днями</translation>
-    </message>
-    <message>
-        <source>Songbooks</source>
-        <translation>Збірники</translation>
-    </message>
-    <message>
-        <source>Other</source>
-        <translation>Інші</translation>
-    </message>
-    <message>
-        <source>W{week}</source>
-        <translation>Т{week}</translation>
-    </message>
-    <message>
-        <source>Week of {date}</source>
-        <translation>Тиждень з {date}</translation>
-    </message>
-    <message>
-        <source>{songs} songs on {days} days</source>
-        <translation>пісень: {songs}, днів: {days}</translation>
-    </message>
-    <message>
-        <source>Songs per week</source>
-        <translation>Пісні за тижнями</translation>
-    </message>
-    <message>
-        <source>Songs per month</source>
-        <translation>Пісні за місяцями</translation>
-    </message>
-    <message>
-        <source>Show less</source>
-        <translation>Показати менше</translation>
-    </message>
-    <message>
-        <source>Show all ({count})</source>
-        <translation>Показати всі ({count})</translation>
-    </message>
-    <message>
         <source>Most sung songs</source>
-        <translation>Найчастіше виконувані</translation>
+        <translation>Найчастіше виконувані пісні</translation>
     </message>
     <message>
         <source>No songs in this period.</source>
@@ -12904,26 +12848,6 @@ Download and install it now? OpenLP will be closed for this; your songs, Bibles,
         <translation>Скільки разів</translation>
     </message>
     <message>
-        <source>Last sung</source>
-        <translation>Останній раз</translation>
-    </message>
-    <message>
-        <source>Not sung in this period</source>
-        <translation>Не виконувались у цьому періоді</translation>
-    </message>
-    <message>
-        <source>{days} days ago</source>
-        <translation>{days} дн. тому</translation>
-    </message>
-    <message>
-        <source>No song usage recorded yet</source>
-        <translation>Виконання пісень ще не записано</translation>
-    </message>
-    <message>
-        <source>Turn on song usage tracking: Tools → Song Usage Tracking → Toggle Tracking. From then on, every song which is shown live is recorded.</source>
-        <translation>Увімкніть запис: Інструменти → Відстеження використання пісень → Перемкнути відстеження (або F4). Після цього записується кожна пісня, показана в прямому ефірі.</translation>
-    </message>
-    <message>
         <source>{from} to {to}</source>
         <translation>з {from} по {to}</translation>
     </message>
@@ -12936,8 +12860,12 @@ Download and install it now? OpenLP will be closed for this; your songs, Bibles,
         <translation>Пошук: {query}</translation>
     </message>
     <message>
-        <source>A song which is shown several times on a day counts once on that day. Click on a song to see the days it was sung.</source>
-        <translation>Пісня, показана за день кілька разів, рахується в цей день один раз. Натисніть на пісню, щоб побачити дні, коли її виконували.</translation>
+        <source>No songs have been sung yet</source>
+        <translation>Пісні ще не виконувались</translation>
+    </message>
+    <message>
+        <source>Every song which is shown live is counted.</source>
+        <translation>Враховується кожна пісня, показана в прямому ефірі.</translation>
     </message>
 </context>
 </TS>

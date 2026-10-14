@@ -27,8 +27,9 @@ from unittest.mock import patch
 import pytest
 
 from openlp.core import edition
-from openlp.core.edition import EditionRelease, edition_title, is_newer_release, parse_edition_version, \
-    parse_latest_release
+from openlp.core.common.enum import PluginStatus
+from openlp.core.edition import EditionRelease, apply_edition_defaults, edition_title, is_newer_release, \
+    parse_edition_version, parse_latest_release
 
 
 def test_edition_title():
@@ -124,3 +125,46 @@ def test_parse_latest_release_ignores(data):
     Test that releases without a version, drafts and pre-releases are not updates
     """
     assert parse_latest_release(data) is None
+
+
+def test_song_usage_is_on_by_default(settings):
+    """
+    Test that the song usage is recorded by default, for the song statistics
+    """
+    # GIVEN: New settings
+    # WHEN: The song usage settings are read
+    # THEN: The song usage plugin and its recording are on
+    assert settings.value('songusage/status') == PluginStatus.Active
+    assert settings.value('songusage/active') is True
+
+
+def test_apply_edition_defaults(settings):
+    """
+    Test that the defaults of the edition are applied once to existing settings
+    """
+    # GIVEN: Existing settings with the song usage turned off
+    settings.setValue('songusage/status', PluginStatus.Inactive)
+    settings.setValue('songusage/active', False)
+
+    # WHEN: The defaults of the edition are applied
+    apply_edition_defaults(settings)
+
+    # THEN: The song usage is turned on, and this is remembered
+    assert settings.value('songusage/status') == PluginStatus.Active
+    assert settings.value('songusage/active') is True
+    assert settings.value('core/edition defaults') == edition.EDITION_DEFAULTS_VERSION
+
+
+def test_apply_edition_defaults_only_once(settings):
+    """
+    Test that the defaults of the edition are applied only once, so that the user can change them afterwards
+    """
+    # GIVEN: Settings to which the defaults were applied, and the song usage was turned off afterwards
+    apply_edition_defaults(settings)
+    settings.setValue('songusage/active', False)
+
+    # WHEN: The defaults of the edition are applied again (at the next start)
+    apply_edition_defaults(settings)
+
+    # THEN: The choice of the user is kept
+    assert settings.value('songusage/active') is False

@@ -19,8 +19,8 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>. #
 ##########################################################################
 """
-The song usage statistics: a window with the most sung songs, the songs per week or month, the songs per day and the
-songs which weren't sung for a while. It can be saved as a PDF or as a web page.
+The song usage statistics: a window with the songs which were sung in a period, the most sung first. It can be saved as
+a PDF or as a web page.
 """
 import logging
 from datetime import date
@@ -51,16 +51,10 @@ def statistics_texts():
         return translate('SongUsagePlugin.SongUsageStatisticsForm', source)
 
     sources = [
-        'Song statistics', '4 weeks', '3 months', '12 months', 'This year', 'All', 'Period', 'All songbooks',
-        'Search song or number, e.g. d203', 'Days with songs', 'Songs sung', 'Different songs', 'Songs per day',
-        'Songbooks', 'Other', 'W{week}', 'Week of {date}', '{songs} songs on {days} days', 'Songs per week',
-        'Songs per month', 'Show less', 'Show all ({count})', 'Most sung songs', 'No songs in this period.', 'Song',
-        'Times sung', 'Last sung', 'Not sung in this period', '{days} days ago', 'No song usage recorded yet',
-        'Turn on song usage tracking: Tools → Song Usage Tracking → Toggle Tracking. From then on, every song which '
-        'is shown live is recorded.',
-        '{from} to {to}', 'Songbook {book}', 'Search: {query}',
-        'A song which is shown several times on a day counts once on that day. Click on a song to see the days it '
-        'was sung.'
+        'Most sung songs', '4 weeks', '3 months', '12 months', 'This year', 'All', 'Period', 'All songbooks',
+        'Search song or number, e.g. d203', 'No songs in this period.', 'Song', 'Times sung',
+        'No songs have been sung yet', 'Every song which is shown live is counted.', '{from} to {to}',
+        'Songbook {book}', 'Search: {query}'
     ]
     return {source: text(source) for source in sources}
 

@@ -41,6 +41,33 @@ EDITION_NAME = 'Gemeinde-Edition'
 EDITION_REPOSITORY = 'SlavaSchmick/OpenLP-Gemeinde-Edition'
 
 
+# The version of the defaults of this edition which differ from OpenLP. Increase it when a default is added to
+# apply_edition_defaults(), so that it is applied once to existing settings.
+EDITION_DEFAULTS_VERSION = 1
+
+
+def apply_edition_defaults(settings):
+    """
+    Apply the defaults of this edition once to existing settings, e.g. after an update from OpenLP or an older edition.
+    New settings get them from the defaults of the settings.
+
+    :param openlp.core.common.settings.Settings settings: The settings
+    """
+    from openlp.core.common.enum import PluginStatus
+    try:
+        applied = int(settings.value('core/edition defaults') or 0)
+    except (TypeError, ValueError):
+        applied = 0
+    if applied >= EDITION_DEFAULTS_VERSION:
+        return
+    if applied < 1:
+        # The song usage is always recorded, for the song statistics
+        settings.setValue('songusage/status', PluginStatus.Active)
+        settings.setValue('songusage/active', True)
+    settings.setValue('core/edition defaults', EDITION_DEFAULTS_VERSION)
+    log.info('Applied the defaults of the edition (version {version})'.format(version=EDITION_DEFAULTS_VERSION))
+
+
 def edition_title():
     """
     The name of the program, e.g. for the title of the main window: "OpenLP Gemeinde-Edition"

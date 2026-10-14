@@ -5,19 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Song statistics</title>
 <!--
-  The song usage statistics of OpenLP. The data, the texts and the settings are put into this page by
-  openlp/plugins/songusage/lib/statistics.py (render_statistics_page). The page works without a network, also when it
-  is saved as a file.
+  The song usage statistics of OpenLP: the songs which were sung in a period, the most sung first. The data, the texts
+  and the settings are put into this page by openlp/plugins/songusage/lib/statistics.py (render_statistics_page). The
+  page works without a network, also when it is saved as a file.
 -->
 <style>
 :root {
   --bg: #f4f5f7; --card: #ffffff; --text: #1d2330; --muted: #6b7280; --line: #e3e6eb; --accent: #2f6fde;
-  --accent-soft: #e4ecfb; --bar: #4f86ea; --bar-soft: #c9d9f7; --chip: #eef0f3; --warn: #b45309;
+  --bar: #4f86ea; --bar-soft: #dce6f9; --chip: #eef0f3;
   --book-0: #2f6fde; --book-1: #d9480f; --book-2: #2b8a3e; --book-3: #7048e8; --book-4: #c2255c; --book-5: #0b7285;
 }
 html.dark {
   --bg: #1b1e24; --card: #252a32; --text: #e6e8ec; --muted: #9aa3b0; --line: #353b45; --accent: #6d9cf0;
-  --accent-soft: #2c3a52; --bar: #5b8fe8; --bar-soft: #34445e; --chip: #303640; --warn: #f0a35c;
+  --bar: #5b8fe8; --bar-soft: #34445e; --chip: #303640;
   --book-0: #6d9cf0; --book-1: #f08a5d; --book-2: #69c07a; --book-3: #a08af5; --book-4: #ef6f9b; --book-5: #4fc1d1;
 }
 * { box-sizing: border-box; }
@@ -26,18 +26,18 @@ body {
   font: 14px/1.45 "Segoe UI", system-ui, -apple-system, sans-serif;
 }
 h1 { font-size: 22px; font-weight: 600; margin: 0 0 4px; }
-h2 { font-size: 15px; font-weight: 600; margin: 0 0 12px; }
 .subtitle { color: var(--muted); margin-bottom: 16px; }
 /* The browser engine of OpenLP doesn't know "gap" in flex layouts, so there are margins instead */
-.toolbar { display: flex; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
+.toolbar { display: flex; flex-wrap: wrap; align-items: center; margin-bottom: 6px; }
 .toolbar > * { margin: 0 18px 10px 0; }
 .segmented { display: inline-flex; background: var(--chip); border-radius: 8px; padding: 3px; flex-wrap: wrap; }
 .segmented button {
   border: 0; background: transparent; color: var(--text); font: inherit; padding: 5px 12px; border-radius: 6px;
   cursor: pointer;
 }
-.segmented button.active { background: var(--card); color: var(--accent); font-weight: 600;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, .12); }
+.segmented button.active {
+  background: var(--card); color: var(--accent); font-weight: 600; box-shadow: 0 1px 2px rgba(0, 0, 0, .12);
+}
 .range { display: inline-flex; align-items: center; color: var(--muted); }
 .range input { margin: 0 6px; }
 .range input:first-child { margin-left: 0; }
@@ -47,78 +47,38 @@ input[type=date], input[type=search] {
 }
 html.dark input[type=date] { color-scheme: dark; }
 input[type=search] { min-width: 280px; }
-.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); grid-gap: 12px; margin-bottom: 16px; }
-.card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
-.kpi .value { font-size: 26px; font-weight: 600; }
-.kpi .label { color: var(--muted); font-size: 13px; }
-.books { display: flex; height: 8px; border-radius: 4px; overflow: hidden; margin: 10px 0 6px; background: var(--chip); }
-.legend { display: flex; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
-.legend span { margin: 0 12px 4px 0; white-space: nowrap; }
-.legend i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 4px; }
-.grid { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); grid-gap: 16px; }
-.grid > .card { margin-bottom: 0; }
-.stack > * + * { margin-top: 16px; }
-.chart svg { display: block; width: 100%; }
-.chart .axis { fill: var(--muted); font-size: 11px; }
-.chart .value { fill: var(--text); font-size: 11px; font-weight: 600; }
-.chart .gridline { stroke: var(--line); }
-.chart rect.bar { fill: var(--bar); }
-.chart rect.bar:hover { fill: var(--accent); }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 8px 16px 12px; }
 table { width: 100%; border-collapse: collapse; }
-td, th { padding: 6px 6px; text-align: left; vertical-align: middle; }
+td, th { padding: 7px 6px; text-align: left; vertical-align: middle; }
 th { font-size: 12px; font-weight: 600; color: var(--muted); border-bottom: 1px solid var(--line); }
-tbody tr.song { cursor: pointer; }
-tbody tr.song:hover td { background: var(--accent-soft); }
-td.rank { color: var(--muted); width: 28px; text-align: right; }
-td.count { width: 38%; }
-td.last { color: var(--muted); white-space: nowrap; width: 1%; }
+tbody tr + tr td { border-top: 1px solid var(--line); }
+td.rank { color: var(--muted); width: 36px; text-align: right; }
+td.song { display: flex; align-items: center; }
+td.count { width: 40%; }
 .title { font-weight: 500; }
-.authors { color: var(--muted); font-size: 12px; }
 .badge {
-  display: inline-block; min-width: 46px; text-align: center; padding: 1px 6px; border-radius: 5px;
-  font-size: 12px; font-weight: 600; color: #fff; margin-right: 8px;
+  display: inline-block; flex: none; min-width: 50px; text-align: center; padding: 1px 6px; border-radius: 5px;
+  font-size: 12px; font-weight: 600; color: #fff; margin-right: 10px;
 }
 .meter { display: flex; align-items: center; }
+.meter b { min-width: 28px; text-align: right; margin-right: 10px; font-size: 15px; }
 .meter .track { flex: 1; height: 10px; background: var(--bar-soft); border-radius: 5px; overflow: hidden; }
 .meter .fill { height: 100%; background: var(--bar); border-radius: 5px; }
-.meter b { min-width: 22px; text-align: right; margin-right: 8px; }
-tr.details td { padding: 2px 6px 10px 40px; color: var(--muted); font-size: 12px; }
-.dates { display: flex; flex-wrap: wrap; }
-.dates span { background: var(--chip); border-radius: 4px; padding: 1px 6px; margin: 0 4px 4px 0; }
-.more { margin-top: 8px; }
-.more button, .link {
-  border: 0; background: transparent; color: var(--accent); font: inherit; cursor: pointer; padding: 0;
-}
-.service { padding: 8px 0; border-bottom: 1px solid var(--line); }
-.service:last-child { border-bottom: 0; }
-.service .date { font-weight: 600; margin-bottom: 4px; }
-.service .date small { color: var(--muted); font-weight: 400; margin-left: 6px; }
-.service .songs { display: flex; flex-wrap: wrap; }
-.service .songs span {
-  background: var(--chip); border-radius: 5px; padding: 2px 7px; font-size: 12px; margin: 0 4px 4px 0;
-}
-.service .songs span b { margin-right: 4px; }
-.empty { color: var(--muted); padding: 10px 0; }
+.empty { color: var(--muted); padding: 14px 0 6px; }
 .notice { background: var(--card); border: 1px dashed var(--line); border-radius: 10px; padding: 28px; text-align: center; }
-.notice h2 { margin-bottom: 6px; }
-.hint { color: var(--muted); font-size: 12px; margin-top: 18px; }
-.overdue { color: var(--warn); }
-@media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+.notice h2 { font-size: 15px; margin: 0 0 6px; }
 @media print {
   :root, html.dark {
     --bg: #ffffff; --card: #ffffff; --text: #1d2330; --muted: #6b7280; --line: #d5d9e0; --bar: #4f86ea;
-    --bar-soft: #dfe7f8; --chip: #eef0f3; --warn: #b45309; --book-0: #2f6fde; --book-1: #d9480f; --book-2: #2b8a3e;
+    --bar-soft: #dfe7f8; --chip: #eef0f3; --book-0: #2f6fde; --book-1: #d9480f; --book-2: #2b8a3e;
     --book-3: #7048e8; --book-4: #c2255c; --book-5: #0b7285;
   }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   body { background: #fff; padding: 0; }
-  .toolbar, .more, .hint { display: none; }
-  .card { border-color: #ccc; }
-  .kpi, .chart { break-inside: avoid; }
+  .toolbar { display: none; }
+  .card { border: 0; padding: 0; }
   thead { display: table-row-group; }
-  tr, .service { break-inside: avoid; }
-  .grid { grid-template-columns: 1fr; }
-  tr.details { display: none; }
+  tr { break-inside: avoid; }
 }
 </style>
 </head>
@@ -134,9 +94,7 @@ DATA = DATA || {songs: [], events: []};
 TEXTS = TEXTS || {};
 SETTINGS = SETTINGS || {};
 
-var LIST_LENGTH = 15;
-var SERVICE_LENGTH = 12;
-var state = {period: '12m', from: '', to: '', book: '', query: '', expanded: {}, showAll: {}};
+var state = {period: '12m', from: '', to: '', book: '', query: ''};
 
 /** A translated text; "{name}" is replaced by the values */
 function t(key, values) {
@@ -179,18 +137,9 @@ function addMonths(text, months) {
   return isoDate(date);
 }
 
-function daysBetween(from, to) {
-  return Math.round((parseDate(to) - parseDate(from)) / 86400000);
-}
-
-function formatDate(text, options) {
+function formatDate(text) {
   return parseDate(text).toLocaleDateString(SETTINGS.language || undefined,
-                                            options || {day: '2-digit', month: '2-digit', year: 'numeric'});
-}
-
-function formatNumber(value, digits) {
-  return Number(value).toLocaleString(SETTINGS.language || undefined,
-                                      {minimumFractionDigits: digits || 0, maximumFractionDigits: digits || 0});
+                                            {day: '2-digit', month: '2-digit', year: 'numeric'});
 }
 
 function today() {
@@ -237,20 +186,13 @@ function songLabel(song) {
   return song.book ? song.book + song.number : '';
 }
 
-function badge(song) {
-  if (!song.book) { return ''; }
-  return '<span class="badge" style="background:' + bookColours[song.book] + '">' + escapeHtml(songLabel(song)) +
-    '</span>';
-}
-
 /** Whether a song is shown with the selected songbook and search */
 function songMatches(song) {
   if (state.book && song.book !== state.book) { return false; }
   var query = state.query.trim().toLowerCase();
   if (!query) { return true; }
   var compact = query.replace(/\s+/g, '');
-  var label = songLabel(song).toLowerCase();
-  if (label && /^[^\d\s]{0,3}\d+$/.test(compact)) {
+  if (song.book && /^[^\d\s]{0,3}\d+$/.test(compact)) {
     // A song number like "d203" or "203"
     var match = compact.match(/^([^\d]*)0*(\d+)$/);
     return (!match[1] || match[1] === song.book.toLowerCase()) && match[2] === song.number;
@@ -258,85 +200,30 @@ function songMatches(song) {
   return song.title.toLowerCase().indexOf(query) !== -1 || song.authors.toLowerCase().indexOf(query) !== -1;
 }
 
-/* ---------------------------------------------------------------- statistics */
-
-function compute() {
-  var range = periodRange();
-  var from = range[0], to = range[1];
-  var matching = DATA.songs.map(songMatches);
-  var perSong = {}, lastEver = {}, days = {}, perBook = {}, events = [];
+/** The songs which were sung in the period, the most sung first */
+function ranking(from, to) {
+  var counts = {};
   DATA.events.forEach(function (event) {
-    var date = event[0], index = event[1];
-    if (!matching[index]) { return; }
-    if (!lastEver[index] || lastEver[index] < date) { lastEver[index] = date; }
-    if (date < from || date > to) { return; }
-    events.push(event);
-    days[date] = days[date] || [];
-    days[date].push(index);
-    var entry = perSong[index] = perSong[index] || {index: index, count: 0, dates: []};
-    entry.count += 1;
-    entry.dates.push(date);
-    var book = DATA.songs[index].book || '';
-    perBook[book] = (perBook[book] || 0) + 1;
+    if (event[0] >= from && event[0] <= to) { counts[event[1]] = (counts[event[1]] || 0) + 1; }
   });
-  var ranking = Object.keys(perSong).map(function (key) { return perSong[key]; });
-  ranking.forEach(function (entry) { entry.last = entry.dates[entry.dates.length - 1]; });
-  ranking.sort(function (a, b) {
-    return b.count - a.count || (b.last > a.last ? 1 : b.last < a.last ? -1 : 0) ||
-      DATA.songs[a.index].title.localeCompare(DATA.songs[b.index].title);
+  var entries = Object.keys(counts).map(function (key) { return {index: Number(key), count: counts[key]}; })
+    .filter(function (entry) { return songMatches(DATA.songs[entry.index]); });
+  entries.sort(function (a, b) {
+    var songA = DATA.songs[a.index], songB = DATA.songs[b.index];
+    return b.count - a.count || songA.book.localeCompare(songB.book) ||
+      Number(songA.number || 0) - Number(songB.number || 0) || songA.title.localeCompare(songB.title);
   });
-  // Songs which were sung before the period, but not in it
-  var resting = [];
-  Object.keys(lastEver).forEach(function (key) {
-    if (!perSong[key] && lastEver[key] < from) { resting.push({index: Number(key), last: lastEver[key]}); }
+  var rank = 0, previous = null;
+  entries.forEach(function (entry, position) {
+    if (entry.count !== previous) { rank = position + 1; previous = entry.count; }
+    entry.rank = rank;
   });
-  resting.sort(function (a, b) { return a.last < b.last ? -1 : a.last > b.last ? 1 : 0; });
-  return {from: from, to: to, events: events, days: days, ranking: ranking, resting: resting, perBook: perBook};
-}
-
-/** The number of songs per week or month in the period, for the chart */
-function timeline(stats) {
-  var weekly = daysBetween(stats.from, stats.to) <= 120;
-  var buckets = [], byKey = {};
-  var cursor = parseDate(stats.from);
-  if (weekly) {
-    cursor.setDate(cursor.getDate() - ((cursor.getDay() + 6) % 7));
-  } else {
-    cursor.setDate(1);
-  }
-  var end = stats.to;
-  while (isoDate(cursor) <= end) {
-    var key = isoDate(cursor);
-    var bucket = {key: key, count: 0, days: 0};
-    buckets.push(bucket);
-    byKey[key] = bucket;
-    if (weekly) { cursor.setDate(cursor.getDate() + 7); } else { cursor.setMonth(cursor.getMonth() + 1); }
-  }
-  function bucketKey(date) {
-    var day = parseDate(date);
-    if (weekly) { day.setDate(day.getDate() - ((day.getDay() + 6) % 7)); } else { day.setDate(1); }
-    return isoDate(day);
-  }
-  Object.keys(stats.days).forEach(function (date) {
-    var bucket = byKey[bucketKey(date)];
-    if (bucket) {
-      bucket.count += stats.days[date].length;
-      bucket.days += 1;
-    }
-  });
-  return {weekly: weekly, buckets: buckets};
-}
-
-function weekNumber(text) {
-  var date = parseDate(text);
-  date.setDate(date.getDate() + 3 - ((date.getDay() + 6) % 7));
-  var firstThursday = new Date(date.getFullYear(), 0, 4);
-  return 1 + Math.round(((date - firstThursday) / 86400000 - 3 + ((firstThursday.getDay() + 6) % 7)) / 7);
+  return entries;
 }
 
 /* ---------------------------------------------------------------- rendering */
 
-function renderToolbar() {
+function renderToolbar(range) {
   var periods = [['4w', t('4 weeks')], ['3m', t('3 months')], ['12m', t('12 months')], ['year', t('This year')],
                  ['all', t('All')], ['custom', t('Period')]];
   var html = '<div class="toolbar"><div class="segmented">';
@@ -344,9 +231,7 @@ function renderToolbar() {
     html += '<button data-period="' + period[0] + '"' + (state.period === period[0] ? ' class="active"' : '') + '>' +
       escapeHtml(period[1]) + '</button>';
   });
-  html += '</div>';
-  var range = periodRange();
-  html += '<span class="range"><input type="date" id="from" value="' + range[0] + '"> – ' +
+  html += '</div><span class="range"><input type="date" id="from" value="' + range[0] + '"> – ' +
     '<input type="date" id="to" value="' + range[1] + '"></span>';
   if (books().length > 1) {
     html += '<div class="segmented"><button data-book=""' + (state.book ? '' : ' class="active"') + '>' +
@@ -362,182 +247,42 @@ function renderToolbar() {
   return html + '</div>';
 }
 
-function renderKpis(stats) {
-  var dayCount = Object.keys(stats.days).length;
-  var html = '<div class="kpis">';
-  function kpi(value, label, extra) {
-    html += '<div class="card kpi"><div class="value">' + value + '</div><div class="label">' + escapeHtml(label) +
-      '</div>' + (extra || '') + '</div>';
+function renderRanking(entries) {
+  if (!entries.length) {
+    return '<div class="card"><div class="empty">' + escapeHtml(t('No songs in this period.')) + '</div></div>';
   }
-  kpi(formatNumber(dayCount), t('Days with songs'));
-  kpi(formatNumber(stats.events.length), t('Songs sung'));
-  kpi(formatNumber(stats.ranking.length), t('Different songs'));
-  kpi(dayCount ? formatNumber(stats.events.length / dayCount, 1) : '–', t('Songs per day'));
-  var bookKeys = Object.keys(stats.perBook).filter(function (book) { return book; }).sort();
-  if (bookKeys.length && !state.book) {
-    var total = stats.events.length;
-    var bar = '<div class="books">', legend = '<div class="legend">';
-    bookKeys.concat(stats.perBook[''] ? [''] : []).forEach(function (book) {
-      var share = stats.perBook[book] / total * 100;
-      var colour = book ? bookColours[book] : 'var(--muted)';
-      bar += '<div style="width:' + share + '%;background:' + colour + '"></div>';
-      legend += '<span><i style="background:' + colour + '"></i>' + escapeHtml(book || t('Other')) + ' ' +
-        formatNumber(share) + ' %</span>';
-    });
-    kpi('', t('Songbooks'), bar + '</div>' + legend + '</div>');
-  }
-  return html + '</div>';
-}
-
-function renderChart(stats) {
-  var line = timeline(stats);
-  var buckets = line.buckets;
-  var slotElement = document.getElementById('chart-slot');
-  var width = Math.max(320, (slotElement ? slotElement.parentNode : document.body).clientWidth - 34);
-  var height = 210, left = 30, bottom = 26, top = 18;
-  var max = Math.max.apply(null, buckets.map(function (bucket) { return bucket.count; }).concat([1]));
-  var step = Math.max(1, Math.ceil(max / 4));
-  var scaleMax = step * Math.ceil(max / step);
-  var slot = (width - left) / Math.max(1, buckets.length);
-  var barWidth = Math.max(2, Math.min(42, slot * 0.68));
-  // Months are shown by their short name, with the year in January and at the start
-  var labels = buckets.map(function (bucket, index) {
-    if (line.weekly) { return t('W{week}', {week: weekNumber(bucket.key)}); }
-    var month = formatDate(bucket.key, {month: 'short'});
-    return index === 0 || bucket.key.slice(5, 7) === '01' ? month + ' ' + bucket.key.slice(0, 4) : month;
-  });
-  var longest = Math.max.apply(null, labels.map(function (label) { return label.length; }));
-  var labelEvery = Math.ceil((longest * 6.5 + 10) / slot);
-  var svg = '<svg viewBox="0 0 ' + width + ' ' + height + '" height="' + height + '">';
-  for (var value = 0; value <= scaleMax; value += step) {
-    var y = top + (height - top - bottom) * (1 - value / scaleMax);
-    svg += '<line class="gridline" x1="' + left + '" x2="' + width + '" y1="' + y + '" y2="' + y + '"/>' +
-      '<text class="axis" x="' + (left - 6) + '" y="' + (y + 4) + '" text-anchor="end">' + value + '</text>';
-  }
-  buckets.forEach(function (bucket, index) {
-    var x = left + slot * index + (slot - barWidth) / 2;
-    var barHeight = (height - top - bottom) * bucket.count / scaleMax;
-    var y = height - bottom - barHeight;
-    var label = labels[index];
-    var tip = (line.weekly ? t('Week of {date}', {date: formatDate(bucket.key)}) :
-      formatDate(bucket.key, {month: 'long', year: 'numeric'})) + ': ' +
-      t('{songs} songs on {days} days', {songs: bucket.count, days: bucket.days});
-    svg += '<rect class="bar" x="' + x + '" y="' + y + '" width="' + barWidth + '" height="' + Math.max(0, barHeight) +
-      '" rx="3"><title>' + escapeHtml(tip) + '</title></rect>';
-    if (bucket.count && slot >= 22) {
-      svg += '<text class="value" x="' + (x + barWidth / 2) + '" y="' + (y - 4) + '" text-anchor="middle">' +
-        bucket.count + '</text>';
-    }
-    if (index % labelEvery === 0) {
-      // Labels at the edges are kept inside the chart
-      var centre = x + barWidth / 2;
-      var anchor = centre > width - 24 ? 'end' : centre < left + 16 ? 'start' : 'middle';
-      var labelX = anchor === 'end' ? width - 1 : anchor === 'start' ? left : centre;
-      svg += '<text class="axis" x="' + labelX + '" y="' + (height - 8) + '" text-anchor="' + anchor + '">' +
-        escapeHtml(label) + '</text>';
-    }
-  });
-  svg += '</svg>';
-  return '<div class="card chart" id="chart-box"><h2>' +
-    escapeHtml(line.weekly ? t('Songs per week') : t('Songs per month')) + '</h2>' + svg + '</div>';
-}
-
-function moreButton(list, total, length) {
-  if (total <= length) { return ''; }
-  return '<div class="more"><button data-more="' + list + '">' +
-    escapeHtml(state.showAll[list] ? t('Show less') : t('Show all ({count})', {count: total})) + '</button></div>';
-}
-
-function renderRanking(stats) {
-  var html = '<div class="card"><h2>' + escapeHtml(t('Most sung songs')) + '</h2>';
-  if (!stats.ranking.length) {
-    return html + '<div class="empty">' + escapeHtml(t('No songs in this period.')) + '</div></div>';
-  }
-  var max = stats.ranking[0].count;
-  var shown = state.showAll.ranking ? stats.ranking : stats.ranking.slice(0, LIST_LENGTH);
-  html += '<table><thead><tr><th></th><th>' + escapeHtml(t('Song')) + '</th><th>' + escapeHtml(t('Times sung')) +
-    '</th><th>' + escapeHtml(t('Last sung')) + '</th></tr></thead><tbody>';
-  var rank = 0, previous = null;
-  stats.ranking.forEach(function (entry, position) {
-    if (entry.count !== previous) { rank = position + 1; previous = entry.count; }
-    entry.rank = rank;
-  });
-  shown.forEach(function (entry) {
+  var max = entries[0].count;
+  var html = '<div class="card"><table><thead><tr><th></th><th>' + escapeHtml(t('Song')) + '</th><th>' +
+    escapeHtml(t('Times sung')) + '</th></tr></thead><tbody>';
+  entries.forEach(function (entry) {
     var song = DATA.songs[entry.index];
-    html += '<tr class="song" data-song="' + entry.index + '"><td class="rank">' + entry.rank + '.</td><td>' +
-      badge(song) + '<span class="title">' + escapeHtml(song.name) +
-      '</span></td><td class="count"><div class="meter"><b>' + entry.count + '</b><div class="track">' +
-      '<div class="fill" style="width:' + (entry.count / max * 100) + '%"></div></div></div></td>' +
-      '<td class="last">' + formatDate(entry.last) + '</td></tr>';
-    if (state.expanded[entry.index]) {
-      html += '<tr class="details"><td colspan="4">' + (song.authors ? escapeHtml(song.authors) + '<br>' : '') +
-        '<div class="dates">' + entry.dates.slice().reverse().map(function (date) {
-          return '<span>' + formatDate(date) + '</span>';
-        }).join('') + '</div></td></tr>';
-    }
+    var badge = song.book ? '<span class="badge" style="background:' + bookColours[song.book] + '">' +
+      escapeHtml(songLabel(song)) + '</span>' : '';
+    html += '<tr><td class="rank">' + entry.rank + '.</td><td class="song">' + badge + '<span class="title">' +
+      escapeHtml(song.name) + '</span></td><td class="count"><div class="meter"><b>' + entry.count + '</b>' +
+      '<div class="track"><div class="fill" style="width:' + (entry.count / max * 100) + '%"></div></div></div></td>' +
+      '</tr>';
   });
-  return html + '</tbody></table>' + moreButton('ranking', stats.ranking.length, LIST_LENGTH) + '</div>';
-}
-
-function renderResting(stats) {
-  if (state.period === 'all' || !stats.resting.length) { return ''; }
-  var shown = state.showAll.resting ? stats.resting : stats.resting.slice(0, LIST_LENGTH);
-  var html = '<div class="card"><h2>' + escapeHtml(t('Not sung in this period')) + '</h2><table><thead><tr><th>' +
-    escapeHtml(t('Song')) + '</th><th>' + escapeHtml(t('Last sung')) + '</th></tr></thead><tbody>';
-  shown.forEach(function (entry) {
-    var song = DATA.songs[entry.index];
-    html += '<tr><td>' + badge(song) + '<span class="title">' +
-      escapeHtml(song.name) + '</span></td><td class="last">' +
-      formatDate(entry.last) + '<br><small class="overdue">' +
-      escapeHtml(t('{days} days ago', {days: formatNumber(daysBetween(entry.last, today()))})) +
-      '</small></td></tr>';
-  });
-  return html + '</tbody></table>' + moreButton('resting', stats.resting.length, LIST_LENGTH) + '</div>';
-}
-
-function renderServices(stats) {
-  var dates = Object.keys(stats.days).sort().reverse();
-  var html = '<div class="card"><h2>' + escapeHtml(t('Songs per day')) + '</h2>';
-  if (!dates.length) {
-    return html + '<div class="empty">' + escapeHtml(t('No songs in this period.')) + '</div></div>';
-  }
-  (state.showAll.services ? dates : dates.slice(0, SERVICE_LENGTH)).forEach(function (date) {
-    html += '<div class="service"><div class="date">' + formatDate(date) + '<small>' +
-      escapeHtml(formatDate(date, {weekday: 'long'})) + '</small></div><div class="songs">';
-    stats.days[date].forEach(function (index) {
-      var song = DATA.songs[index];
-      html += '<span title="' + escapeHtml(song.title) + '">' +
-        (song.book ? '<b>' + escapeHtml(songLabel(song)) + '</b>' + escapeHtml(song.name) :
-         escapeHtml(song.title)) + '</span>';
-    });
-    html += '</div></div>';
-  });
-  return html + moreButton('services', dates.length, SERVICE_LENGTH) + '</div>';
+  return html + '</tbody></table></div>';
 }
 
 function render() {
   var app = document.getElementById('app');
-  var html = '<h1>' + escapeHtml(t('Song statistics')) + '</h1>';
+  var html = '<h1>' + escapeHtml(t('Most sung songs')) + '</h1>';
   if (!DATA.events.length) {
-    app.innerHTML = html + '<div class="notice"><h2>' + escapeHtml(t('No song usage recorded yet')) + '</h2><div>' +
-      escapeHtml(t('Turn on song usage tracking: Tools → Song Usage Tracking → Toggle Tracking. From then on, ' +
-                   'every song which is shown live is recorded.')) + '</div></div>';
+    app.innerHTML = html + '<div class="notice"><h2>' + escapeHtml(t('No songs have been sung yet')) + '</h2><div>' +
+      escapeHtml(t('Every song which is shown live is counted.')) + '</div></div>';
     return;
   }
-  var stats = compute();
-  html += '<div class="subtitle">' + escapeHtml(t('{from} to {to}', {from: formatDate(stats.from),
-                                                                        to: formatDate(stats.to)})) +
+  var range = periodRange();
+  html += '<div class="subtitle">' + escapeHtml(t('{from} to {to}', {from: formatDate(range[0]),
+                                                                        to: formatDate(range[1])})) +
     (state.book ? ' · ' + escapeHtml(t('Songbook {book}', {book: state.book})) : '') +
     (state.query ? ' · ' + escapeHtml(t('Search: {query}', {query: state.query})) : '') + '</div>';
-  html += renderToolbar() + renderKpis(stats);
-  html += '<div class="grid"><div class="stack"><div id="chart-slot"></div>' + renderRanking(stats) + '</div>' +
-    '<div class="stack">' + renderServices(stats) + renderResting(stats) + '</div></div>';
-  html += '<div class="hint">' + escapeHtml(t('A song which is shown several times on a day counts once on that ' +
-                                              'day. Click on a song to see the days it was sung.')) + '</div>';
+  html += renderToolbar(range) + renderRanking(ranking(range[0], range[1]));
   var focused = document.activeElement && document.activeElement.id;
   var selection = focused === 'query' ? document.activeElement.selectionStart : null;
   app.innerHTML = html;
-  document.getElementById('chart-slot').outerHTML = renderChart(stats);
   if (focused === 'query') {
     var query = document.getElementById('query');
     query.focus();
@@ -546,7 +291,7 @@ function render() {
 }
 
 document.addEventListener('click', function (event) {
-  var target = event.target.closest('[data-period], [data-book], [data-more], tr.song');
+  var target = event.target.closest('[data-period], [data-book]');
   if (!target) { return; }
   if (target.dataset.period) {
     if (target.dataset.period === 'custom') {
@@ -555,12 +300,8 @@ document.addEventListener('click', function (event) {
       state.to = range[1];
     }
     state.period = target.dataset.period;
-  } else if (target.dataset.book !== undefined) {
-    state.book = target.dataset.book;
-  } else if (target.dataset.more) {
-    state.showAll[target.dataset.more] = !state.showAll[target.dataset.more];
   } else {
-    state.expanded[target.dataset.song] = !state.expanded[target.dataset.song];
+    state.book = target.dataset.book;
   }
   render();
 });
@@ -582,15 +323,9 @@ document.addEventListener('input', function (event) {
   }
 });
 
-var resizeTimer = null;
-window.addEventListener('resize', function () {
-  clearTimeout(resizeTimer);
-  resizeTimer = setTimeout(render, 150);
-});
-
 if (SETTINGS.dark) { document.documentElement.classList.add('dark'); }
 document.documentElement.lang = SETTINGS.language || 'en';
-document.title = t('Song statistics');
+document.title = t('Most sung songs');
 render();
 </script>
 </body>

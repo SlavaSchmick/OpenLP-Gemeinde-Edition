@@ -48,6 +48,7 @@ from openlp.core.common.registry import Registry
 from openlp.core.common.settings import Settings
 from openlp.core.display.screens import ScreenList
 from openlp.core.display.webengine import init_webview_custom_schemes, set_webview_display_path
+from openlp.core.edition import apply_edition_defaults
 from openlp.core.lib.filelock import FileLock
 from openlp.core.loader import loader
 from openlp.core.resources import qInitResources
@@ -544,6 +545,7 @@ def main():
         set_up_logging(AppLocation.get_directory(AppLocation.CacheDir))
         set_up_web_engine_cache(AppLocation.get_directory(AppLocation.CacheDir) / 'web_cache')
     settings.init_default_shortcuts()
+    apply_edition_defaults(settings)
     # Set the libvlc environment variable if we're frozen
     if getattr(sys, 'frozen', False):
         # Path to libvlc and the plugins

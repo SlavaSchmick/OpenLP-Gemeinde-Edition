@@ -3,6 +3,7 @@
 Die **OpenLP Gemeinde-Edition** ist eine **modifizierte Version** von [OpenLP](https://openlp.org/) 3.1.7.
 Sie enthält Ergänzungen und Änderungen, die nicht von den OpenLP-Entwicklern stammen und von ihnen nicht
 unterstützt werden. Wie OpenLP steht sie unter der GNU General Public License Version 3 (siehe `LICENSE`).
+Die englische Original-Beschreibung von OpenLP steht in `README.rst`.
 
 Repository, Quellcode und Updates: <https://github.com/SlavaSchmick/OpenLP-Gemeinde-Edition>
 (Downloads unter [Releases](https://github.com/SlavaSchmick/OpenLP-Gemeinde-Edition/releases)).

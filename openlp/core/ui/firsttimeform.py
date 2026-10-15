@@ -459,7 +459,7 @@ class FirstTimeForm(QtWidgets.QWizard, UiFirstTimeWizard, RegistryProperties):
         else:
             self.progress_bar.setVisible(False)
             self.progress_page.setTitle(translate('OpenLP.FirstTimeWizard', 'Setting Up'))
-            self.progress_page.setSubTitle('Setup complete.')
+            self.progress_page.setSubTitle(translate('OpenLP.FirstTimeWizard', 'Setup complete.'))
         self.repaint()
         self.application.process_events()
         # Try to give the wizard a chance to repaint itself
@@ -557,7 +557,7 @@ class FirstTimeForm(QtWidgets.QWizard, UiFirstTimeWizard, RegistryProperties):
             msg.setText(translate('OpenLP.FirstTimeWizard', 'Unable to download some files'))
             msg.setInformativeText(translate('OpenLP.FirstTimeWizard',
                                              'The following files were not able to be '
-                                             'downloaded:<br \\>{text}'.format(text=file_list)))
+                                             'downloaded:<br \\>{text}').format(text=file_list))
             msg.setStandardButtons(msg.Ok)
             msg.exec()
         return True

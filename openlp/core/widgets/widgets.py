@@ -192,8 +192,8 @@ class ScreenButton(QtWidgets.QPushButton):
         self.setObjectName('screen_{number}_button'.format(number=screen.number))
         self.setCheckable(True)
         if isinstance(screen.geometry, QtCore.QRect):
-            screen_size_text = translate('OpenLP.ScreenButton',
-                                         f'({screen.geometry.width()} x {screen.geometry.height()} pixels)')
+            screen_size_text = translate('OpenLP.ScreenButton', '({width} x {height} pixels)').format(
+                width=screen.geometry.width(), height=screen.geometry.height())
             self.setText(str(screen) + '\n' + screen_size_text)
         else:
             self.setText(str(screen))

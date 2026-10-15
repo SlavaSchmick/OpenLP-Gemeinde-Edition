@@ -123,17 +123,24 @@ boxes below. Personal Access Tokens are created by doing the following:
         application_id = self.application_id_line_edit.text()
         secret = self.secret_line_edit.text()
         if len(application_id) == 0 or len(secret) == 0:
-            QtWidgets.QMessageBox.warning(self, "Authentication Failed",
-                                          "Please enter values for both Application ID and Secret",
+            QtWidgets.QMessageBox.warning(self, translate('PlanningCenterPlugin.PlanningCenterTab',
+                                                          'Authentication Failed'),
+                                          translate('PlanningCenterPlugin.PlanningCenterTab',
+                                                    'Please enter values for both Application ID and Secret'),
                                           QtWidgets.QMessageBox.Ok)
             return
         test_auth = PlanningCenterAPI(application_id, secret)
         organization = test_auth.check_credentials()
         if len(organization):
-            QtWidgets.QMessageBox.information(self, 'Planning Center Online Authentication Test',
-                                              "Authentication successful for organization: {0}".format(organization),
+            QtWidgets.QMessageBox.information(self, translate('PlanningCenterPlugin.PlanningCenterTab',
+                                                              'Planning Center Online Authentication Test'),
+                                              translate('PlanningCenterPlugin.PlanningCenterTab',
+                                                        'Authentication successful for organization: {0}')
+                                              .format(organization),
                                               QtWidgets.QMessageBox.Ok)
         else:
-            QtWidgets.QMessageBox.warning(self, "Authentication Failed",
-                                          "Authentiation Failed",
+            QtWidgets.QMessageBox.warning(self, translate('PlanningCenterPlugin.PlanningCenterTab',
+                                                          'Authentication Failed'),
+                                          translate('PlanningCenterPlugin.PlanningCenterTab',
+                                                    'Authentication Failed'),
                                           QtWidgets.QMessageBox.Ok)

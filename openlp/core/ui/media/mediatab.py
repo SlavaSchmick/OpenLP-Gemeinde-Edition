@@ -206,7 +206,7 @@ class MediaTab(SettingsTab):
         for blacklisted in VLC_ARGUMENT_BLACKLIST:
             if blacklisted in arguments:
                 critical_error_message_box(message=translate('MediaPlugin.MediaTab',
-                                                             'The argument {arg} must not be used for VLC!'.format(
-                                                                 arg=blacklisted.strip())), parent=self)
+                                                             'The argument {arg} must not be used for VLC!').format(
+                                                                 arg=blacklisted.strip()), parent=self)
                 self.vlc_arguments_edit.setFocus()
                 return

@@ -23,6 +23,7 @@ A widget representing a song in the duplicate song removal wizard review page.
 """
 from PyQt5 import QtCore, QtWidgets
 
+from openlp.core.common.i18n import translate
 from openlp.core.ui.icons import UiIcons
 from openlp.plugins.songs.lib import VerseType
 from openlp.plugins.songs.lib.openlyricsxml import SongXML
@@ -92,7 +93,7 @@ class SongReviewWidget(QtWidgets.QWidget):
         # Add last modified date.
         self.song_last_modified_label = QtWidgets.QLabel(self)
         self.song_last_modified_label.setObjectName('last_modified_label')
-        self.song_last_modified_label.setText('Last Modified:')
+        self.song_last_modified_label.setText(translate('SongsPlugin.SongReviewWidget', 'Last Modified:'))
         self.song_info_form_layout.setWidget(2, QtWidgets.QFormLayout.ItemRole.LabelRole, self.song_last_modified_label)
         self.song_last_modified_content = QtWidgets.QLabel(self)
         self.song_last_modified_content.setObjectName('last_modified_content')
@@ -103,7 +104,7 @@ class SongReviewWidget(QtWidgets.QWidget):
         # Add Theme widget.
         self.song_theme_label = QtWidgets.QLabel(self)
         self.song_theme_label.setObjectName('song_theme_label')
-        self.song_theme_label.setText('Theme:')
+        self.song_theme_label.setText(translate('SongsPlugin.SongReviewWidget', 'Theme:'))
         self.song_info_form_layout.setWidget(3, QtWidgets.QFormLayout.ItemRole.LabelRole, self.song_theme_label)
         self.song_theme_content = QtWidgets.QLabel(self)
         self.song_theme_content.setObjectName('song_theme_content')
@@ -209,14 +210,14 @@ class SongReviewWidget(QtWidgets.QWidget):
         self.song_vertical_layout.addWidget(self.song_remove_button, alignment=QtCore.Qt.AlignHCenter)
 
     def retranslate_ui(self):
-        self.song_remove_button.setText('Remove')
-        self.song_title_label.setText('Title:')
-        self.song_alternate_title_label.setText('Alternate Title:')
-        self.song_ccli_number_label.setText('CCLI Number:')
-        self.song_verse_order_label.setText('Verse Order:')
-        self.song_copyright_label.setText('Copyright:')
-        self.song_comments_label.setText('Comments:')
-        self.song_authors_label.setText('Authors:')
+        self.song_remove_button.setText(translate('SongsPlugin.SongReviewWidget', 'Remove'))
+        self.song_title_label.setText(translate('SongsPlugin.SongReviewWidget', 'Title:'))
+        self.song_alternate_title_label.setText(translate('SongsPlugin.SongReviewWidget', 'Alternate Title:'))
+        self.song_ccli_number_label.setText(translate('SongsPlugin.SongReviewWidget', 'CCLI Number:'))
+        self.song_verse_order_label.setText(translate('SongsPlugin.SongReviewWidget', 'Verse Order:'))
+        self.song_copyright_label.setText(translate('SongsPlugin.SongReviewWidget', 'Copyright:'))
+        self.song_comments_label.setText(translate('SongsPlugin.SongReviewWidget', 'Comments:'))
+        self.song_authors_label.setText(translate('SongsPlugin.SongReviewWidget', 'Authors:'))
 
     def on_remove_button_clicked(self):
         """

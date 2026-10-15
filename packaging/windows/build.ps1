@@ -89,6 +89,12 @@ $lrelease = Get-ChildItem (Join-Path $repo '.venv') -Recurse -Filter lrelease.ex
 foreach ($language in 'de', 'ru', 'uk') {
     & $lrelease.FullName (Join-Path $repo "resources\i18n\$language.ts") -qm (Join-Path $i18n "$language.qm") | Out-Null
     if ($LASTEXITCODE -ne 0) { throw "lrelease failed for $language" }
+    # Qt's own texts (standard buttons like "Close", context menus), which OpenLP loads from the same folder
+    foreach ($qtFile in "qt_$language.qm", "qtbase_$language.qm") {
+        $qtSource = Get-ChildItem (Join-Path $repo '.venv') -Recurse -Filter $qtFile | Select-Object -First 1
+        if (-not $qtSource) { throw "Qt translation $qtFile not found" }
+        Copy-Item $qtSource.FullName (Join-Path $i18n $qtFile) -Force
+    }
 }
 
 Write-Host '== VLC'

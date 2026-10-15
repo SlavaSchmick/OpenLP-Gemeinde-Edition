@@ -180,8 +180,9 @@ class BibleImport(BibleDB, LogMixin, RegistryProperties):
         except OSError as e:
             self.log_exception('Opening {file_name} failed.'.format(file_name=e.filename))
             critical_error_message_box(
-                title='An Error Occured When Opening A File',
-                message='The following error occurred when trying to open\n{file_name}:\n\n{error}'
+                title=translate('BiblesPlugin.BibleImport', 'An Error Occured When Opening A File'),
+                message=translate('BiblesPlugin.BibleImport',
+                                  'The following error occurred when trying to open\n{file_name}:\n\n{error}')
                 .format(file_name=e.filename, error=e.strerror))
         return None
 
@@ -233,6 +234,6 @@ class BibleImport(BibleDB, LogMixin, RegistryProperties):
             bible_type = 'Zefania'
         critical_error_message_box(
             message=translate('BiblesPlugin.BibleImport',
-                              'Incorrect Bible file type supplied. This looks like an {bible_type} XML bible.'
-                              .format(bible_type=bible_type)))
+                              'Incorrect Bible file type supplied. This looks like an {bible_type} XML bible.')
+            .format(bible_type=bible_type))
         raise ValidationError(msg='Invalid xml.')

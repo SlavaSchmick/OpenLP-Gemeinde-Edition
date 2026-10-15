@@ -12,6 +12,13 @@ Downloads: [Releases](https://github.com/SlavaSchmick/OpenLP-Gemeinde-Edition/re
 
 ### Geändert
 
+- **Übersetzungen gründlich überarbeitet** (Deutsch, Russisch, Ukrainisch), Schwerpunkt Einheitlichkeit:
+  - Standardknöpfe wie „Schließen“, „Abbrechen“, „Ja/Nein“ erscheinen jetzt in der gewählten Sprache (bisher englisch).
+  - Texte, die trotz Übersetzung immer englisch blieben (Projektoren, Assistenten, Meldungen), werden jetzt übersetzt.
+  - Einheitliche Begriffe und Anrede (Deutsch durchgehend „Sie“), Menüpfade in Hilfetexten passen zu den echten
+    Menüs; zahlreiche Sinn- und Tippfehler behoben (z. B. vertauschte Einträge „Schwarz“/„Zurück“ im Russischen).
+  - Neue deutsche Menünamen: *Einstellungen → Erweiterungen verwalten* und *→ OpenLP konfigurieren…*,
+    *Extras → Liedprotokollierung → Protokollierung ein/aus*; Liedteil „Pre-Chorus“ heißt „Vorrefrain“.
 - OpenLP prüft **bei jedem Start** auf ein Update (bisher nur einmal am Tag), damit ein neues Release sofort angeboten
   wird.
 
@@ -19,7 +26,7 @@ Downloads: [Releases](https://github.com/SlavaSchmick/OpenLP-Gemeinde-Edition/re
 
 ### Neu
 
-- **Liedstatistik „Meistgesungene Lieder“** (*Extras → Protokollierung → Statistik anzeigen*): Tabelle aller gesungenen
+- **Liedstatistik „Meistgesungene Lieder“** (*Extras → Liedprotokollierung → Statistik anzeigen*): Tabelle aller gesungenen
   Lieder mit Platz, Nummer und Anzahl, das meistgesungene oben. Zeitraum (letzte 4 Wochen, 3 Monate, 12 Monate, dieses
   Jahr, gesamt, benutzerdefiniert), Liederbuch (D/R) und Suche (z. B. `d203`) wählbar; speichern als PDF oder CSV.
   Ein Lied zählt pro Tag einmal.

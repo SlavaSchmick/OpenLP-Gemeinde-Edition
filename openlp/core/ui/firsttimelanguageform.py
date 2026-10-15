@@ -23,7 +23,7 @@ The language selection dialog.
 """
 from PyQt5 import QtCore, QtWidgets
 
-from openlp.core.common.i18n import LanguageManager
+from openlp.core.common.i18n import LanguageManager, translate
 from openlp.core.lib.ui import create_action
 
 from .firsttimelanguagedialog import Ui_FirstTimeLanguageDialog
@@ -41,7 +41,7 @@ class FirstTimeLanguageForm(QtWidgets.QDialog, Ui_FirstTimeLanguageDialog):
                                                     QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
         self.setup_ui(self)
         self.qm_list = LanguageManager.get_qm_list()
-        self.language_combo_box.addItem('Autodetect')
+        self.language_combo_box.addItem(translate('OpenLP.FirstTimeLanguageForm', 'Autodetect'))
         self.language_combo_box.addItems(sorted(self.qm_list.keys()))
 
     def exec(self):

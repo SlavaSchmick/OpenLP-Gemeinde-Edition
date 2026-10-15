@@ -194,6 +194,8 @@ class CaptureVideoLinuxWidget(CaptureVideoWidget):
     def retranslate_ui(self):
         super().retranslate_ui()
         self.video_std_label.setText(translate('MediaPlugin.StreamSelector', 'Video standard'))
+        self.video_std_combobox.setItemText(0, translate('MediaPlugin.StreamSelector', 'Undefined'))
+        self.video_std_combobox.setItemText(1, translate('MediaPlugin.StreamSelector', 'All'))
 
     def find_devices(self):
         """
@@ -267,6 +269,8 @@ class CaptureAnalogTVWidget(CaptureVideoLinuxWidget):
     def retranslate_ui(self):
         super().retranslate_ui()
         self.video_std_label.setText(translate('MediaPlugin.StreamSelector', 'Video standard'))
+        self.video_std_combobox.setItemText(0, translate('MediaPlugin.StreamSelector', 'Undefined'))
+        self.video_std_combobox.setItemText(1, translate('MediaPlugin.StreamSelector', 'All'))
         self.freq_label.setText(translate('MediaPlugin.StreamSelector', 'Frequency'))
 
     def update_mrl(self):
@@ -472,6 +476,9 @@ class CaptureDigitalTVWidget(CaptureModeWidget):
         self.qam_label.setText(translate('MediaPlugin.StreamSelector', 'Modulation / Constellation'))
         self.psk_label.setText(translate('MediaPlugin.StreamSelector', 'Modulation / Constellation'))
         self.dvbs_rate_label.setText(translate('MediaPlugin.StreamSelector', 'Transponder symbol rate'))
+        # The first entry of bandwidth and modulation is 'Automatic'
+        self.dvb_bandwidth_combo_box.setItemText(0, translate('MediaPlugin.StreamSelector', 'Automatic'))
+        self.qam_combo_box.setItemText(0, translate('MediaPlugin.StreamSelector', 'Automatic'))
 
     def has_support_for_mrl(self, mrl, options):
         return '//frequency=' in mrl

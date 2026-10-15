@@ -92,7 +92,9 @@ class EasyWorshipSongImport(SongImport):
         except Exception:
             log.exception('Unexpected data in file {name}'.format(name=self.import_source))
             self.log_error(self.import_source,
-                           '{name} contains unexpected data and can not be imported'.format(name=self.import_source))
+                           translate('SongsPlugin.EasyWorshipSongImport',
+                                     '{name} contains unexpected data and can not be imported')
+                           .format(name=self.import_source))
 
     def import_ews(self):
         """

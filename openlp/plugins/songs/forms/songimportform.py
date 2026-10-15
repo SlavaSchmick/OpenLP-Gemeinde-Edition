@@ -156,11 +156,11 @@ class SongImportForm(OpenLPWizard, RegistryProperties):
                 self.format_widgets[format_list]['removeButton'].setText(
                     translate('SongsPlugin.ImportWizardForm', 'Remove File(s)'))
             else:
-                f_label = 'Filename:'
                 if select_mode == SongFormatSelect.SingleFolder:
-                    f_label = 'Folder:'
-                self.format_widgets[format_list]['filepathLabel'].setText(
-                    translate('SongsPlugin.ImportWizardForm', f_label))
+                    f_label = translate('SongsPlugin.ImportWizardForm', 'Folder:')
+                else:
+                    f_label = translate('SongsPlugin.ImportWizardForm', 'Filename:')
+                self.format_widgets[format_list]['filepathLabel'].setText(f_label)
         for format_list in self.disablable_formats:
             self.format_widgets[format_list]['disabled_label'].setText(SongFormat.get(format_list, 'disabledLabelText'))
         self.progress_page.setTitle(WizardStrings.Importing)

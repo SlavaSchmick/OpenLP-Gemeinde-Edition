@@ -115,7 +115,8 @@ class SelectPlanForm(QtWidgets.QDialog, Ui_SelectPlanDialog):
         if service_type_id:
             plan_list = self.planning_center_api.get_plan_list(service_type_id)
             self.plan_selection_combo_box.clear()
-            self.plan_selection_combo_box.addItem('Select Plan Date')
+            self.plan_selection_combo_box.addItem(translate('PlanningCenterPlugin.PlanningCenterForm',
+                                                            'Select Plan Date'))
             self.plan_selection_combo_box.setCurrentIndex(0)
             # Get Today's date and see if it is listed... if it is, then select it in the combobox
             today = date.today()

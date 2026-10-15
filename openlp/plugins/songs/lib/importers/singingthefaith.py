@@ -190,7 +190,7 @@ class SingingTheFaithImport(SongImport):
                         line_replaced = False
                     else:
                         self.log_error(translate('SongsPlugin.SingingTheFaithImport',
-                                       'File {file})'.format(file=file.name)),
+                                       'File {file}').format(file=file.name),
                                        translate('SongsPlugin.SingingTheFaithImport',
                                        'Unknown hint {hint}').format(hint=hint))
                     if line_replaced:
@@ -430,7 +430,9 @@ class SingingTheFaithImport(SongImport):
                     elif tag == 'CCLI':
                         self.hint_ccli = val
                     elif tag == 'Hymn':
-                        self.log_error(file.name, 'Missing End tag in hint for Hymn: {}'.format(song_number))
+                        self.log_error(file.name, translate('SongsPlugin.SingingTheFaithImport',
+                                                            'Missing End tag in hint for Hymn: {}').format(song_number))
                     else:
-                        self.log_error(file.name, 'Unknown tag {} value {}'.format(tag, val))
+                        self.log_error(file.name, translate('SongsPlugin.SingingTheFaithImport',
+                                                            'Unknown tag {} value {}').format(tag, val))
         return hintfound

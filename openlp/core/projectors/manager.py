@@ -504,7 +504,8 @@ class ProjectorManager(QtWidgets.QWidget, RegistryBase, UiProjectorManager, LogM
         projector = list_item.data(QtCore.Qt.UserRole)
         msg = QtWidgets.QMessageBox()
         msg.setText(translate('OpenLP.ProjectorManager',
-                              f'Delete projector ({projector.link.ip}) {projector.link.name}?'))
+                              'Delete projector ({projector.link.ip}) {projector.link.name}?')
+                    .format(projector=projector))
         msg.setInformativeText(translate('OpenLP.ProjectorManager',
                                          'Are you sure you want to delete this projector?'))
         msg.setStandardButtons(msg.Cancel | msg.Ok)
@@ -1033,4 +1034,4 @@ def not_implemented(function):
                                       translate('OpenLP.ProjectorManager', 'Not Implemented Yet'),
                                       translate('OpenLP.ProjectorManager',
                                                 'Function "{function}"<br />has not been implemented yet.'
-                                                '<br />Please check back again later.'.format(function=function)))
+                                                '<br />Please check back again later.').format(function=function))

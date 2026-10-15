@@ -72,7 +72,7 @@
         <message>
             <location filename="../../openlp/plugins/alerts/forms/alertdialog.py" line="99" />
             <source>Display &amp;&amp; Cl&amp;ose</source>
-            <translation>Показати &amp;&amp; за&amp;крити</translation>
+            <translation>Показати &amp;&amp; з&amp;акрити</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/alerts/forms/alertform.py" line="108" />
@@ -84,7 +84,7 @@
             <source>You haven't specified any text for your alert. 
 Please type in some text before clicking New.</source>
             <translation>Ви не ввели текст оголошення. 
-Будь ласка, введіть текст, перш ніж натиснути «Нове».</translation>
+Введіть текст, перш ніж натиснути «Нове».</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/alerts/forms/alertform.py" line="178" />
@@ -107,7 +107,7 @@ Do you want to continue anyway?</source>
             <location filename="../../openlp/plugins/alerts/forms/alertform.py" line="189" />
             <source>The alert text does not contain '&lt;&gt;'.
 Do you want to continue anyway?</source>
-            <translation>Текст оголошення не містить '&lt;&gt;'.
+            <translation>Текст оголошення не містить «&lt;&gt;».
 Все одно продовжити?</translation>
         </message>
     </context>
@@ -212,7 +212,7 @@ Do you want to continue anyway?</source>
         <message>
             <location filename="../../openlp/plugins/bibles/bibleplugin.py" line="157" />
             <source>Preview the selected Bible.</source>
-            <translation>Попередній перегляд вибраної Біблії.</translation>
+            <translation>Переглянути вибрану Біблію.</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/bibles/bibleplugin.py" line="158" />
@@ -785,7 +785,25 @@ be followed by one or more non-numeric characters.</source>
             <comment>This looks like an unknown type of XML bible.</comment>
             <translation>невідомий тип</translation>
         </message>
-    </context>
+            <message>
+            <source>An Error Occured When Opening A File</source>
+            <translation>Помилка під час відкриття файлу</translation>
+        </message>
+        <message>
+            <source>Incorrect Bible file type supplied. This looks like an {bible_type} XML bible.</source>
+            <translation>Неправильний тип файлу Біблії. Схоже, це XML-Біблія у форматі {bible_type}.</translation>
+        </message>
+        <message>
+            <source>The following error occurred when trying to open
+{file_name}:
+
+{error}</source>
+            <translation>Під час відкриття файлу
+{file_name} сталася помилка:
+
+{error}</translation>
+        </message>
+</context>
     <context>
         <name>BiblesPlugin.BibleManager</name>
         <message>
@@ -1088,7 +1106,7 @@ It is not possible to customize the Book Names.</source>
         <message>
             <location filename="../../openlp/plugins/bibles/forms/editbibleform.py" line="98" />
             <source>To use the customized book names, "Bible language" must be selected on the Meta Data tab or, if "Global settings" is selected, on the Bible page in Configure OpenLP.</source>
-            <translation>Щоб використовувати власні назви книг, на вкладці метаданих має бути вибрано «Мова Біблії», а якщо вибрано «Загальні налаштування» — на сторінці «Біблія» в налаштуваннях OpenLP.</translation>
+            <translation>Щоб використовувати власні назви книг, на вкладці «Метадані» має бути вибрано «Мова Біблії», а якщо вибрано «Загальні налаштування» — на сторінці «Біблії» в налаштуваннях OpenLP.</translation>
         </message>
     </context>
     <context>
@@ -1140,7 +1158,7 @@ It is not possible to customize the Book Names.</source>
         <message>
             <location filename="../../openlp/plugins/bibles/forms/bibleimportform.py" line="373" />
             <source>Bible Import Wizard</source>
-            <translation>Майстер імпорту Біблії</translation>
+            <translation>Майстер імпорту Біблій</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/bibles/forms/bibleimportform.py" line="376" />
@@ -1240,7 +1258,7 @@ It is not possible to customize the Book Names.</source>
         <message>
             <location filename="../../openlp/plugins/bibles/forms/bibleimportform.py" line="424" />
             <source>Set up the Bible's license details.</source>
-            <translation>Укажіть відомості про ліцензію Біблії.</translation>
+            <translation>Вкажіть відомості про ліцензію Біблії.</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/bibles/forms/bibleimportform.py" line="426" />
@@ -1464,7 +1482,7 @@ It is not possible to customize the Book Names.</source>
         <message>
             <location filename="../../openlp/plugins/bibles/lib/mediaitem.py" line="314" />
             <source>Search Scripture Reference...</source>
-            <translation>Пошук за посиланням на Писання...</translation>
+            <translation>Шукати за посиланням на Писання...</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/bibles/lib/mediaitem.py" line="314" />
@@ -1474,7 +1492,7 @@ It is not possible to customize the Book Names.</source>
         <message>
             <location filename="../../openlp/plugins/bibles/lib/mediaitem.py" line="314" />
             <source>Search Text...</source>
-            <translation>Пошук тексту...</translation>
+            <translation>Шукати текст...</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/bibles/lib/mediaitem.py" line="460" />
@@ -1498,7 +1516,7 @@ You will need to re-import this Bible to use it again.</source>
         <message>
             <location filename="../../openlp/plugins/bibles/lib/mediaitem.py" line="590" />
             <source>OpenLP cannot combine single and dual Bible verse search results. Do you want to clear your saved results?</source>
-            <translation>OpenLP не може об'єднати результати пошуку з однією та двома Біблiями. Очистити збережені результати?</translation>
+            <translation>OpenLP не може об&apos;єднати результати пошуку з однією та двома Бібліями. Очистити збережені результати?</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/bibles/lib/mediaitem.py" line="626" />
@@ -1517,7 +1535,7 @@ Only verses found in both Bibles will be shown.
 
 {count:d} verses have not been included in the results.</source>
             <translation>Друга Біблія «{second_name}» не містить усіх віршів основної Біблії «{name}».
-Буде показано лише вірші, що є в обох Біблiях.
+Буде показано лише вірші, що є в обох Бібліях.
 
 До результатів не включено віршів: {count:d}.</translation>
         </message>
@@ -1696,7 +1714,7 @@ Only verses found in both Bibles will be shown.
         <message>
             <location filename="../../openlp/plugins/custom/forms/editcustomdialog.py" line="110" />
             <source>Ed&amp;it All</source>
-            <translation>Редагувати &amp;все</translation>
+            <translation>Редагувати вс&amp;е</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/custom/forms/editcustomdialog.py" line="111" />
@@ -2396,7 +2414,7 @@ Do you want to add the other images anyway?</source>
         <message>
             <location filename="../../openlp/plugins/media/forms/mediaclipselectorform.py" line="593" />
             <source>Set name of mediaclip</source>
-            <translation>Укажіть назву медіафрагмента</translation>
+            <translation>Вкажіть назву медіафрагмента</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/media/forms/mediaclipselectorform.py" line="593" />
@@ -2449,7 +2467,7 @@ Do you want to add the other images anyway?</source>
         <message>
             <location filename="../../openlp/core/ui/media/mediacontroller.py" line="327" />
             <source>Unable to Preview Stream </source>
-            <translation>Не вдається переглянути потік</translation>
+            <translation>Не вдається переглянути потік </translation>
         </message>
         <message>
             <location filename="../../openlp/core/ui/media/mediacontroller.py" line="327" />
@@ -2554,7 +2572,11 @@ Do you want to add the other images anyway?</source>
             <source>Start Live items automatically</source>
             <translation>Автоматично запускати елементи прямого ефіру</translation>
         </message>
-    </context>
+            <message>
+            <source>The argument {arg} must not be used for VLC!</source>
+            <translation>Аргумент {arg} не можна використовувати для VLC!</translation>
+        </message>
+</context>
     <context>
         <name>MediaPlugin.StreamSelector</name>
         <message>
@@ -2727,7 +2749,19 @@ Do you want to add the other images anyway?</source>
             <source>Capture Mode</source>
             <translation>Режим захоплення</translation>
         </message>
-    </context>
+            <message>
+            <source>All</source>
+            <translation>Усі</translation>
+        </message>
+        <message>
+            <source>Automatic</source>
+            <translation>Автоматично</translation>
+        </message>
+        <message>
+            <source>Undefined</source>
+            <translation>Не задано</translation>
+        </message>
+</context>
     <context>
         <name>MediaPlugin.VlcPlayer</name>
         <message>
@@ -2888,7 +2922,7 @@ OpenLP спробує продовжити роботу.</translation>
         <message>
             <location filename="../../openlp/core/api/tab.py" line="397" />
             <source>There was a problem fetching the latest version of the remote</source>
-            <translation>Під час отримання останньої версії пульта виникла проблема</translation>
+            <translation>Під час отримання останньої версії веб-пульта виникла проблема</translation>
         </message>
         <message>
             <location filename="../../openlp/core/api/tab.py" line="407" />
@@ -3697,7 +3731,11 @@ in slide controller:</source>
             <source>Translation:</source>
             <translation>Мова:</translation>
         </message>
-    </context>
+            <message>
+            <source>Autodetect</source>
+            <translation>Автовизначення</translation>
+        </message>
+</context>
     <context>
         <name>OpenLP.FirstTimeWizard</name>
         <message>
@@ -3783,7 +3821,7 @@ in slide controller:</source>
         <message>
             <location filename="../../openlp/core/ui/firsttimewizard.py" line="74" />
             <source>OpenLP has a web remote, which enables you to control OpenLP from another computer, phone or tablet on the same network as the OpenLP computer. OpenLP can download this web remote for you now, or you can download it later via the remote settings.</source>
-            <translation>OpenLP має веб-пульт, за допомогою якого можна керувати OpenLP з іншого комп'ютера, телефона чи планшета в тій самій мережі, що й комп'ютер з OpenLP. OpenLP може завантажити цей веб-пульт зараз, або ви можете завантажити його пізніше в налаштуваннях пульта.</translation>
+            <translation>OpenLP має веб-пульт, за допомогою якого можна керувати OpenLP з іншого комп&apos;ютера, телефона чи планшета в тій самій мережі, що й комп&apos;ютер з OpenLP. OpenLP може завантажити цей веб-пульт зараз, або ви можете завантажити його пізніше в налаштуваннях «Віддалене керування».</translation>
         </message>
         <message>
             <location filename="../../openlp/core/ui/firsttimewizard.py" line="78" />
@@ -3793,7 +3831,7 @@ in slide controller:</source>
         <message>
             <location filename="../../openlp/core/ui/firsttimewizard.py" line="79" />
             <source>Web-based Remote Interface</source>
-            <translation>Веб-інтерфейс дистанційного керування</translation>
+            <translation>Веб-інтерфейс віддаленого керування</translation>
         </message>
         <message>
             <location filename="../../openlp/core/ui/firsttimewizard.py" line="80" />
@@ -3893,7 +3931,7 @@ in slide controller:</source>
         <message>
             <location filename="../../openlp/core/ui/firsttimewizard.py" line="343" />
             <source>Song Usage Monitor</source>
-            <translation>Облік використання пісень</translation>
+            <translation>Відстеження використання пісень</translation>
         </message>
         <message>
             <location filename="../../openlp/core/ui/firsttimewizard.py" line="344" />
@@ -4001,7 +4039,15 @@ If you click the '{finish_button}' button you can download the data at a later t
             <source>Please wait while resources are downloaded and OpenLP is configured.</source>
             <translation>Зачекайте, поки завантажуються ресурси і налаштовується OpenLP.</translation>
         </message>
-    </context>
+            <message>
+            <source>Setup complete.</source>
+            <translation>Налаштування завершено.</translation>
+        </message>
+        <message>
+            <source>The following files were not able to be downloaded:&lt;br \&gt;{text}</source>
+            <translation>Не вдалося завантажити такі файли:&lt;br \&gt;{text}</translation>
+        </message>
+</context>
     <context>
         <name>OpenLP.FolderLibraryItem</name>
         <message>
@@ -4508,7 +4554,7 @@ If you click the '{finish_button}' button you can download the data at a later t
         <message>
             <location filename="../../openlp/core/ui/mainwindow.py" line="392" />
             <source>E&amp;xit</source>
-            <translation>&amp;Вихід</translation>
+            <translation>Ви&amp;йти</translation>
         </message>
         <message>
             <location filename="../../openlp/core/ui/mainwindow.py" line="393" />
@@ -4663,7 +4709,7 @@ If you click the '{finish_button}' button you can download the data at a later t
         <message>
             <location filename="../../openlp/core/ui/mainwindow.py" line="436" />
             <source>&amp;About</source>
-            <translation>&amp;Про програму</translation>
+            <translation>Про про&amp;граму</translation>
         </message>
         <message>
             <location filename="../../openlp/core/ui/mainwindow.py" line="437" />
@@ -4743,7 +4789,7 @@ If you click the '{finish_button}' button you can download the data at a later t
         <message>
             <location filename="../../openlp/core/ui/mainwindow.py" line="461" />
             <source>&amp;Show all</source>
-            <translation>&amp;Показати все</translation>
+            <translation>Показати &amp;все</translation>
         </message>
         <message>
             <location filename="../../openlp/core/ui/mainwindow.py" line="462" />
@@ -4753,7 +4799,7 @@ If you click the '{finish_button}' button you can download the data at a later t
         <message>
             <location filename="../../openlp/core/ui/mainwindow.py" line="464" />
             <source>&amp;Setup</source>
-            <translation>&amp;Підготовка</translation>
+            <translation>Під&amp;готовка</translation>
         </message>
         <message>
             <location filename="../../openlp/core/ui/mainwindow.py" line="465" />
@@ -4789,7 +4835,7 @@ You can download the latest version from https://openlp.org/.</source>
             <source>Version {version} of the web remote is now available for download.
 To download this version, go to the Remote settings and click the Upgrade button.</source>
             <translation>Для завантаження доступна версія веб-пульта {version}.
-Щоб завантажити її, перейдіть до налаштувань пульта і натисніть кнопку «Оновити».</translation>
+Щоб завантажити її, перейдіть до налаштувань «Віддалене керування» і натисніть кнопку «Встановити».</translation>
         </message>
         <message>
             <location filename="../../openlp/core/ui/mainwindow.py" line="649" />
@@ -4813,7 +4859,7 @@ Re-running this wizard may make changes to your current OpenLP configuration and
         <message>
             <location filename="../../openlp/core/ui/mainwindow.py" line="757" />
             <source>OpenLP Main Display Blanked</source>
-            <translation>Головний екран OpenLP вимкнено</translation>
+            <translation>Головний екран OpenLP затемнено</translation>
         </message>
         <message>
             <location filename="../../openlp/core/ui/mainwindow.py" line="757" />
@@ -5155,7 +5201,7 @@ File extension not supported</source>
         <message>
             <location filename="../../openlp/core/projectors/constants.py" line="173" />
             <source>Blank/unblank video and/or mute audio.</source>
-            <translation>Вимкнути/увімкнути відео та/або вимкнути звук.</translation>
+            <translation>Затемнити/показати відео та/або вимкнути звук.</translation>
         </message>
         <message>
             <location filename="../../openlp/core/projectors/constants.py" line="178" />
@@ -5771,12 +5817,12 @@ File extension not supported</source>
         <message>
             <location filename="../../openlp/core/projectors/editform.py" line="194" />
             <source>Add New Projector</source>
-            <translation>Додати новий проєктор</translation>
+            <translation>Додавання нового проєктора</translation>
         </message>
         <message>
             <location filename="../../openlp/core/projectors/editform.py" line="197" />
             <source>Edit Projector</source>
-            <translation>Редагувати проєктор</translation>
+            <translation>Редагування проєктора</translation>
         </message>
         <message>
             <location filename="../../openlp/core/projectors/editform.py" line="199" />
@@ -5808,7 +5854,95 @@ File extension not supported</source>
             <source>Notes</source>
             <translation>Примітки</translation>
         </message>
-    </context>
+            <message>
+            <source>Database Error</source>
+            <translation>Помилка бази даних</translation>
+        </message>
+        <message>
+            <source>Database ID Error</source>
+            <translation>Помилка ідентифікатора бази даних</translation>
+        </message>
+        <message>
+            <source>Duplicate Address</source>
+            <translation>Повторювана адреса</translation>
+        </message>
+        <message>
+            <source>Duplicate Name</source>
+            <translation>Повторювана назва</translation>
+        </message>
+        <message>
+            <source>Entries must have unique names.&lt;br /&gt;&lt;br /&gt;Please enter a different name.</source>
+            <translation>Назви записів мають бути унікальними.&lt;br /&gt;&lt;br /&gt;Введіть іншу назву.</translation>
+        </message>
+        <message>
+            <source>IP Address Not Set</source>
+            <translation>IP-адресу не задано</translation>
+        </message>
+        <message>
+            <source>IP address is not valid.&lt;br /&gt;&lt;br /&gt;Please enter a valid IP address.</source>
+            <translation>Неправильна IP-адреса.&lt;br /&gt;&lt;br /&gt;Введіть правильну IP-адресу.</translation>
+        </message>
+        <message>
+            <source>IP:port combination are already in the database &lt;br /&gt;&lt;br /&gt;Please Enter a different IP:port combination.</source>
+            <translation>Таке поєднання IP:порт уже є в базі даних. &lt;br /&gt;&lt;br /&gt;Введіть інше поєднання IP:порт.</translation>
+        </message>
+        <message>
+            <source>Invalid IP Address</source>
+            <translation>Неправильна IP-адреса</translation>
+        </message>
+        <message>
+            <source>Invalid Port Number</source>
+            <translation>Неправильний номер порту</translation>
+        </message>
+        <message>
+            <source>Invalid Projector</source>
+            <translation>Неправильний проєктор</translation>
+        </message>
+        <message>
+            <source>Mismatch between this entry and the database.&lt;br /&gt;&lt;br /&gt;See the log for possible issues.</source>
+            <translation>Цей запис не відповідає базі даних.&lt;br /&gt;&lt;br /&gt;Можливі причини див. у журналі.</translation>
+        </message>
+        <message>
+            <source>Multiple Records</source>
+            <translation>Кілька записів</translation>
+        </message>
+        <message>
+            <source>Multiple entries found in the database&lt;br /&gt;&lt;br /&gt;Ensure Name and/or IP/Port data is unique</source>
+            <translation>У базі даних знайдено кілька записів&lt;br /&gt;&lt;br /&gt;Переконайтеся, що назва та/або IP/порт унікальні</translation>
+        </message>
+        <message>
+            <source>Name Not Set</source>
+            <translation>Назву не задано</translation>
+        </message>
+        <message>
+            <source>Port Not Set</source>
+            <translation>Порт не задано</translation>
+        </message>
+        <message>
+            <source>Port numbers below 1000 are reserved for admin use only.&lt;br /&gt;Port numbers above 32767 are not currently usable.&lt;br /&gt;&lt;br /&gt;Please enter a valid port number between 1000 and 32767 inclusive.&lt;br /&gt;&lt;br /&gt;Default PJLink port is {port}</source>
+            <translation>Номери портів, менші за 1000, зарезервовано для адміністратора.&lt;br /&gt;Номери портів, більші за 32767, наразі не можна використовувати.&lt;br /&gt;&lt;br /&gt;Введіть правильний номер порту від 1000 до 32767 включно.&lt;br /&gt;&lt;br /&gt;Стандартний порт PJLink: {port}</translation>
+        </message>
+        <message>
+            <source>Projector instance not a valid PJLink or Projector Instance&lt;br /&gt;&lt;br /&gt;See log for issue</source>
+            <translation>Проєктор не є правильним екземпляром PJLink або проєктора&lt;br /&gt;&lt;br /&gt;Подробиці див. у журналі</translation>
+        </message>
+        <message>
+            <source>There was an error saving projector information.&lt;br /&gt;&lt;br /&gt;See the log for the error</source>
+            <translation>Під час збереження відомостей про проєктор сталася помилка.&lt;br /&gt;&lt;br /&gt;Подробиці див. у журналі</translation>
+        </message>
+        <message>
+            <source>You must enter a name for this entry.&lt;br /&gt;&lt;br /&gt;Please enter a unique name for this entry.</source>
+            <translation>Потрібно ввести назву для цього запису.&lt;br /&gt;&lt;br /&gt;Введіть унікальну назву.</translation>
+        </message>
+        <message>
+            <source>You must enter a port number for this entry.&lt;br /&gt;&lt;br /&gt;Please enter a valid port number.</source>
+            <translation>Потрібно ввести номер порту для цього запису.&lt;br /&gt;&lt;br /&gt;Введіть правильний номер порту.</translation>
+        </message>
+        <message>
+            <source>You must enter an IP address.&lt;br /&gt;&lt;br /&gt;Please enter a valid IP address.</source>
+            <translation>Потрібно ввести IP-адресу.&lt;br /&gt;&lt;br /&gt;Введіть правильну IP-адресу.</translation>
+        </message>
+</context>
     <context>
         <name>OpenLP.ProjectorManager</name>
         <message>
@@ -5974,7 +6108,7 @@ File extension not supported</source>
         <message>
             <location filename="../../openlp/core/projectors/manager.py" line="214" />
             <source>&amp;Connect Projector</source>
-            <translation>&amp;Підключити проєктор</translation>
+            <translation>Під&amp;ключити проєктор</translation>
         </message>
         <message>
             <location filename="../../openlp/core/projectors/manager.py" line="219" />
@@ -5984,7 +6118,7 @@ File extension not supported</source>
         <message>
             <location filename="../../openlp/core/projectors/manager.py" line="225" />
             <source>Power &amp;On Projector</source>
-            <translation>У&amp;вімкнути проєктор</translation>
+            <translation>&amp;Увімкнути проєктор</translation>
         </message>
         <message>
             <location filename="../../openlp/core/projectors/manager.py" line="230" />
@@ -5994,7 +6128,7 @@ File extension not supported</source>
         <message>
             <location filename="../../openlp/core/projectors/manager.py" line="236" />
             <source>Select &amp;Input</source>
-            <translation>Вибрати &amp;вхід</translation>
+            <translation>Вибрати в&amp;хід</translation>
         </message>
         <message>
             <location filename="../../openlp/core/projectors/manager.py" line="241" />
@@ -6009,7 +6143,7 @@ File extension not supported</source>
         <message>
             <location filename="../../openlp/core/projectors/manager.py" line="256" />
             <source>&amp;Show Projector Screen</source>
-            <translation>&amp;Показати екран проєктора</translation>
+            <translation>Показа&amp;ти екран проєктора</translation>
         </message>
         <message>
             <location filename="../../openlp/core/projectors/manager.py" line="262" />
@@ -6171,7 +6305,11 @@ File extension not supported</source>
             <source>Not Implemented Yet</source>
             <translation>Ще не реалізовано</translation>
         </message>
-    </context>
+            <message>
+            <source>Function &quot;{function}&quot;&lt;br /&gt;has not been implemented yet.&lt;br /&gt;Please check back again later.</source>
+            <translation>Функцію «{function}»&lt;br /&gt;ще не реалізовано.&lt;br /&gt;Спробуйте пізніше.</translation>
+        </message>
+</context>
     <context>
         <name>OpenLP.ProjectorTab</name>
         <message>
@@ -6317,7 +6455,11 @@ File extension not supported</source>
             <source>({screen.geometry.width()} x {screen.geometry.height()} pixels)</source>
             <translation>({screen.geometry.width()} x {screen.geometry.height()} пікселів)</translation>
         </message>
-    </context>
+            <message>
+            <source>({width} x {height} pixels)</source>
+            <translation>({width} x {height} пікселів)</translation>
+        </message>
+</context>
     <context>
         <name>OpenLP.ScreenList</name>
         <message>
@@ -6535,7 +6677,7 @@ File extension not supported</source>
         <message>
             <location filename="../../openlp/core/ui/servicemanager.py" line="222" />
             <source>Send the selected item to Live.</source>
-            <translation>Надіслати вибраний елемент у прямий ефір.</translation>
+            <translation>Показати вибраний елемент у прямому ефірі.</translation>
         </message>
         <message>
             <location filename="../../openlp/core/ui/servicemanager.py" line="240" />
@@ -6560,12 +6702,12 @@ File extension not supported</source>
         <message>
             <location filename="../../openlp/core/ui/servicemanager.py" line="251" />
             <source>&amp;Reorder Item</source>
-            <translation>&amp;Змінити порядок у елементі</translation>
+            <translation>&amp;Змінити порядок в елементі</translation>
         </message>
         <message>
             <location filename="../../openlp/core/ui/servicemanager.py" line="254" />
             <source>&amp;Notes</source>
-            <translation>&amp;Примітки</translation>
+            <translation>При&amp;мітки</translation>
         </message>
         <message>
             <location filename="../../openlp/core/ui/servicemanager.py" line="257" />
@@ -6600,12 +6742,12 @@ File extension not supported</source>
         <message>
             <location filename="../../openlp/core/ui/servicemanager.py" line="291" />
             <source>Show &amp;Preview</source>
-            <translation>Показати &amp;перегляд</translation>
+            <translation>Показати пере&amp;гляд</translation>
         </message>
         <message>
             <location filename="../../openlp/core/ui/servicemanager.py" line="296" />
             <source>&amp;Change Item Theme</source>
-            <translation>&amp;Змінити тему елемента</translation>
+            <translation>Змінити &amp;тему елемента</translation>
         </message>
         <message>
             <location filename="../../openlp/core/ui/servicemanager.py" line="374" />
@@ -7083,7 +7225,7 @@ please use a different shortcut.</source>
         <message>
             <location filename="../../openlp/core/ui/slidecontroller.py" line="361" />
             <source>Move to live.</source>
-            <translation>Перейти в прямий ефір.</translation>
+            <translation>Показати в прямому ефірі.</translation>
         </message>
         <message>
             <location filename="../../openlp/core/ui/slidecontroller.py" line="364" />
@@ -8587,7 +8729,7 @@ Closing this instance</source>
         <message>
             <location filename="../../openlp/core/common/i18n.py" line="486" />
             <source>Web Interface, Download and Install Latest Version</source>
-            <translation>Веб-інтерфейс: завантажити й установити останню версію</translation>
+            <translation>Веб-інтерфейс: завантажити й встановити останню версію</translation>
         </message>
         <message>
             <location filename="../../openlp/core/common/i18n.py" line="487" />
@@ -8785,13 +8927,13 @@ Add some items to it then press Save</source>
             <location filename="../../openlp/plugins/songs/lib/ui.py" line="41" />
             <source>Songbook</source>
             <comment>Singular</comment>
-            <translation>Збірник пісень</translation>
+            <translation>Збірник</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/songs/lib/ui.py" line="42" />
             <source>Songbooks</source>
             <comment>Plural</comment>
-            <translation>Збірники пісень</translation>
+            <translation>Збірники</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/songs/lib/ui.py" line="43" />
@@ -8801,19 +8943,19 @@ Add some items to it then press Save</source>
         <message>
             <location filename="../../openlp/plugins/songs/lib/ui.py" line="44" />
             <source>Song Maintenance</source>
-            <translation>Обслуговування пісень</translation>
+            <translation>Керування піснями</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/songs/lib/ui.py" line="45" />
             <source>Topic</source>
             <comment>Singular</comment>
-            <translation>Тема</translation>
+            <translation>Тематика</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/songs/lib/ui.py" line="46" />
             <source>Topics</source>
             <comment>Plural</comment>
-            <translation>Теми</translation>
+            <translation>Тематики</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/songs/lib/ui.py" line="47" />
@@ -8981,7 +9123,11 @@ Add some items to it then press Save</source>
             <source>Could not import bible text because no bible is installed.</source>
             <translation>Не вдалося імпортувати текст Біблії, бо не встановлено жодної Біблії.</translation>
         </message>
-    </context>
+            <message>
+            <source>Select Plan Date</source>
+            <translation>Виберіть дату плану</translation>
+        </message>
+</context>
     <context>
         <name>PlanningCenterPlugin.PlanningCenterTab</name>
         <message>
@@ -9025,7 +9171,23 @@ Add some items to it then press Save</source>
   &lt;li&gt;Скопіюйте та вставте наведені нижче значення Application ID і Secret.&lt;/li&gt;
 &lt;/ol&gt;</translation>
         </message>
-    </context>
+            <message>
+            <source>Authentication Failed</source>
+            <translation>Помилка автентифікації</translation>
+        </message>
+        <message>
+            <source>Authentication successful for organization: {0}</source>
+            <translation>Автентифікацію для організації виконано: {0}</translation>
+        </message>
+        <message>
+            <source>Planning Center Online Authentication Test</source>
+            <translation>Перевірка автентифікації Planning Center Online</translation>
+        </message>
+        <message>
+            <source>Please enter values for both Application ID and Secret</source>
+            <translation>Введіть ідентифікатор програми й секретний код</translation>
+        </message>
+</context>
     <context>
         <name>PresentationPlugin</name>
         <message>
@@ -9076,7 +9238,11 @@ Add some items to it then press Save</source>
             <source>Add the selected presentation to the service.</source>
             <translation>Додати вибрану презентацію до служіння.</translation>
         </message>
-    </context>
+            <message>
+            <source>Impress on macOS</source>
+            <translation>Impress у macOS</translation>
+        </message>
+</context>
     <context>
         <name>PresentationPlugin.MediaItem</name>
         <message>
@@ -9186,7 +9352,7 @@ Add some items to it then press Save</source>
         <message>
             <location filename="../../openlp/core/api/tab.py" line="201" />
             <source>Remote Interface</source>
-            <translation>Віддалений інтерфейс</translation>
+            <translation>Віддалене керування</translation>
         </message>
         <message>
             <location filename="../../openlp/core/api/tab.py" line="202" />
@@ -9261,7 +9427,7 @@ Add some items to it then press Save</source>
         <message>
             <location filename="../../openlp/core/api/tab.py" line="220" />
             <source>Install</source>
-            <translation>Установити</translation>
+            <translation>Встановити</translation>
         </message>
         <message>
             <location filename="../../openlp/core/api/tab.py" line="221" />
@@ -9276,7 +9442,7 @@ Add some items to it then press Save</source>
         <message>
             <location filename="../../openlp/core/api/tab.py" line="223" />
             <source>Installed version:</source>
-            <translation>Установлена версія:</translation>
+            <translation>Встановлена версія:</translation>
         </message>
         <message>
             <location filename="../../openlp/core/api/tab.py" line="224" />
@@ -9468,7 +9634,7 @@ has been successfully created. </source>
     </message>
     <message>
         <source>Show the statistics of the song usage.</source>
-        <translation>Показати статистику виконаних пісень.</translation>
+        <translation>Показати статистику використання пісень.</translation>
     </message>
 </context>
     <context>
@@ -9521,7 +9687,7 @@ All data recorded before this date will be permanently deleted.</source>
         <message>
             <location filename="../../openlp/plugins/songusage/forms/songusagedetaildialog.py" line="88" />
             <source>to</source>
-            <translation>до</translation>
+            <translation>по</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/songusage/forms/songusagedetaildialog.py" line="89" />
@@ -9666,7 +9832,7 @@ The encoding is responsible for the correct character representation.</source>
         <message>
             <location filename="../../openlp/plugins/songs/songsplugin.py" line="186" />
             <source>&amp;Song</source>
-            <translation>&amp;Пісню</translation>
+            <translation>&amp;Пісня</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/songs/songsplugin.py" line="166" />
@@ -9706,7 +9872,7 @@ The encoding is responsible for the correct character representation.</source>
         <message>
             <location filename="../../openlp/plugins/songs/songsplugin.py" line="210" />
             <source>Find &amp;Duplicate Songs</source>
-            <translation>Знайти &amp;дублікати пісень</translation>
+            <translation>Знайти д&amp;ублікати пісень</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/songs/songsplugin.py" line="210" />
@@ -9971,7 +10137,11 @@ The encoding is responsible for the correct character representation.</source>
             <translation>
 [вище наведено теги пісні з примітками, імпортовані з EasyWorship]</translation>
         </message>
-    </context>
+            <message>
+            <source>{name} contains unexpected data and can not be imported</source>
+            <translation>{name} містить неочікувані дані, тому його не можна імпортувати</translation>
+        </message>
+</context>
     <context>
         <name>SongsPlugin.EditBibleForm</name>
         <message>
@@ -10020,7 +10190,7 @@ The encoding is responsible for the correct character representation.</source>
         <message>
             <location filename="../../openlp/plugins/songs/forms/editsongdialog.py" line="308" />
             <source>Ed&amp;it All</source>
-            <translation>Ре&amp;дагувати все</translation>
+            <translation>Редагувати вс&amp;е</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/songs/forms/editsongdialog.py" line="310" />
@@ -10045,7 +10215,7 @@ The encoding is responsible for the correct character representation.</source>
         <message>
             <location filename="../../openlp/plugins/songs/forms/editsongdialog.py" line="316" />
             <source>&amp;Manage Authors, Topics, Songbooks</source>
-            <translation>&amp;Керувати авторами, темами, збірниками</translation>
+            <translation>&amp;Керувати авторами, тематиками, збірниками</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/songs/forms/editsongdialog.py" line="318" />
@@ -10060,7 +10230,7 @@ The encoding is responsible for the correct character representation.</source>
         <message>
             <location filename="../../openlp/plugins/songs/forms/editsongdialog.py" line="321" />
             <source>Add &amp;to Song</source>
-            <translation>Додати &amp;до пісні</translation>
+            <translation>Додати до пі&amp;сні</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/songs/forms/editsongdialog.py" line="322" />
@@ -10070,7 +10240,7 @@ The encoding is responsible for the correct character representation.</source>
         <message>
             <location filename="../../openlp/plugins/songs/forms/editsongdialog.py" line="323" />
             <source>Authors, Topics &amp;&amp; Songbooks</source>
-            <translation>Автори, теми &amp;&amp; збірники</translation>
+            <translation>Автори, тематики &amp;&amp; збірники</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/songs/forms/editsongdialog.py" line="326" />
@@ -10197,7 +10367,7 @@ Please correct these tags before continuing.</source>
         <message>
             <location filename="../../openlp/plugins/songs/forms/editsongform.py" line="630" />
             <source>You have not selected a valid author. Either select an author from the list, or type in a new author and click the "Add Author to Song" button to add the new author.</source>
-            <translation>Ви не вибрали дійсного автора. Виберіть автора зі списку або введіть нового й натисніть кнопку «Додати автора до пісні», щоб додати нового автора.</translation>
+            <translation>Ви не вибрали дійсного автора. Виберіть автора зі списку або введіть нового й натисніть кнопку «Додати до пісні», щоб додати нового автора.</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/songs/forms/editsongform.py" line="654" />
@@ -10212,22 +10382,22 @@ Please correct these tags before continuing.</source>
         <message>
             <location filename="../../openlp/plugins/songs/forms/editsongform.py" line="681" />
             <source>Add Topic</source>
-            <translation>Додати тему</translation>
+            <translation>Додати тематику</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/songs/forms/editsongform.py" line="681" />
             <source>This topic does not exist, do you want to add it?</source>
-            <translation>Цієї теми не існує. Додати її?</translation>
+            <translation>Цієї тематики не існує. Додати її?</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/songs/forms/editsongform.py" line="699" />
             <source>This topic is already in the list.</source>
-            <translation>Ця тема вже є в списку.</translation>
+            <translation>Ця тематика вже є в списку.</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/songs/forms/editsongform.py" line="708" />
             <source>You have not selected a valid topic. Either select a topic from the list, or type in a new topic and click the "Add Topic to Song" button to add the new topic.</source>
-            <translation>Ви не вибрали дійсну тему. Виберіть тему зі списку або введіть нову й натисніть кнопку «Додати тему до пісні», щоб додати нову тему.</translation>
+            <translation>Ви не вибрали дійсну тематику. Виберіть тематику зі списку або введіть нову й натисніть кнопку «Додати до пісні», щоб додати нову тематику.</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/songs/forms/editsongform.py" line="727" />
@@ -10270,7 +10440,7 @@ Please correct these tags before continuing.</source>
         <message>
             <location filename="../../openlp/core/common/i18n.py" line="377" />
             <source>Edit Verse</source>
-            <translation>Редагувати вірш</translation>
+            <translation>Редагування вірша</translation>
         </message>
         <message>
             <location filename="../../openlp/core/common/i18n.py" line="385" />
@@ -10290,7 +10460,7 @@ Please correct these tags before continuing.</source>
         <message>
             <location filename="../../openlp/core/common/i18n.py" line="396" />
             <source>Split a slide into two by inserting a verse splitter.</source>
-            <translation>Розділити слайд на два, вставивши розділювач віршів.</translation>
+            <translation>Розділити слайд на два, вставивши роздільник віршів.</translation>
         </message>
         <message>
             <location filename="../../openlp/core/common/i18n.py" line="471" />
@@ -10317,7 +10487,19 @@ Please correct these tags before continuing.</source>
             <source>Invalid Chord</source>
             <translation>Неправильний акорд</translation>
         </message>
-    </context>
+            <message>
+            <source>An invalid chord was detected:
+{err_msg}</source>
+            <translation>Виявлено неправильний акорд:
+{err_msg}</translation>
+        </message>
+        <message>
+            <source>Transposing failed because of invalid chord:
+{err_msg}</source>
+            <translation>Не вдалося транспонувати через неправильний акорд:
+{err_msg}</translation>
+        </message>
+</context>
     <context>
         <name>SongsPlugin.ExportWizardForm</name>
         <message>
@@ -10719,7 +10901,15 @@ Please correct these tags before continuing.</source>
             <source>Datasoul Song Files</source>
             <translation>Файли пісень Datasoul</translation>
         </message>
-    </context>
+            <message>
+            <source>Filename:</source>
+            <translation>Ім&apos;я файлу:</translation>
+        </message>
+        <message>
+            <source>Folder:</source>
+            <translation>Папка:</translation>
+        </message>
+</context>
     <context>
         <name>SongsPlugin.LiveWorshipImport</name>
         <message>
@@ -10774,7 +10964,7 @@ Please correct these tags before continuing.</source>
         <message>
             <location filename="../../openlp/plugins/songs/lib/mediaitem.py" line="128" />
             <source>Maintain the lists of authors, topics and books.</source>
-            <translation>Керувати списками авторів, тем і збірників.</translation>
+            <translation>Керувати списками авторів, тематик і збірників.</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/songs/lib/mediaitem.py" line="138" />
@@ -10804,7 +10994,7 @@ Please correct these tags before continuing.</source>
         <message>
             <location filename="../../openlp/plugins/songs/lib/mediaitem.py" line="138" />
             <source>Search Topics...</source>
-            <translation>Шукати теми...</translation>
+            <translation>Шукати тематики...</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/songs/lib/mediaitem.py" line="138" />
@@ -10992,7 +11182,15 @@ See log for details</source>
             <source>Error: {error}</source>
             <translation>Помилка: {error}</translation>
         </message>
-    </context>
+            <message>
+            <source>Missing End tag in hint for Hymn: {}</source>
+            <translation>Бракує закривального тегу в підказці для гімну: {}</translation>
+        </message>
+        <message>
+            <source>Unknown tag {} value {}</source>
+            <translation>Невідомий тег {} зі значенням {}</translation>
+        </message>
+</context>
     <context>
         <name>SongsPlugin.SongBeamerImport</name>
         <message>
@@ -11165,12 +11363,12 @@ See log for details</source>
         <message>
             <location filename="../../openlp/plugins/songs/forms/songmaintenanceform.py" line="267" />
             <source>Could not add your topic.</source>
-            <translation>Не вдалося додати тему.</translation>
+            <translation>Не вдалося додати тематику.</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/songs/forms/songmaintenanceform.py" line="270" />
             <source>This topic already exists.</source>
-            <translation>Ця тема вже існує.</translation>
+            <translation>Ця тематика вже існує.</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/songs/forms/songmaintenanceform.py" line="284" />
@@ -11200,12 +11398,12 @@ See log for details</source>
         <message>
             <location filename="../../openlp/plugins/songs/forms/songmaintenanceform.py" line="355" />
             <source>The topic {original} already exists. Would you like to make songs with topic {new} use the existing topic {original}?</source>
-            <translation>Тема {original} уже існує. Призначити пісням з темою {new} наявну тему {original}?</translation>
+            <translation>Тематика {original} уже існує. Призначити пісням з тематикою {new} наявну тематику {original}?</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/songs/forms/songmaintenanceform.py" line="365" />
             <source>Could not save your modified topic, because it already exists.</source>
-            <translation>Не вдалося зберегти змінену тему, бо вона вже існує.</translation>
+            <translation>Не вдалося зберегти змінену тематику, бо вона вже існує.</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/songs/forms/songmaintenanceform.py" line="394" />
@@ -11230,17 +11428,17 @@ See log for details</source>
         <message>
             <location filename="../../openlp/plugins/songs/forms/songmaintenanceform.py" line="538" />
             <source>Delete Topic</source>
-            <translation>Видалити тему</translation>
+            <translation>Видалити тематику</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/songs/forms/songmaintenanceform.py" line="538" />
             <source>Are you sure you want to delete the selected topic?</source>
-            <translation>Ви справді хочете видалити вибрану тему?</translation>
+            <translation>Ви справді хочете видалити вибрану тематику?</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/songs/forms/songmaintenanceform.py" line="538" />
             <source>This topic cannot be deleted, it is currently assigned to at least one song.</source>
-            <translation>Цю тему неможливо видалити, бо її призначено принаймні одній пісні.</translation>
+            <translation>Цю тематику неможливо видалити, бо її призначено принаймні одній пісні.</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/songs/forms/songmaintenanceform.py" line="549" />
@@ -11497,7 +11695,7 @@ Are you sure you want to import this song?</source>
         <message>
             <location filename="../../openlp/plugins/songs/lib/songstab.py" line="201" />
             <source>Authors when type is not set</source>
-            <translation>Автори без указаного типу</translation>
+            <translation>Автори без вказаного типу</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/songs/lib/songstab.py" line="203" />
@@ -11552,7 +11750,7 @@ Are you sure you want to import this song?</source>
         <message>
             <location filename="../../openlp/plugins/songs/lib/songstab.py" line="221" />
             <source>Topics</source>
-            <translation>Теми</translation>
+            <translation>Тематики</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/songs/lib/songstab.py" line="222" />
@@ -11615,17 +11813,17 @@ Are you sure you want to import this song?</source>
         <message>
             <location filename="../../openlp/plugins/songs/forms/topicsdialog.py" line="60" />
             <source>Topic Maintenance</source>
-            <translation>Керування темами</translation>
+            <translation>Керування тематиками</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/songs/forms/topicsdialog.py" line="61" />
             <source>Topic name:</source>
-            <translation>Назва теми:</translation>
+            <translation>Назва тематики:</translation>
         </message>
         <message>
             <location filename="../../openlp/plugins/songs/forms/topicsform.py" line="58" />
             <source>You need to type in a topic name.</source>
-            <translation>Потрібно ввести назву теми.</translation>
+            <translation>Потрібно ввести назву тематики.</translation>
         </message>
     </context>
     <context>
@@ -11641,7 +11839,7 @@ Are you sure you want to import this song?</source>
 For an optimal chord experience, please include a song key at the beginning of the song. For example: [=G]
 
 You can disable this warning message in songs settings.</source>
-            <translation>Для цієї пісні не визначено тональність; її слід указати перед першим акордом.
+            <translation>Для цієї пісні не визначено тональність; її слід вказати перед першим акордом.
 Для оптимальної роботи з акордами вкажіть тональність на початку пісні. Наприклад: [=G]
 
 Це попередження можна вимкнути в налаштуваннях пісень.</translation>
@@ -12821,7 +13019,7 @@ Download and install it now? OpenLP will be closed for this; your songs, Bibles,
     </message>
     <message>
         <source>Search song or number, e.g. d203</source>
-        <translation>Пошук пісні або номера, напр. r47</translation>
+        <translation>Шукати пісню або номер, напр. r47</translation>
     </message>
     <message>
         <source>Rank</source>
@@ -12895,5 +13093,48 @@ Download and install it now? OpenLP will be closed for this; your songs, Bibles,
         <source>CSV files</source>
         <translation>Файли CSV</translation>
     </message>
+</context>
+<context>
+    <name>SongsPlugin.SongReviewWidget</name>
+        <message>
+            <source>Alternate Title:</source>
+            <translation>Альтернативна назва:</translation>
+        </message>
+        <message>
+            <source>Authors:</source>
+            <translation>Автори:</translation>
+        </message>
+        <message>
+            <source>CCLI Number:</source>
+            <translation>Номер CCLI:</translation>
+        </message>
+        <message>
+            <source>Comments:</source>
+            <translation>Коментарі:</translation>
+        </message>
+        <message>
+            <source>Copyright:</source>
+            <translation>Авторські права:</translation>
+        </message>
+        <message>
+            <source>Last Modified:</source>
+            <translation>Остання зміна:</translation>
+        </message>
+        <message>
+            <source>Remove</source>
+            <translation>Вилучити</translation>
+        </message>
+        <message>
+            <source>Theme:</source>
+            <translation>Тема:</translation>
+        </message>
+        <message>
+            <source>Title:</source>
+            <translation>Назва:</translation>
+        </message>
+        <message>
+            <source>Verse Order:</source>
+            <translation>Порядок віршів:</translation>
+        </message>
 </context>
 </TS>

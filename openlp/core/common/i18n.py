@@ -230,13 +230,17 @@ class LanguageManager(object):
         app_translator.load(language, lang_path)
         log.info(f"Language: '{language}' loaded.")
         # A translator for buttons and other default strings provided by Qt.
+        qt_lang_path = QtCore.QLibraryInfo.location(QtCore.QLibraryInfo.TranslationsPath)
         if not is_win() and not is_macosx():
-            lang_path = QtCore.QLibraryInfo.location(QtCore.QLibraryInfo.TranslationsPath)
-        # As of Qt5, the core translations come in 2 files per language
+            lang_path = qt_lang_path
+        # As of Qt5, the core translations come in 2 files per language. They are looked for next to the translations
+        # of OpenLP first, and then where Qt has them (e.g. in PyQt5, when they are not next to OpenLP's)
         default_translator = QtCore.QTranslator()
-        default_translator.load('qt_%s' % language, lang_path)
+        if not default_translator.load('qt_%s' % language, lang_path):
+            default_translator.load('qt_%s' % language, qt_lang_path)
         base_translator = QtCore.QTranslator()
-        base_translator.load('qtbase_%s' % language, lang_path)
+        if not base_translator.load('qtbase_%s' % language, lang_path):
+            base_translator.load('qtbase_%s' % language, qt_lang_path)
         return app_translator, default_translator, base_translator
 
     @staticmethod

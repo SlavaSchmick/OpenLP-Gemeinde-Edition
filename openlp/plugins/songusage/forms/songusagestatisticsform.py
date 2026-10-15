@@ -139,21 +139,27 @@ class SongUsageStatisticsForm(QtWidgets.QDialog, RegistryProperties):
         self.button_box.rejected.connect(self.close)
 
     def retranslate_ui(self):
-        def text(source):
-            return translate('SongUsagePlugin.SongUsageStatisticsForm', source)
-
-        self.setWindowTitle(text('Most Sung Songs'))
-        self.period_label.setText(text('&Period:'))
-        for period, name in ((Period.FourWeeks, text('Last 4 weeks')), (Period.ThreeMonths, text('Last 3 months')),
-                             (Period.TwelveMonths, text('Last 12 months')), (Period.ThisYear, text('This year')),
-                             (Period.All, text('All')), (Period.Custom, text('Custom'))):
+        self.setWindowTitle(translate('SongUsagePlugin.SongUsageStatisticsForm', 'Most Sung Songs'))
+        self.period_label.setText(translate('SongUsagePlugin.SongUsageStatisticsForm', '&Period:'))
+        periods = ((Period.FourWeeks, translate('SongUsagePlugin.SongUsageStatisticsForm', 'Last 4 weeks')),
+                   (Period.ThreeMonths, translate('SongUsagePlugin.SongUsageStatisticsForm', 'Last 3 months')),
+                   (Period.TwelveMonths, translate('SongUsagePlugin.SongUsageStatisticsForm', 'Last 12 months')),
+                   (Period.ThisYear, translate('SongUsagePlugin.SongUsageStatisticsForm', 'This year')),
+                   (Period.All, translate('SongUsagePlugin.SongUsageStatisticsForm', 'All')),
+                   (Period.Custom, translate('SongUsagePlugin.SongUsageStatisticsForm', 'Custom')))
+        for period, name in periods:
             self.period_combo_box.setItemText(period, name)
-        self.to_label.setText(text('to'))
-        self.book_label.setText(text('Song&book:'))
-        self.search_edit.setPlaceholderText(text('Search song or number, e.g. d203'))
-        self.song_table.setHorizontalHeaderLabels([text('Rank'), text('No.'), text('Song'), text('Times Sung')])
-        self.pdf_button.setText(text('Save as &PDF...'))
-        self.csv_button.setText(text('Save as &CSV...'))
+        self.to_label.setText(translate('SongUsagePlugin.SongUsageStatisticsForm', 'to'))
+        self.book_label.setText(translate('SongUsagePlugin.SongUsageStatisticsForm', 'Song&book:'))
+        self.search_edit.setPlaceholderText(translate('SongUsagePlugin.SongUsageStatisticsForm',
+                                                      'Search song or number, e.g. d203'))
+        self.song_table.setHorizontalHeaderLabels([translate('SongUsagePlugin.SongUsageStatisticsForm', 'Rank'),
+                                                   translate('SongUsagePlugin.SongUsageStatisticsForm', 'No.'),
+                                                   translate('SongUsagePlugin.SongUsageStatisticsForm', 'Song'),
+                                                   translate('SongUsagePlugin.SongUsageStatisticsForm',
+                                                             'Times Sung')])
+        self.pdf_button.setText(translate('SongUsagePlugin.SongUsageStatisticsForm', 'Save as &PDF...'))
+        self.csv_button.setText(translate('SongUsagePlugin.SongUsageStatisticsForm', 'Save as &CSV...'))
 
     def load_statistics(self):
         """

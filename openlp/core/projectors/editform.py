@@ -101,7 +101,7 @@ class MessageList(metaclass=Singleton):
                                               'Port numbers below 1000 are reserved for admin use only.<br />'
                                               'Port numbers above 32767 are not currently usable.<br /><br />'
                                               'Please enter a valid port number between 1000 and 32767 inclusive.'
-                                              f'<br /><br />Default PJLink port is {PJLINK_PORT}')
+                                              '<br /><br />Default PJLink port is {port}').format(port=PJLINK_PORT)
                             }
 
     @staticmethod

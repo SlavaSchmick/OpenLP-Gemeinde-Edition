@@ -137,8 +137,8 @@ class EditVerseForm(QtWidgets.QDialog, Ui_EditVerseDialog):
             # Transposing failed
             critical_error_message_box(title=translate('SongsPlugin.EditVerseForm', 'Transposing failed'),
                                        message=translate('SongsPlugin.EditVerseForm',
-                                                         'Transposing failed because of invalid chord:\n{err_msg}'
-                                                         .format(err_msg=ke)))
+                                                         'Transposing failed because of invalid chord:\n{err_msg}')
+                                       .format(err_msg=ke))
             return
         self.verse_text_edit.setFocus()
         self.verse_text_edit.moveCursor(QtGui.QTextCursor.MoveOperation.End)
@@ -159,8 +159,8 @@ class EditVerseForm(QtWidgets.QDialog, Ui_EditVerseDialog):
             # Transposing failed
             critical_error_message_box(title=translate('SongsPlugin.EditVerseForm', 'Transposing failed'),
                                        message=translate('SongsPlugin.EditVerseForm',
-                                                         'Transposing failed because of invalid chord:\n{err_msg}'
-                                                         .format(err_msg=ke)))
+                                                         'Transposing failed because of invalid chord:\n{err_msg}')
+                                       .format(err_msg=ke))
             return
         self.verse_text_edit.setFocus()
         self.verse_text_edit.moveCursor(QtGui.QTextCursor.MoveOperation.End)
@@ -256,7 +256,7 @@ class EditVerseForm(QtWidgets.QDialog, Ui_EditVerseDialog):
                 # Transposing failed
                 critical_error_message_box(title=translate('SongsPlugin.EditVerseForm', 'Invalid Chord'),
                                            message=translate('SongsPlugin.EditVerseForm',
-                                                             'An invalid chord was detected:\n{err_msg}'
-                                                             .format(err_msg=ke)))
+                                                             'An invalid chord was detected:\n{err_msg}')
+                                           .format(err_msg=ke))
         else:
             super().accept()

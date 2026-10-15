@@ -24,6 +24,7 @@ from subprocess import Popen
 
 from openlp.core.common import delete_file
 from openlp.core.common.applocation import AppLocation
+from openlp.core.common.i18n import translate
 from openlp.core.common.mixins import LogMixin
 from openlp.core.common.path import Path
 from openlp.core.common.platform import is_macosx
@@ -66,7 +67,8 @@ class MacLOController(PresentationController, LogMixin):
         Initialise the class
         """
         log.debug('Initialising')
-        super(MacLOController, self).__init__(plugin, 'maclo', MacLODocument, 'Impress on macOS')
+        super(MacLOController, self).__init__(plugin, 'maclo', MacLODocument,
+                                              translate('PresentationPlugin', 'Impress on macOS'))
         self.supports = ['odp']
         self.also_supports = ['ppt', 'pps', 'pptx', 'ppsx', 'pptm']
         self.server_process = None

@@ -121,14 +121,12 @@ def update_check_date():
 
 def check_for_update(main_window):
     """
-    Run a thread to download and check the version of OpenLP
+    Run a thread to download and check the version of OpenLP. It runs at every start (and not only once a day), so that
+    a new release of this edition is offered as soon as it is published.
 
     :param MainWindow main_window: The OpenLP main window.
     """
     last_check_date = Registry().get('settings').value('core/last version test')
-    if date.today().strftime('%Y-%m-%d') <= last_check_date:
-        log.debug('Version check skipped, last checked today')
-        return
     worker = VersionWorker(last_check_date, get_version())
     worker.new_version.connect(main_window.on_new_version)
     worker.quit.connect(update_check_date)

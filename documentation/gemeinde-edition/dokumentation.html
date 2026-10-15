@@ -344,14 +344,14 @@ Update). Wer sie ausschalten möchte: <span class="path">Extras → Protokollier
 <p>Die Gemeinde-Edition bekommt ihre Updates aus ihrem eigenen GitHub-Repository – <strong>nicht</strong> von openlp.org. So kann niemand versehentlich das offizielle OpenLP installieren, das alle Ergänzungen dieser Edition entfernen würde.</p>
 <h3>So läuft ein Update</h3>
 <ol>
-  <li>Beim Start prüft OpenLP (einmal am Tag), ob es auf <a href="https://github.com/SlavaSchmick/OpenLP-Gemeinde-Edition/releases">github.com/SlavaSchmick/OpenLP-Gemeinde-Edition/releases</a> eine neuere Version gibt.</li>
+  <li>Bei jedem Start prüft OpenLP, ob es auf <a href="https://github.com/SlavaSchmick/OpenLP-Gemeinde-Edition/releases">github.com/SlavaSchmick/OpenLP-Gemeinde-Edition/releases</a> eine neuere Version gibt.</li>
   <li>Wenn ja, erscheint die Frage <em>„Version … der OpenLP Gemeinde-Edition ist verfügbar … Jetzt herunterladen und installieren?“</em></li>
   <li>Bei <strong>Ja</strong> wird das Setup heruntergeladen (mit Fortschritt, abbrechbar) und mit der Prüfsumme von GitHub kontrolliert – eine beschädigte Datei wird nicht gestartet.</li>
   <li>Windows fragt nach Administratorrechten, OpenLP wird geschlossen, das Update installiert und OpenLP danach <strong>automatisch wieder gestartet</strong>.</li>
 </ol>
 <ul>
   <li><strong>Lieder, Bibeln, Abläufe, Designs und Einstellungen bleiben erhalten.</strong></li>
-  <li>Bei <strong>Nein</strong> passiert nichts; am nächsten Tag wird wieder gefragt.</li>
+  <li>Bei <strong>Nein</strong> passiert nichts; beim nächsten Start wird wieder gefragt.</li>
   <li>Ausschalten lässt sich die Prüfung unter <span class="path">Einstellungen → Einstellungen… → Allgemein → „OpenLP auf Updates überprüfen“</span>.</li>
   <li>VLC ist Teil des Setups und wird mit einem Update der Edition ebenfalls aktualisiert; ein auf dem Rechner installiertes VLC hat keinen Einfluss.</li>
 </ul>

@@ -216,18 +216,19 @@ def test_check_for_update(mocked_run_thread, mock_settings):
 
 
 @patch('openlp.core.version.run_thread')
-def test_check_for_update_skipped(mocked_run_thread, mock_settings):
+def test_check_for_update_at_every_start(mocked_run_thread, mock_settings):
     """
-    Test that the check_for_update() function skips running if it already ran today
+    Test that the check_for_update() function also runs when it already ran today, so that a new release is offered
+    as soon as it is published
     """
-    # GIVEN: A mocked settings object
+    # GIVEN: A mocked settings object, with a check today
     mock_settings.value.return_value = date.today().strftime('%Y-%m-%d')
 
     # WHEN: check_for_update() is called
     check_for_update(MagicMock())
 
-    # THEN: The right things should have been called and a thread set in motion
-    assert mocked_run_thread.call_count == 0
+    # THEN: The version is checked again
+    assert mocked_run_thread.call_count == 1
 
 
 @pytest.mark.parametrize('in_version, out_version', [

@@ -3,6 +3,13 @@
 Alle Versionen der Gemeinde-Edition, die neueste oben. Die Änderungen des offiziellen OpenLP stehen in `CHANGELOG.rst`.
 Downloads: [Releases](https://github.com/SlavaSchmick/OpenLP-Gemeinde-Edition/releases)
 
+## Noch nicht veröffentlicht
+
+### Geändert
+
+- OpenLP prüft **bei jedem Start** auf ein Update (bisher nur einmal am Tag), damit ein neues Release sofort angeboten
+  wird.
+
 ## 3.1.7+gemeinde.2 – 14.10.2026
 
 ### Neu

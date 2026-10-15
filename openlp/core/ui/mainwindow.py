@@ -45,11 +45,12 @@ from openlp.core.common.platform import is_macosx, is_win
 from openlp.core.common.registry import Registry
 from openlp.core.common.settings import Settings
 from openlp.core.display.screens import ScreenList
-from openlp.core.edition import edition_title
+from openlp.core.edition import edition_title, is_newer_release
 from openlp.core.lib.plugin import PluginStatus
 from openlp.core.lib.ui import create_action
 from openlp.core.projectors.manager import ProjectorManager
 from openlp.core.state import State
+from openlp.core.threading import is_thread_finished, run_thread
 from openlp.core.ui.aboutform import AboutForm
 from openlp.core.ui.editionupdate import offer_update
 from openlp.core.ui.firsttimeform import FirstTimeForm
@@ -62,6 +63,7 @@ from openlp.core.ui.settingsform import SettingsForm
 from openlp.core.ui.shortcutlistform import ShortcutListForm
 from openlp.core.ui.style import PROGRESSBAR_STYLE, get_library_stylesheet
 from openlp.core.ui.thememanager import ThemeManager
+from openlp.core.version import VersionWorker, get_version
 from openlp.core.widgets.dialogs import FileDialog
 from openlp.core.widgets.docks import MediaDockManager, OpenLPDockWidget
 
@@ -303,6 +305,9 @@ class Ui_MainWindow(object):
                                               can_shortcuts=True, category=UiStrings().Help,
                                               triggers=self.on_help_clicked)
         self.web_site_item = create_action(main_window, 'webSiteItem', can_shortcuts=True, category=UiStrings().Help)
+        self.check_update_item = create_action(main_window, 'checkUpdateItem', icon=UiIcons().download,
+                                               can_shortcuts=True, category=UiStrings().Help,
+                                               triggers=self.on_check_update_item_clicked)
         # Shortcuts not connected to buttons or menu entries.
         self.search_shortcut_action = create_action(main_window,
                                                     'searchShortcut', can_shortcuts=True,
@@ -340,7 +345,8 @@ class Ui_MainWindow(object):
         add_actions(self.tools_menu, (self.tools_open_data_folder, None))
         add_actions(self.tools_menu, (self.tools_first_time_wizard, None))
         add_actions(self.tools_menu, [self.update_theme_images])
-        add_actions(self.help_menu, (self.user_manual_item, None, self.web_site_item, self.about_item))
+        add_actions(self.help_menu, (self.user_manual_item, None, self.web_site_item, self.check_update_item,
+                                     self.about_item))
         add_actions(self.menu_bar, (self.file_menu.menuAction(), self.view_menu.menuAction(),
                     self.tools_menu.menuAction(), self.settings_menu.menuAction(), self.help_menu.menuAction()))
         add_actions(self, [self.search_shortcut_action])
@@ -442,6 +448,9 @@ class Ui_MainWindow(object):
         self.search_shortcut_action.setToolTip(
             translate('OpenLP.MainWindow', 'Jump to the search box of the current active plugin.'))
         self.web_site_item.setText(translate('OpenLP.MainWindow', '&Web Site'))
+        self.check_update_item.setText(translate('OpenLP.MainWindow', 'Check for &Updates...'))
+        self.check_update_item.setStatusTip(translate('OpenLP.MainWindow', 'Check now whether a new version of '
+                                                      'OpenLP is available.'))
         for item in self.language_group.actions():
             item.setText(item.objectName())
             item.setStatusTip(translate('OpenLP.MainWindow',
@@ -632,6 +641,47 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, LogMixin, RegistryPropert
         :param openlp.core.edition.EditionRelease release: The new release
         """
         offer_update(self, release)
+
+    def on_check_update_item_clicked(self):
+        """
+        Check for a new release of this edition now, in a thread; the answer is shown when the check is done
+        """
+        if not is_thread_finished('manual version check'):
+            return
+        self.check_update_item.setEnabled(False)
+        QtWidgets.QApplication.setOverrideCursor(QtCore.Qt.WaitCursor)
+        worker = VersionWorker('', get_version(), retries=1)
+        worker.checked.connect(self.on_update_checked)
+        worker.no_internet.connect(self.on_update_check_failed)
+        run_thread(worker, 'manual version check')
+
+    def _finish_update_check(self):
+        QtWidgets.QApplication.restoreOverrideCursor()
+        self.check_update_item.setEnabled(True)
+
+    def on_update_checked(self, release):
+        """
+        Offer the latest release if it is newer than the running version, or say that this is the latest version
+
+        :param openlp.core.edition.EditionRelease release: The latest release, or None if there is none
+        """
+        self._finish_update_check()
+        current = get_version()['full']
+        if is_newer_release(release, current):
+            offer_update(self, release)
+        else:
+            self.information_message(translate('OpenLP.MainWindow', 'Check for Updates'),
+                                     translate('OpenLP.MainWindow', 'You are using the latest version of {edition} '
+                                               '({version}).').format(edition=edition_title(), version=current))
+
+    def on_update_check_failed(self):
+        """
+        Tell the user that GitHub could not be reached
+        """
+        self._finish_update_check()
+        QtWidgets.QMessageBox.warning(self, translate('OpenLP.MainWindow', 'Check for Updates'),
+                                      translate('OpenLP.MainWindow', 'OpenLP could not check for updates. Please '
+                                                'check the internet connection and try again.'))
 
     def on_new_remote_version(self, version: str):
         """

@@ -4667,6 +4667,26 @@ Processing has terminated and no changes have been made.</source>
         <source>New Data Directory Error</source>
         <translation>Ошибка изменения каталога данных</translation>
     </message>
+    <message>
+        <source>Check for &amp;Updates...</source>
+        <translation>Проверить &amp;обновления...</translation>
+    </message>
+    <message>
+        <source>Check now whether a new version of OpenLP is available.</source>
+        <translation>Проверить сейчас, доступна ли новая версия OpenLP.</translation>
+    </message>
+    <message>
+        <source>Check for Updates</source>
+        <translation>Проверка обновлений</translation>
+    </message>
+    <message>
+        <source>You are using the latest version of {edition} ({version}).</source>
+        <translation>У вас установлена последняя версия программы {edition} ({version}).</translation>
+    </message>
+    <message>
+        <source>OpenLP could not check for updates. Please check the internet connection and try again.</source>
+        <translation>OpenLP не удалось проверить обновления. Проверьте подключение к интернету и попробуйте ещё раз.</translation>
+    </message>
 </context>
 <context>
     <name>OpenLP.Manager</name>

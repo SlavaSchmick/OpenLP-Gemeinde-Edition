@@ -33,6 +33,7 @@ from PyQt5 import QtCore, QtWidgets, QtGui
 from openlp.core.common.platform import is_macosx
 from openlp.core.common.registry import Registry
 from openlp.core.display.screens import ScreenList
+from openlp.core.edition import EditionRelease
 from openlp.core.lib.plugin import PluginStatus
 from openlp.core.state import State
 from openlp.core.ui.mainwindow import MainWindow
@@ -994,3 +995,65 @@ def test_wait_for_threads_runtime_error(MockApp, main_window_reduced):
     assert mocked_http_thread.isRunning.call_count == 1, 'isRunning() should have been called once'
     mocked_http_thread.wait.assert_not_called()
     mocked_http_thread.terminate.assert_not_called()
+
+
+@patch('openlp.core.ui.mainwindow.run_thread')
+@patch('openlp.core.ui.mainwindow.is_thread_finished', return_value=True)
+def test_check_for_updates_menu(mocked_is_thread_finished, mocked_run_thread, main_window):
+    """
+    Test that the menu entry checks for updates in a thread, and is disabled meanwhile
+    """
+    # GIVEN: The main window with the menu entry in the help menu
+    assert main_window.check_update_item in main_window.help_menu.actions()
+
+    # WHEN: The menu entry is used
+    with patch.object(QtWidgets.QApplication, 'setOverrideCursor'):
+        main_window.check_update_item.trigger()
+
+    # THEN: The check runs in a thread, with one try, and the entry is disabled until it is done
+    worker, name = mocked_run_thread.call_args[0]
+    assert name == 'manual version check'
+    assert worker.retries == 1
+    assert not main_window.check_update_item.isEnabled()
+
+
+@patch('openlp.core.ui.mainwindow.offer_update')
+@patch('openlp.core.ui.mainwindow.get_version', return_value={'full': '3.1.7+gemeinde.2'})
+def test_update_checked(mocked_get_version, mocked_offer_update, main_window):
+    """
+    Test that a newer release is offered, and that the user is told when this is the latest version
+    """
+    # GIVEN: The main window during a check
+    main_window.check_update_item.setEnabled(False)
+    newer = EditionRelease('3.1.7+gemeinde.3', '', 'https://example.org/setup.exe', 'setup.exe', None)
+    same = EditionRelease('3.1.7+gemeinde.2', '', 'https://example.org/setup.exe', 'setup.exe', None)
+
+    # WHEN: The check found a newer release, and then the running one
+    with patch.object(QtWidgets.QApplication, 'restoreOverrideCursor'), \
+            patch.object(main_window, 'information_message') as mocked_information:
+        main_window.on_update_checked(newer)
+        main_window.on_update_checked(same)
+        main_window.on_update_checked(None)
+
+    # THEN: The newer release is offered, otherwise the user is told that this is the latest version
+    mocked_offer_update.assert_called_once_with(main_window, newer)
+    assert mocked_information.call_count == 2
+    assert '3.1.7+gemeinde.2' in mocked_information.call_args[0][1]
+    assert main_window.check_update_item.isEnabled()
+
+
+def test_update_check_failed(main_window):
+    """
+    Test that a failed check is shown
+    """
+    # GIVEN: The main window during a check
+    main_window.check_update_item.setEnabled(False)
+
+    # WHEN: GitHub could not be reached
+    with patch.object(QtWidgets.QApplication, 'restoreOverrideCursor'), \
+            patch.object(QtWidgets.QMessageBox, 'warning') as mocked_warning:
+        main_window.on_update_check_failed()
+
+    # THEN: The user is told, and can try again
+    mocked_warning.assert_called_once()
+    assert main_window.check_update_item.isEnabled()

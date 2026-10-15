@@ -4945,6 +4945,26 @@ Der Import wurde abgebrochen und es wurden keine Änderungen gemacht.</translati
         <source>New Data Directory Error</source>
         <translation>Fehler im neuen Daten Ordner</translation>
     </message>
+    <message>
+        <source>Check for &amp;Updates...</source>
+        <translation>Nach &amp;Updates suchen...</translation>
+    </message>
+    <message>
+        <source>Check now whether a new version of OpenLP is available.</source>
+        <translation>Jetzt prüfen, ob eine neue Version von OpenLP verfügbar ist.</translation>
+    </message>
+    <message>
+        <source>Check for Updates</source>
+        <translation>Nach Updates suchen</translation>
+    </message>
+    <message>
+        <source>You are using the latest version of {edition} ({version}).</source>
+        <translation>Sie verwenden die neueste Version der {edition} ({version}).</translation>
+    </message>
+    <message>
+        <source>OpenLP could not check for updates. Please check the internet connection and try again.</source>
+        <translation>OpenLP konnte nicht nach Updates suchen. Bitte die Internetverbindung prüfen und es noch einmal versuchen.</translation>
+    </message>
 </context>
 <context>
     <name>OpenLP.Manager</name>

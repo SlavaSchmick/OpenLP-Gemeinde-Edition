@@ -552,6 +552,7 @@ class Settings(QtCore.QSettings):
         # Add shortcuts here so QKeySequence has a QApplication instance to use.
         Settings.__default_settings__.update({
             'shortcuts/aboutItem': [QtGui.QKeySequence(QtCore.Qt.CTRL + QtCore.Qt.Key_F1)],
+            'shortcuts/checkUpdateItem': [],
             'shortcuts/addToService': [],
             'shortcuts/audioPauseItem': [],
             'shortcuts/displayTagItem': [],

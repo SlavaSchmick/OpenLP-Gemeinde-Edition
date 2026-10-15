@@ -62,17 +62,21 @@ class VersionWorker(ThreadWorker):
     """
     new_version = QtCore.pyqtSignal(object)
     no_internet = QtCore.pyqtSignal()
+    # The latest release (or None), when it could be read from GitHub
+    checked = QtCore.pyqtSignal(object)
 
-    def __init__(self, last_check_date, current_version):
+    def __init__(self, last_check_date, current_version, retries=3):
         """
         Constructor for the version check worker.
 
         :param string last_check_date: The last day we checked for a new version of OpenLP
+        :param int retries: How often to try to connect to GitHub
         """
         log.debug('VersionWorker - Initialise')
         super(VersionWorker, self).__init__(None)
         self.last_check_date = last_check_date
         self.current_version = current_version
+        self.retries = retries
 
     def start(self):
         """
@@ -93,7 +97,7 @@ class VersionWorker(ThreadWorker):
         }
         release = None
         retries = 0
-        while retries < 3:
+        while retries < self.retries:
             try:
                 response = get_web_page(url, headers=headers)
                 release = parse_latest_release(response) if response else None
@@ -107,6 +111,9 @@ class VersionWorker(ThreadWorker):
                 retries += 1
         else:
             self.no_internet.emit()
+            self.quit.emit()
+            return
+        self.checked.emit(release)
         if is_newer_release(release, self.current_version['full']):
             self.new_version.emit(release)
         self.quit.emit()

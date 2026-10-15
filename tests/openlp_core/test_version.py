@@ -188,6 +188,46 @@ def test_worker_start_connection_error(mock_get_web_page, worker_env):
     mocked_quit.emit.assert_called_once_with()
 
 
+@patch('openlp.core.version.get_web_page')
+def test_worker_reports_the_checked_release(mock_get_web_page, worker_env):
+    """
+    Test that the worker reports the latest release also when it isn't newer, for a check started by the user
+    """
+    # GIVEN: The running release is the latest one
+    mock_get_web_page.return_value = RELEASE_JSON.replace('gemeinde.2', 'gemeinde.1')
+    worker = VersionWorker('', CURRENT_VERSION, retries=1)
+
+    # WHEN: The worker is run
+    with patch.object(worker, 'checked') as mock_checked, patch.object(worker, 'new_version') as mock_new_version, \
+            patch.object(worker, 'quit'):
+        worker.start()
+
+    # THEN: The latest release is reported, but not announced as new
+    assert mock_checked.emit.call_args[0][0].version == '3.1.7+gemeinde.1'
+    mock_new_version.emit.assert_not_called()
+
+
+@patch('openlp.core.version.get_web_page')
+def test_worker_connection_error_is_not_a_check(mock_get_web_page, worker_env):
+    """
+    Test that a failed connection is reported as such, and not as a check without a newer release
+    """
+    # GIVEN: GitHub can't be reached, and only one try
+    mock_get_web_page.side_effect = ConnectionError('Could not connect')
+    worker = VersionWorker('', CURRENT_VERSION, retries=1)
+
+    # WHEN: The worker is run
+    with patch.object(worker, 'checked') as mock_checked, patch.object(worker, 'no_internet') as mock_no_internet, \
+            patch.object(worker, 'quit') as mock_quit:
+        worker.start()
+
+    # THEN: It is tried once, the failure is reported and the check completes
+    assert mock_get_web_page.call_count == 1
+    mock_no_internet.emit.assert_called_once_with()
+    mock_checked.emit.assert_not_called()
+    mock_quit.emit.assert_called_once_with()
+
+
 def test_update_check_date(mock_settings):
     """
     Test that the update_check_date() function writes the correct date

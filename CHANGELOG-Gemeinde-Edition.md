@@ -5,6 +5,11 @@ Downloads: [Releases](https://github.com/SlavaSchmick/OpenLP-Gemeinde-Edition/re
 
 ## Noch nicht veröffentlicht
 
+### Neu
+
+- **Hilfe → Nach Updates suchen…**: prüft sofort, ob es eine neue Version gibt, und bietet sie zur Installation an –
+  sonst kommt die Meldung, dass die neueste Version installiert ist.
+
 ### Geändert
 
 - OpenLP prüft **bei jedem Start** auf ein Update (bisher nur einmal am Tag), damit ein neues Release sofort angeboten

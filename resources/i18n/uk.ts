@@ -4946,7 +4946,27 @@ Processing has terminated and no changes have been made.</source>
             <source>New Data Directory Error</source>
             <translation>Помилка нової папки даних</translation>
         </message>
-    </context>
+        <message>
+        <source>Check for &amp;Updates...</source>
+        <translation>Перевірити &amp;оновлення...</translation>
+    </message>
+    <message>
+        <source>Check now whether a new version of OpenLP is available.</source>
+        <translation>Перевірити зараз, чи доступна нова версія OpenLP.</translation>
+    </message>
+    <message>
+        <source>Check for Updates</source>
+        <translation>Перевірка оновлень</translation>
+    </message>
+    <message>
+        <source>You are using the latest version of {edition} ({version}).</source>
+        <translation>У вас встановлено останню версію програми {edition} ({version}).</translation>
+    </message>
+    <message>
+        <source>OpenLP could not check for updates. Please check the internet connection and try again.</source>
+        <translation>OpenLP не вдалося перевірити оновлення. Перевірте підключення до інтернету та спробуйте ще раз.</translation>
+    </message>
+</context>
     <context>
         <name>OpenLP.Manager</name>
         <message>

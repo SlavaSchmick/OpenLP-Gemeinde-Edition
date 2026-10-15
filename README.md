@@ -76,7 +76,7 @@ bauen.
 
 ## Ein Update veröffentlichen
 
-Installierte Gemeinde-Editionen prüfen bei jedem Start das **neueste Release** dieses Repositorys und
+Installierte Gemeinde-Editionen prüfen bei jedem Start (und über *Hilfe → Nach Updates suchen…*) das **neueste Release** dieses Repositorys und
 bieten es zum Herunterladen und Installieren an. Dafür muss in `openlp/core/edition.py` das Repository eingetragen
 sein (`EDITION_REPOSITORY = 'besitzer/name'`) und das Repository öffentlich sein.
 

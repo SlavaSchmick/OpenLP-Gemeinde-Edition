@@ -7156,6 +7156,10 @@ please use a different shortcut.</source>
         <source>Duplicate Shortcut</source>
         <translation>Belegtes Tastenkürzel</translation>
     </message>
+    <message>
+        <source>Search action or shortcut, e.g. song or Ctrl+L</source>
+        <translation>Aktion oder Tastenkürzel suchen, z. B. Lied oder Strg+L</translation>
+    </message>
 </context>
 <context>
     <name>OpenLP.ShortcutListForm</name>

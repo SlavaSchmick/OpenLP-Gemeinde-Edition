@@ -22,9 +22,10 @@
 Package to test the openlp.core.ui.shortcutform package.
 """
 import pytest
+from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from openlp.core.ui.shortcutlistform import ShortcutListForm
 
@@ -219,3 +220,67 @@ def test_on_custom_radio_button_clicked(form):
         mocked_action_shortcuts.assert_called_with(mocked_action)
         mocked_refresh_shortcut_list.assert_called_with()
         mocked_set_text.assert_called_with('Esc')
+
+
+def _filled_form(form):
+    """
+    Fill the list with two categories and three actions, with shortcuts
+    """
+    song_search = QtWidgets.QAction('Song search')
+    song_search.setShortcut(QtGui.QKeySequence('Ctrl+L'))
+    bible_search = QtWidgets.QAction('Bible search')
+    bible_search.setShortcut(QtGui.QKeySequence('Ctrl+B'))
+    full_screen = QtWidgets.QAction('Full screen')
+    form.action_list = SimpleNamespace(categories=[SimpleNamespace(name='General', actions=[song_search, bible_search]),
+                                                   SimpleNamespace(name='View', actions=[full_screen])])
+    form._actions = (song_search, bible_search, full_screen)
+    form.reload_shortcut_list()
+    return form
+
+
+def _shown(form):
+    shown = []
+    for index in range(form.tree_widget.topLevelItemCount()):
+        category = form.tree_widget.topLevelItem(index)
+        if category.isHidden():
+            continue
+        shown += [category.child(i).text(0) for i in range(category.childCount()) if not category.child(i).isHidden()]
+    return shown
+
+
+@pytest.mark.parametrize('search,expected', [
+    ('', ['Song search', 'Bible search', 'Full screen']),
+    ('song', ['Song search']),
+    ('SEARCH', ['Song search', 'Bible search']),
+    ('ctrl+b', ['Bible search']),
+    ('Ctrl + L', ['Song search']),
+    ('view', ['Full screen']),
+    ('nothing', []),
+])
+def test_filter_shortcut_list(search, expected, form):
+    """
+    Test that the search shows only the actions which match by name, category or shortcut
+    """
+    # GIVEN: The shortcut list with some actions
+    _filled_form(form)
+
+    # WHEN: Something is searched
+    form.search_edit.setText(search)
+
+    # THEN: Only the matching actions are shown
+    assert _shown(form) == expected
+
+
+def test_filter_kept_after_refresh(form):
+    """
+    Test that the search still applies after the shortcuts were refreshed (e.g. after one was changed)
+    """
+    # GIVEN: A search
+    _filled_form(form)
+    form.search_edit.setText('bible')
+
+    # WHEN: The list is refreshed
+    form.refresh_shortcut_list()
+
+    # THEN: The search still applies
+    assert _shown(form) == ['Bible search']

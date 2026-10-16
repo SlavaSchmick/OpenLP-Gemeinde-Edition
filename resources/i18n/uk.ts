@@ -7159,7 +7159,11 @@ please use a different shortcut.</source>
             <source>Duplicate Shortcut</source>
             <translation>Повторюване сполучення клавіш</translation>
         </message>
-    </context>
+            <message>
+            <source>Search action or shortcut, e.g. song or Ctrl+L</source>
+            <translation>Пошук дії або сполучення клавіш, напр. пісня або Ctrl+L</translation>
+        </message>
+</context>
     <context>
         <name>OpenLP.ShortcutListForm</name>
         <message>

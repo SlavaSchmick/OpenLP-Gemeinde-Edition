@@ -6881,6 +6881,10 @@ please use a different shortcut.</source>
         <source>Duplicate Shortcut</source>
         <translation>Повторяющееся сочетание клавиш</translation>
     </message>
+    <message>
+        <source>Search action or shortcut, e.g. song or Ctrl+L</source>
+        <translation>Поиск действия или сочетания клавиш, напр. песня или Ctrl+L</translation>
+    </message>
 </context>
 <context>
     <name>OpenLP.ShortcutListForm</name>

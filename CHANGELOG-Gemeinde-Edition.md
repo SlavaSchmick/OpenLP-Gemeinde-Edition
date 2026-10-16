@@ -10,6 +10,8 @@ Downloads: [Releases](https://github.com/SlavaSchmick/OpenLP-Gemeinde-Edition/re
 - **Globales Tastenkürzel Strg+Alt+O:** holt OpenLP aus jedem anderen Programm in den Vordergrund (ein minimiertes
   Fenster wird wiederhergestellt). Änderbar unter *Einstellungen → Tastenkürzel konfigurieren… → „OpenLP in den
   Vordergrund holen“*.
+- **Suche im Dialog „Tastenkürzel konfigurieren“:** filtert beim Tippen nach Aktion, Kategorie oder Tastenkürzel
+  (z. B. „Lied“ oder „Strg+L“).
 
 ## 3.1.7+gemeinde.3 – 15.10.2026
 

@@ -79,6 +79,10 @@ class Ui_ShortcutListDialog(object):
         self.description_label.setObjectName('description_label')
         self.description_label.setWordWrap(True)
         self.shortcut_list_layout.addWidget(self.description_label)
+        self.search_edit = QtWidgets.QLineEdit(shortcutListDialog)
+        self.search_edit.setObjectName('search_edit')
+        self.search_edit.setClearButtonEnabled(True)
+        self.shortcut_list_layout.addWidget(self.search_edit)
         self.tree_widget = ShortcutTreeWidget(shortcutListDialog)
         self.tree_widget.setObjectName('tree_widget')
         self.tree_widget.setAlternatingRowColors(True)
@@ -139,6 +143,8 @@ class Ui_ShortcutListDialog(object):
         self.description_label.setText(
             translate('OpenLP.ShortcutListDialog', 'Select an action and click one of the buttons below to start '
                       'capturing a new primary or alternate shortcut, respectively.'))
+        self.search_edit.setPlaceholderText(translate('OpenLP.ShortcutListDialog',
+                                                      'Search action or shortcut, e.g. song or Ctrl+L'))
         self.tree_widget.setHeaderLabels([translate('OpenLP.ShortcutListDialog', 'Action'),
                                          translate('OpenLP.ShortcutListDialog', 'Shortcut'),
                                          translate('OpenLP.ShortcutListDialog', 'Alternate')])

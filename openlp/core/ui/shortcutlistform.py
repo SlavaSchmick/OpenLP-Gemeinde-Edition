@@ -61,6 +61,7 @@ class ShortcutListForm(QtWidgets.QDialog, Ui_ShortcutListDialog, RegistryPropert
         self.button_box.clicked.connect(self.on_restore_defaults_clicked)
         self.default_radio_button.clicked.connect(self.on_default_radio_button_clicked)
         self.custom_radio_button.clicked.connect(self.on_custom_radio_button_clicked)
+        self.search_edit.textChanged.connect(self.filter_shortcut_list)
 
     def keyPressEvent(self, event):
         """
@@ -111,6 +112,7 @@ class ShortcutListForm(QtWidgets.QDialog, Ui_ShortcutListDialog, RegistryPropert
         """
         self.changed_actions = {}
         self.reload_shortcut_list()
+        self.search_edit.setFocus()
         self._adjust_button(self.primary_push_button, False, False, '')
         self._adjust_button(self.alternate_push_button, False, False, '')
         return QtWidgets.QDialog.exec(self)
@@ -164,7 +166,35 @@ class ShortcutListForm(QtWidgets.QDialog, Ui_ShortcutListDialog, RegistryPropert
             else:
                 item.setText(1, self.get_shortcut_string(shortcuts[0], for_display=True))
                 item.setText(2, self.get_shortcut_string(shortcuts[1], for_display=True))
+        self.filter_shortcut_list()
         self.on_current_item_changed()
+
+    def filter_shortcut_list(self):
+        """
+        Show only the actions which match the search: by their name, their category, their tool tip or their
+        shortcuts (as shown, e.g. "Strg+L", or as written in English, e.g. "Ctrl+L"). A matching category shows all
+        its actions.
+        """
+        search = self.search_edit.text().strip().lower()
+        compact_search = search.replace(' ', '')
+        for index in range(self.tree_widget.topLevelItemCount()):
+            category_item = self.tree_widget.topLevelItem(index)
+            category_matches = bool(search) and search in category_item.text(0).lower()
+            any_shown = False
+            for child_index in range(category_item.childCount()):
+                item = category_item.child(child_index)
+                texts = [item.text(0), item.toolTip(0)]
+                action = self._current_item_action(item)
+                if action is not None:
+                    texts += [shortcut.toString(QtGui.QKeySequence.PortableText) for shortcut in action.shortcuts()]
+                shortcut_texts = [item.text(1), item.text(2)] + texts[2:]
+                text_matches = any(search in text.lower() for text in texts[:2])
+                shortcut_matches = bool(compact_search) and any(
+                    compact_search in text.lower().replace(' ', '') for text in shortcut_texts)
+                matches = not search or category_matches or text_matches or shortcut_matches
+                item.setHidden(not matches)
+                any_shown = any_shown or matches
+            category_item.setHidden(not any_shown)
 
     def on_primary_push_button_clicked(self, toggled):
         """

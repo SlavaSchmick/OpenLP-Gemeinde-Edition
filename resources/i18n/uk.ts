@@ -5012,6 +5012,14 @@ Processing has terminated and no changes have been made.</source>
         <source>OpenLP could not check for updates. Please check the internet connection and try again.</source>
         <translation>OpenLP не вдалося перевірити оновлення. Перевірте підключення до інтернету та спробуйте ще раз.</translation>
     </message>
+        <message>
+            <source>Bring OpenLP to the Front</source>
+            <translation>Вивести OpenLP на передній план</translation>
+        </message>
+        <message>
+            <source>Bring OpenLP to the front, also from another program (global shortcut).</source>
+            <translation>Вивести OpenLP на передній план, навіть з іншої програми (глобальне сполучення клавіш).</translation>
+        </message>
 </context>
     <context>
         <name>OpenLP.Manager</name>

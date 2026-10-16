@@ -3,6 +3,14 @@
 Alle Versionen der Gemeinde-Edition, die neueste oben. Die Änderungen des offiziellen OpenLP stehen in `CHANGELOG.rst`.
 Downloads: [Releases](https://github.com/SlavaSchmick/OpenLP-Gemeinde-Edition/releases)
 
+## Noch nicht veröffentlicht
+
+### Neu
+
+- **Globales Tastenkürzel Strg+Alt+O:** holt OpenLP aus jedem anderen Programm in den Vordergrund (ein minimiertes
+  Fenster wird wiederhergestellt). Änderbar unter *Einstellungen → Tastenkürzel konfigurieren… → „OpenLP in den
+  Vordergrund holen“*.
+
 ## 3.1.7+gemeinde.3 – 15.10.2026
 
 ### Neu

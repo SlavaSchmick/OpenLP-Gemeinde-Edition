@@ -553,6 +553,7 @@ class Settings(QtCore.QSettings):
         Settings.__default_settings__.update({
             'shortcuts/aboutItem': [QtGui.QKeySequence(QtCore.Qt.CTRL + QtCore.Qt.Key_F1)],
             'shortcuts/checkUpdateItem': [],
+            'shortcuts/bringToFrontItem': [QtGui.QKeySequence(QtCore.Qt.CTRL + QtCore.Qt.ALT + QtCore.Qt.Key_O)],
             'shortcuts/addToService': [],
             'shortcuts/audioPauseItem': [],
             'shortcuts/displayTagItem': [],

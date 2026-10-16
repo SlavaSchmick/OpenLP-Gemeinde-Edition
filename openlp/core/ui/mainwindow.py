@@ -55,6 +55,7 @@ from openlp.core.ui.aboutform import AboutForm
 from openlp.core.ui.editionupdate import offer_update
 from openlp.core.ui.firsttimeform import FirstTimeForm
 from openlp.core.ui.formattingtagform import FormattingTagForm
+from openlp.core.ui.globalhotkey import GlobalHotkey
 from openlp.core.ui.icons import UiIcons
 from openlp.core.ui.pluginform import PluginForm
 from openlp.core.ui.printserviceform import PrintServiceForm
@@ -309,6 +310,9 @@ class Ui_MainWindow(object):
                                                can_shortcuts=True, category=UiStrings().Help,
                                                triggers=self.on_check_update_item_clicked)
         # Shortcuts not connected to buttons or menu entries.
+        # A global shortcut (registered with Windows) which brings OpenLP to the front from other programs
+        self.bring_to_front_item = create_action(main_window, 'bringToFrontItem', can_shortcuts=True,
+                                                 category=UiStrings().View)
         self.search_shortcut_action = create_action(main_window,
                                                     'searchShortcut', can_shortcuts=True,
                                                     category=translate('OpenLP.MainWindow', 'General'),
@@ -448,6 +452,9 @@ class Ui_MainWindow(object):
         self.search_shortcut_action.setToolTip(
             translate('OpenLP.MainWindow', 'Jump to the search box of the current active plugin.'))
         self.web_site_item.setText(translate('OpenLP.MainWindow', '&Web Site'))
+        self.bring_to_front_item.setText(translate('OpenLP.MainWindow', 'Bring OpenLP to the Front'))
+        self.bring_to_front_item.setStatusTip(translate('OpenLP.MainWindow', 'Bring OpenLP to the front, also from '
+                                                        'another program (global shortcut).'))
         self.check_update_item.setText(translate('OpenLP.MainWindow', 'Check for &Updates...'))
         self.check_update_item.setStatusTip(translate('OpenLP.MainWindow', 'Check now whether a new version of '
                                                       'OpenLP is available.'))
@@ -489,6 +496,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, LogMixin, RegistryPropert
         """
         super(MainWindow, self).__init__()
         Registry().register('main_window', self)
+        self.global_hotkey = None
         self.clipboard = QtWidgets.QApplication.clipboard()
         self.recent_files = []
         self.timer_id = 0
@@ -703,6 +711,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, LogMixin, RegistryPropert
         """
         QtWidgets.QWidget.show(self)
         self.activateWindow()
+        if not self.global_hotkey:
+            self.global_hotkey = GlobalHotkey(self, self.bring_to_front_item)
         # We have -disable-web-security added by our code.
         # If a file is passed in we will have that as well so count of 2
         # If not we need to see if we want to use the previous file.so count of 1
@@ -1175,6 +1185,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, LogMixin, RegistryPropert
 
         :param save_settings: Switch to prevent saving settings. Defaults to **True**.
         """
+        if self.global_hotkey:
+            self.global_hotkey.unregister()
         if save_settings:
             if self.settings.value('advanced/save current plugin'):
                 self.settings.setValue('advanced/current media plugin', self.media_tool_box.currentIndex())

@@ -4734,6 +4734,14 @@ Processing has terminated and no changes have been made.</source>
         <source>OpenLP could not check for updates. Please check the internet connection and try again.</source>
         <translation>OpenLP не удалось проверить обновления. Проверьте подключение к интернету и попробуйте ещё раз.</translation>
     </message>
+    <message>
+        <source>Bring OpenLP to the Front</source>
+        <translation>Вывести OpenLP на передний план</translation>
+    </message>
+    <message>
+        <source>Bring OpenLP to the front, also from another program (global shortcut).</source>
+        <translation>Вывести OpenLP на передний план, даже из другой программы (глобальное сочетание клавиш).</translation>
+    </message>
 </context>
 <context>
     <name>OpenLP.Manager</name>

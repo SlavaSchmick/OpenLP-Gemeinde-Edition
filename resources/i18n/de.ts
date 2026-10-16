@@ -5010,6 +5010,14 @@ Der Import wurde abgebrochen und es wurden keine Änderungen gemacht.</translati
         <source>OpenLP could not check for updates. Please check the internet connection and try again.</source>
         <translation>OpenLP konnte nicht nach Updates suchen. Bitte prüfen Sie die Internetverbindung und versuchen Sie es noch einmal.</translation>
     </message>
+    <message>
+        <source>Bring OpenLP to the Front</source>
+        <translation>OpenLP in den Vordergrund holen</translation>
+    </message>
+    <message>
+        <source>Bring OpenLP to the front, also from another program (global shortcut).</source>
+        <translation>OpenLP in den Vordergrund holen, auch aus einem anderen Programm (globales Tastenkürzel).</translation>
+    </message>
 </context>
 <context>
     <name>OpenLP.Manager</name>

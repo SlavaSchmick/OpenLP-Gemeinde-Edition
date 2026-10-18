@@ -15,6 +15,12 @@ Downloads: [Releases](https://github.com/SlavaSchmick/OpenLP-Gemeinde-Edition/re
 - **Liedsuche nach Varianten:** „d63“ findet alle Fassungen eines Liedes (D63A, D63B) als exakte Treffer oben,
   „d63a“ genau diese Fassung.
 
+### Behoben
+
+- **Projektoren mit PJLink Klasse 2** (z. B. Acer) verloren nach wenigen Sekunden die Verbindung: OpenLP fragte die
+  Klasse-2-Befehle FILT und FREZ (und MVOL) mit dem Klasse-1-Präfix ab, worauf der Projektor nicht antwortet. Der
+  Fehler steckt auch im offiziellen OpenLP.
+
 ## 3.1.7+gemeinde.3 – 15.10.2026
 
 ### Neu

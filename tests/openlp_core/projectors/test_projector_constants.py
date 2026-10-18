@@ -77,3 +77,17 @@ def test_build_pjlink_video_label():
 
     # THEN: Verify dictionary was build correctly
     assert PJLINK_DEFAULT_CODES == TEST_VIDEO_CODES, 'PJLink video strings should match'
+
+
+def test_class_2_commands_are_sent_as_class_2():
+    """
+    Test that the commands which only exist in PJLink class 2 are sent with the class 2 header (%2). A projector
+    doesn't answer them with the class 1 header (%1), and OpenLP then drops the connection after the timeout.
+    """
+    # GIVEN: The valid PJLink commands
+    # WHEN: The commands which only exist in class 2 are collected
+    wrong = [cmd for cmd, details in constants.PJLINK_VALID_CMD.items()
+             if details['version'] == ['2'] and details['default'] != '2']
+
+    # THEN: All of them are sent as class 2
+    assert wrong == []

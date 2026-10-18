@@ -185,12 +185,12 @@ PJLINK_VALID_CMD = {
                                       'Returns fan/lamp/temp/cover/filter/other error status.')
              },
     'FILT': {'version': ['2'],
-             'default': '1',
+             'default': '2',
              'description': translate('OpenLP.PJLinkConstants',
                                       'Query number of hours on filter.')
              },
     'FREZ': {'version': ['2'],
-             'default': '1',
+             'default': '2',
              'description': translate('OpenLP.PJLinkConstants',
                                       'Freeze or unfreeze current image being projected.')
              },
@@ -240,7 +240,7 @@ PJLINK_VALID_CMD = {
                                       'UDP Status - Projector is now available on network. Includes MAC address.')
              },
     'MVOL': {'version': ['2'],
-             'default': '1',
+             'default': '2',
              'description': translate('OpenLP.PJLinkConstants',
                                       'Adjust microphone volume by 1 step.')
              },

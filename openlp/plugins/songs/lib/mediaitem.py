@@ -57,7 +57,8 @@ log = logging.getLogger(__name__)
 
 # The id of a song, made of a song book letter and the number, e.g. "r47", "D203", "d0203" or "R 47". The letter can be
 # left out ("47").
-SONG_ID_SEARCH = re.compile(r'^\s*(?P<book>[^\W\d_]*)\s*0*(?P<number>\d+)\s*$')
+# A song id like "r47" or "D203", also of a variant of a song like "d63a"
+SONG_ID_SEARCH = re.compile(r'^\s*(?P<book>[^\W\d_]*)\s*0*(?P<number>\d+)(?P<variant>[^\W\d_]?)\s*$')
 
 
 class SongMediaItem(MediaManagerItem):
@@ -202,7 +203,8 @@ class SongMediaItem(MediaManagerItem):
         """
         Find the songs with an id like "r47" or "D203" exactly: by their alternate title (e.g. "R47") or by their number
         in a song book whose name starts with the letter (e.g. "Russisch" #47). Without a letter ("47") the number has
-        to match in any song book.
+        to match in any song book. Without a variant letter ("d63") the variants of the song are found too ("D63A",
+        "D63B"), with one ("d63a") only that variant.
 
         :param str search_keywords: The typed text
         :return: The songs with this id, or None if the text is not a song id
@@ -212,17 +214,21 @@ class SongMediaItem(MediaManagerItem):
             return None
         book = match.group('book').lower()
         number = match.group('number')
+        variant = re.escape(match.group('variant').lower()) if match.group('variant') else r'[^\W\d_]?'
         # The alternate title is the part of the search title after the "@", see clean_song()
-        candidates = self.plugin.manager.get_all_objects(Song, Song.search_title.like('%@{book}%{number}'.format(
+        candidates = self.plugin.manager.get_all_objects(Song, Song.search_title.like('%@{book}%{number}%'.format(
             book=book, number=number)))
-        id_pattern = re.compile(r'{book}[^\W\d_]*0*{number}'.format(book=re.escape(book), number=number)
-                                if book else r'[^\W\d_]*0*{number}'.format(number=number))
+        book_pattern = re.escape(book) if book else ''
+        id_pattern = re.compile(r'{book}[^\W\d_]*0*{number}{variant}'.format(
+            book=book_pattern, number=number, variant=variant))
         songs = [song for song in candidates if id_pattern.fullmatch(song.search_title.rpartition('@')[2])]
         entries = (self.plugin.manager.session.query(Song).join(SongBookEntry).join(SongBook)
-                   .filter(SongBookEntry.entry == number))
+                   .filter(SongBookEntry.entry.ilike('{number}%'.format(number=number))))
         if book:
             entries = entries.filter(SongBook.name.ilike('{book}%'.format(book=book)))
-        songs += [song for song in entries.all() if song not in songs]
+        entry_pattern = re.compile('0*{number}{variant}'.format(number=number, variant=variant), re.IGNORECASE)
+        songs += [song for song in entries.all() if song not in songs and
+                  any(entry_pattern.fullmatch(entry.entry or '') for entry in song.songbook_entries)]
         return [song for song in songs if not song.temporary]
 
     def on_search_text_return_pressed(self):

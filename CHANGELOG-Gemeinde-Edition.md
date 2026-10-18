@@ -12,6 +12,8 @@ Downloads: [Releases](https://github.com/SlavaSchmick/OpenLP-Gemeinde-Edition/re
   Vordergrund holen“*.
 - **Suche im Dialog „Tastenkürzel konfigurieren“:** filtert beim Tippen nach Aktion, Kategorie oder Tastenkürzel
   (z. B. „Lied“ oder „Strg+L“).
+- **Liedsuche nach Varianten:** „d63“ findet alle Fassungen eines Liedes (D63A, D63B) als exakte Treffer oben,
+  „d63a“ genau diese Fassung.
 
 ## 3.1.7+gemeinde.3 – 15.10.2026
 

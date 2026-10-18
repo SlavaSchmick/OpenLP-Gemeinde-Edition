@@ -906,3 +906,64 @@ def test_song_search_shortcut_default(settings):
     """
     from PyQt5 import QtGui
     assert settings.value('shortcuts/songSearchShortcut') == [QtGui.QKeySequence('Ctrl+L')]
+
+
+def _add_variants(manager):
+    """Add the variants A and B of the song D63, like in the Gemeinde-Gesangbuch"""
+    from openlp.plugins.songs.lib import clean_song
+    from openlp.plugins.songs.lib.db import SongBook
+    german = manager.get_object_filtered(SongBook, SongBook.name == 'Deutsch')
+    for variant in ('A', 'B'):
+        song = Song()
+        song.title = 'D063{} Keiner wird zuschanden'.format(variant)
+        song.alternate_title = 'D63{}'.format(variant)
+        song.lyrics = '<song version="1.0"><lyrics><verse type="v" label="1"><![CDATA[Keiner]]></verse></lyrics></song>'
+        song.verse_order = ''
+        song.search_title = ''
+        song.search_lyrics = ''
+        song.temporary = False
+        song.add_songbook_entry(german, '63{}'.format(variant))
+        with patch('openlp.plugins.songs.lib.translate', side_effect=lambda context, text, *args: text):
+            clean_song(manager, song)
+        manager.save_object(song)
+
+
+@pytest.mark.parametrize('typed, expected', [
+    ('d63', ['D063A Keiner wird zuschanden', 'D063B Keiner wird zuschanden']),
+    ('d63a', ['D063A Keiner wird zuschanden']), ('D063B', ['D063B Keiner wird zuschanden']),
+    ('d 63 b', None), ('d63c', []), ('d47', ['D0047 Lied 47'])])
+def test_search_song_id_variants(song_id_db, media_item, typed, expected):
+    """
+    Test that a song id without a variant letter finds all variants of the song, and with one only that variant
+    """
+    # GIVEN: A song with the variants A and B
+    _add_variants(song_id_db)
+
+    # WHEN: A song id is searched
+    result = media_item.search_song_id(typed)
+
+    # THEN: The variants are found as expected
+    if expected is None:
+        assert result is None
+    else:
+        assert sorted(song.title for song in result) == expected
+
+
+def test_search_song_id_variant_by_song_book(song_id_db, media_item):
+    """
+    Test that a variant is also found by its song book number, when it has no alternate title
+    """
+    # GIVEN: The variants of D63, without alternate titles
+    _add_variants(song_id_db)
+    for song in song_id_db.get_all_objects(Song, Song.title.like('D063%')):
+        song.alternate_title = ''
+        song.search_title = song.title.lower() + '@'
+        song_id_db.save_object(song)
+
+    # WHEN: A variant and all variants are searched
+    one = media_item.search_song_id('d63b')
+    both = media_item.search_song_id('d63')
+
+    # THEN: They are found by the song book "Deutsch" and the number with the variant
+    assert [song.title for song in one] == ['D063B Keiner wird zuschanden']
+    assert sorted(song.title for song in both) == ['D063A Keiner wird zuschanden', 'D063B Keiner wird zuschanden']

@@ -71,12 +71,33 @@ def offer_update(parent, release):
     setup_path = download_setup(parent, release)
     if not setup_path:
         return False
+    if not ready_to_close(parent):
+        return False
     if not start_setup(setup_path):
         critical_error_message_box(title, translate('OpenLP.EditionUpdate', 'The setup could not be started. You can '
                                                     'start it yourself: {path}').format(path=setup_path))
         return False
+    # The setup waits until OpenLP is closed; OpenLP closes without asking again, see ready_to_close()
+    parent.closing_for_update = True
     parent.close()
     return True
+
+
+def ready_to_close(parent):
+    """
+    Ask whether to save a modified service before the setup is started, because OpenLP then closes for the update
+    without asking again (the setup ends OpenLP if it is still open after a while)
+
+    :param parent: The main window
+    :return: False if the user cancelled, then there is no update now
+    """
+    service_manager = getattr(parent, 'service_manager_contents', None)
+    if service_manager is None or not service_manager.is_modified():
+        return True
+    answer = service_manager.save_modified_service()
+    if answer == QtWidgets.QMessageBox.Save:
+        return bool(service_manager.decide_save_method())
+    return answer == QtWidgets.QMessageBox.Discard
 
 
 def download_setup(parent, release):

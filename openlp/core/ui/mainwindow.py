@@ -497,6 +497,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, LogMixin, RegistryPropert
         super(MainWindow, self).__init__()
         Registry().register('main_window', self)
         self.global_hotkey = None
+        # Set when OpenLP closes for an update, which already asked to save the service
+        self.closing_for_update = False
         self.clipboard = QtWidgets.QApplication.clipboard()
         self.recent_files = []
         self.timer_id = 0
@@ -1122,7 +1124,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, LogMixin, RegistryPropert
         if not self.application.is_event_loop_active:
             event.ignore()
             return
-        if self.service_manager_contents.is_modified():
+        if self.closing_for_update:
+            # Closing for an update: the service was saved (or discarded) before the setup was started
+            event.accept()
+        elif self.service_manager_contents.is_modified():
             ret = self.service_manager_contents.save_modified_service()
             if ret == QtWidgets.QMessageBox.Save:
                 if self.service_manager_contents.decide_save_method():

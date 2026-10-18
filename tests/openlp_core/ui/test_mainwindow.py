@@ -1057,3 +1057,25 @@ def test_update_check_failed(main_window):
     # THEN: The user is told, and can try again
     mocked_warning.assert_called_once()
     assert main_window.check_update_item.isEnabled()
+
+
+def test_close_for_update_asks_nothing(main_window):
+    """
+    Test that OpenLP closes for an update without asking again, as the service was saved before the setup started
+    """
+    # GIVEN: OpenLP closing for an update, with a modified service and the exit confirmation turned on
+    main_window.closing_for_update = True
+    main_window.application.is_event_loop_active = True
+    main_window.settings.setValue('advanced/enable exit confirmation', True)
+    event = QtGui.QCloseEvent()
+    with patch.object(main_window.service_manager_contents, 'is_modified', return_value=True), \
+            patch.object(main_window.service_manager_contents, 'save_modified_service') as mocked_save, \
+            patch.object(main_window, '_wait_for_threads'), patch.object(main_window, 'clean_up'), \
+            patch.object(QtWidgets.QMessageBox, 'exec') as mocked_question:
+        # WHEN: The main window is closed
+        main_window.closeEvent(event)
+
+    # THEN: It closes without any question
+    assert event.isAccepted()
+    mocked_save.assert_not_called()
+    mocked_question.assert_not_called()

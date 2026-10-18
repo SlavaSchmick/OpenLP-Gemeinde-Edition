@@ -121,6 +121,7 @@ def test_offer_update_installs(settings):
     Test that the setup is downloaded and started when the user wants to update, and OpenLP is closed for it
     """
     parent = MagicMock()
+    parent.service_manager_contents.is_modified.return_value = False
     with patch('openlp.core.ui.editionupdate.QtWidgets.QMessageBox.question',
                return_value=QtWidgets.QMessageBox.Yes), \
             patch('openlp.core.ui.editionupdate.download_setup', return_value=Path('setup.exe')) as mocked_download, \
@@ -130,6 +131,7 @@ def test_offer_update_installs(settings):
     assert result is True
     mocked_download.assert_called_once()
     mocked_start.assert_called_once_with(Path('setup.exe'))
+    assert parent.closing_for_update is True
     parent.close.assert_called_once_with()
 
 
@@ -167,6 +169,7 @@ def test_offer_update_setup_not_started(settings):
     Test that OpenLP stays open when the setup can't be started, and the user is told where it is
     """
     parent = MagicMock()
+    parent.service_manager_contents.is_modified.return_value = False
     with patch('openlp.core.ui.editionupdate.QtWidgets.QMessageBox.question',
                return_value=QtWidgets.QMessageBox.Yes), \
             patch('openlp.core.ui.editionupdate.download_setup', return_value=Path('setup.exe')), \
@@ -188,3 +191,56 @@ def test_start_setup_silently():
         assert editionupdate.start_setup(Path('C:/temp/setup.exe')) is True
     mocked_execute.assert_called_once_with(None, 'open', str(Path('C:/temp/setup.exe')),
                                            '/SILENT /SUPPRESSMSGBOXES /NORESTART', None, 1)
+
+
+@pytest.mark.parametrize('answer, saved, ready', [
+    (QtWidgets.QMessageBox.Save, True, True), (QtWidgets.QMessageBox.Save, False, False),
+    (QtWidgets.QMessageBox.Discard, None, True), (QtWidgets.QMessageBox.Cancel, None, False)])
+def test_ready_to_close_with_modified_service(answer, saved, ready):
+    """
+    Test that a modified service is saved or discarded before the setup starts, and that cancelling stops the update
+    """
+    # GIVEN: OpenLP with a modified service
+    parent = MagicMock()
+    parent.service_manager_contents.is_modified.return_value = True
+    parent.service_manager_contents.save_modified_service.return_value = answer
+    parent.service_manager_contents.decide_save_method.return_value = saved
+
+    # WHEN: OpenLP gets ready to close for the update
+    # THEN: It is ready unless the user cancelled or the service couldn't be saved
+    assert editionupdate.ready_to_close(parent) is ready
+
+
+def test_ready_to_close_without_changes():
+    """
+    Test that nothing is asked when the service isn't modified
+    """
+    # GIVEN: OpenLP without changes
+    parent = MagicMock()
+    parent.service_manager_contents.is_modified.return_value = False
+
+    # WHEN: OpenLP gets ready to close for the update
+    # THEN: It is ready, and nothing was asked
+    assert editionupdate.ready_to_close(parent) is True
+    parent.service_manager_contents.save_modified_service.assert_not_called()
+
+
+def test_offer_update_cancelled_at_save(settings):
+    """
+    Test that the setup isn't started when the user cancels saving the modified service
+    """
+    # GIVEN: OpenLP with a modified service, and the user cancels the question to save it
+    parent = MagicMock()
+    parent.service_manager_contents.is_modified.return_value = True
+    parent.service_manager_contents.save_modified_service.return_value = QtWidgets.QMessageBox.Cancel
+    with patch('openlp.core.ui.editionupdate.QtWidgets.QMessageBox.question',
+               return_value=QtWidgets.QMessageBox.Yes), \
+            patch('openlp.core.ui.editionupdate.download_setup', return_value=Path('setup.exe')), \
+            patch('openlp.core.ui.editionupdate.start_setup') as mocked_start:
+        # WHEN: The update is offered and accepted
+        result = editionupdate.offer_update(parent, make_release())
+
+    # THEN: The setup isn't started and OpenLP stays open
+    assert result is False
+    mocked_start.assert_not_called()
+    parent.close.assert_not_called()

@@ -35,7 +35,7 @@
 <body>
 
 <h1>OpenLP Gemeinde-Edition</h1>
-<div class="subtitle">Version 3.1.7+gemeinde.4 · eine modifizierte Version von OpenLP 3.1.7 · Dokumentation aller Ergänzungen und Änderungen · Stand: 18.10.2026</div>
+<div class="subtitle">Version 3.1.7+gemeinde.5 · eine modifizierte Version von OpenLP 3.1.7 · Dokumentation aller Ergänzungen und Änderungen · Stand: 18.10.2026</div>
 
 <p>Die <strong>OpenLP Gemeinde-Edition</strong> ist eine modifizierte Version von OpenLP. Ihre Ergänzungen und Änderungen stammen nicht von den OpenLP-Entwicklern und werden von ihnen nicht unterstützt. Quellcode und Updates: <a href="https://github.com/SlavaSchmick/OpenLP-Gemeinde-Edition">github.com/SlavaSchmick/OpenLP-Gemeinde-Edition</a></p>
 
@@ -43,7 +43,7 @@
   <strong>Inhalt dieses Ordners</strong>
   <table style="margin-top:5pt">
     <tr><th style="width:38%">Datei / Ordner</th><th>Zweck</th></tr>
-    <tr><td><code>OpenLP-Gemeinde-Edition-3.1.7-gemeinde.4-Setup-x64.exe</code></td><td>Installationsprogramm (Windows 10/11, 64 Bit). Enthält alle benötigten Komponenten, auch VLC – auf dem Zielrechner muss nichts weiter installiert werden.</td></tr>
+    <tr><td><code>OpenLP-Gemeinde-Edition-3.1.7-gemeinde.5-Setup-x64.exe</code></td><td>Installationsprogramm (Windows 10/11, 64 Bit). Enthält alle benötigten Komponenten, auch VLC – auf dem Zielrechner muss nichts weiter installiert werden.</td></tr>
     <tr><td><code>Liederbücher\Deutsch</code></td><td>Gemeinde-Gesangbuch: 698 deutsche Lieder im OpenLP-Format (OpenLyrics, eine Datei je Lied), mit Autoren und Copyright</td></tr>
     <tr><td><code>Liederbücher\Russisch</code></td><td>800 bereinigte russische Lieder im OpenLP-Format</td></tr>
     <tr><td><code>Liederbücher\Bereinigungsbericht …</code></td><td>Protokolle der Bereinigung (russisches Liederbuch und Gemeinde-Gesangbuch)</td></tr>
@@ -71,7 +71,7 @@
 
 <h2>1. Installation</h2>
 <ol>
-  <li><strong>Setup starten:</strong> Doppelklick auf <code>OpenLP-Gemeinde-Edition-3.1.7-gemeinde.4-Setup-x64.exe</code>. Es werden Administratorrechte benötigt (Windows-Abfrage bestätigen).</li>
+  <li><strong>Setup starten:</strong> Doppelklick auf <code>OpenLP-Gemeinde-Edition-3.1.7-gemeinde.5-Setup-x64.exe</code>. Es werden Administratorrechte benötigt (Windows-Abfrage bestätigen).</li>
   <li><strong>Sprache des Installationsprogramms</strong> wählen: Englisch, Deutsch, Russisch oder Ukrainisch. Vorausgewählt ist die Sprache von Windows.</li>
   <li>Lizenz bestätigen, Zielordner (Standard: <code>C:\Program Files\OpenLP</code>) und Zusatzaufgaben wählen:
     <ul>
@@ -348,7 +348,7 @@ Update). Wer sie ausschalten möchte: <span class="path">Extras → Liedprotokol
 <ol>
   <li>Bei jedem Start prüft OpenLP, ob es auf <a href="https://github.com/SlavaSchmick/OpenLP-Gemeinde-Edition/releases">github.com/SlavaSchmick/OpenLP-Gemeinde-Edition/releases</a> eine neuere Version gibt.</li>
   <li>Wenn ja, erscheint die Frage <em>„Version … der OpenLP Gemeinde-Edition ist verfügbar … Jetzt herunterladen und installieren?“</em></li>
-  <li>Bei <strong>Ja</strong> wird das Setup heruntergeladen (mit Fortschritt, abbrechbar) und mit der Prüfsumme von GitHub kontrolliert – eine beschädigte Datei wird nicht gestartet.</li>
+  <li>Bei <strong>Ja</strong> fragt OpenLP zuerst, ob ein geänderter Ablauf gespeichert werden soll. Dann wird das Setup heruntergeladen (mit Fortschritt, abbrechbar) und mit der Prüfsumme von GitHub kontrolliert – eine beschädigte Datei wird nicht gestartet.</li>
   <li>Windows fragt nach Administratorrechten, OpenLP wird geschlossen, das Update installiert und OpenLP danach <strong>automatisch wieder gestartet</strong>.</li>
 </ol>
 <ul>
@@ -366,7 +366,7 @@ Update). Wer sie ausschalten möchte: <span class="path">Extras → Liedprotokol
 <table>
   <tr><th style="width:30%">Punkt</th><th>Details</th></tr>
   <tr><td>Grundlage</td><td>OpenLP 3.1.7 (Python, PyQt5, QtWebEngine)</td></tr>
-  <tr><td>Version</td><td>3.1.7+gemeinde.4 (OpenLP Gemeinde-Edition)</td></tr>
+  <tr><td>Version</td><td>3.1.7+gemeinde.5 (OpenLP Gemeinde-Edition)</td></tr>
   <tr><td>Quellcode</td><td><a href="https://github.com/SlavaSchmick/OpenLP-Gemeinde-Edition">github.com/SlavaSchmick/OpenLP-Gemeinde-Edition</a> – das offizielle OpenLP 3.1.7 als Basis (Tag <code>openlp-3.1.7</code>), die Änderungen als eigene Commits</td></tr>
   <tr><td>Paket</td><td>PyInstaller (Programmordner) und Inno Setup 6; enthält VLC 3.0.24 (64 Bit) und alle Bibliotheken</td></tr>
   <tr><td>Installationsort</td><td><code>C:\Program Files\OpenLP</code></td></tr>
@@ -374,7 +374,7 @@ Update). Wer sie ausschalten möchte: <span class="path">Extras → Liedprotokol
   <tr><td>Systemvoraussetzung</td><td>Windows 10 oder 11, 64 Bit</td></tr>
   <tr><td>Live-Video</td><td>Kamerazugriff über die Chromium-Engine (nur für OpenLP-eigene Seiten freigegeben); Windows-Kameraberechtigung für Desktop-Apps muss erlaubt sein</td></tr>
   <tr><td>Audio-Ausgabe</td><td>VLC über WASAPI; Gerät wird beim Laden jedes Mediums gesetzt</td></tr>
-  <tr><td>Qualitätssicherung</td><td>Automatische Tests: 2679 Python-Tests und 112 JavaScript-Tests; zusätzlich Prüfungen im laufenden Programm (Bibel- und Liedsuche, Tastatur-Workflow, Textgröße, ganze Verse mit Vergleichstext, PowerPoint-Präsentation, Update über GitHub, Liedstatistik mit PDF, Live-Video, Audio, Sprachen)</td></tr>
+  <tr><td>Qualitätssicherung</td><td>Automatische Tests: 2686 Python-Tests und 112 JavaScript-Tests; zusätzlich Prüfungen im laufenden Programm (Bibel- und Liedsuche, Tastatur-Workflow, Textgröße, ganze Verse mit Vergleichstext, PowerPoint-Präsentation, Update über GitHub, Liedstatistik mit PDF, Live-Video, Audio, Sprachen)</td></tr>
 </table>
 
 </body>

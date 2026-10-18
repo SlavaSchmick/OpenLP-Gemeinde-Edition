@@ -3,6 +3,17 @@
 Alle Versionen der Gemeinde-Edition, die neueste oben. Die Änderungen des offiziellen OpenLP stehen in `CHANGELOG.rst`.
 Downloads: [Releases](https://github.com/SlavaSchmick/OpenLP-Gemeinde-Edition/releases)
 
+## 3.1.7+gemeinde.5 – 18.10.2026
+
+### Behoben
+
+- **Automatisches Update konnte OpenLP unbrauchbar hinterlassen:** Hatte sich OpenLP beim Update noch nicht beendet,
+  brach das Setup mitten in der Installation ab – nachdem es die alten Programmdateien schon gelöscht hatte. OpenLP
+  startete danach nicht mehr. Das Setup wartet jetzt, bis OpenLP beendet ist, und beendet ein hängendes OpenLP nach
+  einer Minute selbst; gelöscht wird erst danach. Von Hand gestartet, bittet es darum, OpenLP zu schließen.
+- Vor einem Update fragt OpenLP jetzt **vor** dem Start des Setups, ob ein geänderter Ablauf gespeichert werden soll
+  (bei „Abbrechen“ wird nicht aktualisiert); danach schließt es ohne weitere Rückfragen.
+
 ## 3.1.7+gemeinde.4 – 18.10.2026
 
 ### Neu

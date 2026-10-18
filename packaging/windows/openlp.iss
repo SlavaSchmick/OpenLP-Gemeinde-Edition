@@ -76,6 +76,18 @@ english.RemoveFailed=The previous OpenLP installation could not be removed (erro
 german.RemoveFailed=Die bisherige OpenLP-Installation konnte nicht entfernt werden (Fehler %1). Bitte deinstallieren Sie sie in den Windows-Einstellungen und starten Sie dieses Setup erneut.
 russian.RemoveFailed=Не удалось удалить предыдущую установку OpenLP (ошибка %1). Удалите её в параметрах Windows и снова запустите эту установку.
 ukrainian.RemoveFailed=Не вдалося видалити попередню інсталяцію OpenLP (помилка %1). Видаліть її в параметрах Windows і знову запустіть цю інсталяцію.
+english.WaitingForOpenLP=Waiting for OpenLP to close...
+german.WaitingForOpenLP=Warten, bis OpenLP beendet ist...
+russian.WaitingForOpenLP=Ожидание завершения OpenLP...
+ukrainian.WaitingForOpenLP=Очікування завершення OpenLP...
+english.OpenLPStillRunning=OpenLP is still running and could not be closed. Nothing has been changed. Please close OpenLP and start this setup again.
+german.OpenLPStillRunning=OpenLP läuft noch und konnte nicht beendet werden. Es wurde nichts verändert. Bitte beenden Sie OpenLP und starten Sie dieses Setup erneut.
+russian.OpenLPStillRunning=OpenLP всё ещё работает, и его не удалось закрыть. Ничего не изменено. Закройте OpenLP и снова запустите эту установку.
+ukrainian.OpenLPStillRunning=OpenLP усе ще працює, і його не вдалося закрити. Нічого не змінено. Закрийте OpenLP і знову запустіть цю інсталяцію.
+english.CloseOpenLP=OpenLP is running. Please close OpenLP (save the service if needed) and click "Retry".
+german.CloseOpenLP=OpenLP ist geöffnet. Bitte beenden Sie OpenLP (den Ablauf ggf. vorher speichern) und klicken Sie auf „Wiederholen“.
+russian.CloseOpenLP=OpenLP открыт. Закройте OpenLP (при необходимости сохраните служение) и нажмите «Повторить».
+ukrainian.CloseOpenLP=OpenLP відкрито. Закрийте OpenLP (за потреби збережіть служіння) і натисніть «Повторити».
 english.AssociateFiles=Open OpenLP service files (.osz, .oszl) with OpenLP
 german.AssociateFiles=OpenLP-Ablaufdateien (.osz, .oszl) mit OpenLP öffnen
 russian.AssociateFiles=Открывать файлы служения OpenLP (.osz, .oszl) в OpenLP
@@ -185,12 +197,79 @@ begin
   end;
 end;
 
+{ Whether a program OpenLP.exe is running, e.g. OpenLP which is still closing after it started this setup for an
+  update }
+function IsOpenLPRunning(): Boolean;
+var
+  Locator, Service, Processes: Variant;
+begin
+  Result := False;
+  try
+    Locator := CreateOleObject('WbemScripting.SWbemLocator');
+    Service := Locator.ConnectServer('.', 'root\CIMV2');
+    Processes := Service.ExecQuery('SELECT ProcessId FROM Win32_Process WHERE Name = ''OpenLP.exe''');
+    Result := Processes.Count > 0;
+  except
+    Log('The running programs could not be checked: ' + GetExceptionMessage);
+  end;
+end;
+
+{ Wait until OpenLP is closed, and end it if it still runs after a minute. The old program files are deleted at the
+  start of the installation; while OpenLP runs, its files can't be replaced, and the installation would stop halfway
+  with the old files already gone. }
+function WaitForOpenLP(): Boolean;
+var
+  Waited, ResultCode: Integer;
+begin
+  if not WizardSilent() then
+  begin
+    { Started by hand: ask to close OpenLP, it may have unsaved changes }
+    while IsOpenLPRunning() do
+      if MsgBox(CustomMessage('CloseOpenLP'), mbInformation, MB_RETRYCANCEL) = IDCANCEL then
+      begin
+        Result := False;
+        exit;
+      end;
+    Result := True;
+    exit;
+  end;
+  { An update from within OpenLP: OpenLP is closing, it already asked to save the service }
+  Waited := 0;
+  while IsOpenLPRunning() and (Waited < 60) do
+  begin
+    if Waited = 0 then
+    begin
+      Log('Waiting for OpenLP to close');
+      WizardForm.StatusLabel.Caption := CustomMessage('WaitingForOpenLP');
+    end;
+    Sleep(1000);
+    Waited := Waited + 1;
+  end;
+  if IsOpenLPRunning() then
+  begin
+    Log('OpenLP is still running after a minute, ending it');
+    Exec(ExpandConstant('{sys}\taskkill.exe'), '/F /T /IM OpenLP.exe', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+    Waited := 0;
+    while IsOpenLPRunning() and (Waited < 15) do
+    begin
+      Sleep(1000);
+      Waited := Waited + 1;
+    end;
+  end;
+  Result := not IsOpenLPRunning();
+end;
+
 function PrepareToInstall(var NeedsRestart: Boolean): String;
 var
   ErrorCode: Integer;
 begin
   Result := '';
   ErrorCode := 0;
+  if not WaitForOpenLP() then
+  begin
+    Result := CustomMessage('OpenLPStillRunning');
+    exit;
+  end;
   WizardForm.StatusLabel.Caption := CustomMessage('RemovingOld');
   if not (RemoveFrom(HKLM64, ErrorCode) and RemoveFrom(HKLM32, ErrorCode) and RemoveFrom(HKCU, ErrorCode)) then
     Result := FmtMessage(CustomMessage('RemoveFailed'), [IntToStr(ErrorCode)]);

@@ -511,7 +511,8 @@ class PJLink(QtNetwork.QTcpSocket):
         self.socket_timer.start()
         while self.bytesAvailable() >= 1:
             data = self.readLine(1024)
-            data = data.strip()
+            # Some projectors (e.g. Acer) end their replies with a NUL byte, which strip() keeps
+            data = data.replace(b'\x00', b'').strip()
             if not data:
                 log.warning(f'({self.entry.name}) get_socket(): Ignoring empty packet')
                 if self.bytesAvailable() < 1:
@@ -540,7 +541,8 @@ class PJLink(QtNetwork.QTcpSocket):
             data = decode(buff, 'utf-8')
         else:
             data = buff
-        data = data.strip()
+        # Some projectors (e.g. Acer) end their replies with a NUL byte, which strip() keeps
+        data = data.replace('\x00', '').strip()
         self.receive_data_signal()
         # Initial packet checks
         if len(data) < 7:

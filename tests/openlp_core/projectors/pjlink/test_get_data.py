@@ -28,7 +28,7 @@ import openlp.core.projectors.pjlink
 
 from unittest.mock import DEFAULT, patch
 from openlp.core.projectors.constants import PJLINK_MAX_PACKET, PJLINK_PREFIX, \
-    E_AUTHENTICATION, S_AUTHENTICATE, S_CONNECT, S_CONNECTED, S_DATA_OK
+    E_AUTHENTICATION, S_AUTHENTICATE, S_CONNECT, S_CONNECTED, S_DATA_OK, S_STANDBY
 from tests.resources.projector.data import TEST_HASH, TEST_PIN, TEST_SALT
 
 test_module = openlp.core.projectors.pjlink.__name__
@@ -505,3 +505,22 @@ def test_e_authenticate(pjlink, caplog):
         mock_pjlink['change_status'].assert_called_with(status=E_AUTHENTICATION)
         mock_pjlink['projectorAuthentication'].emit.assert_called_with(pjlink.entry.name)
         mock_command.assert_called_with(pjlink, t_cmd, t_data)
+
+
+def test_reply_with_nul_byte(pjlink):
+    """
+    Test that a reply which ends with a NUL byte (e.g. from Acer projectors) is understood: the shutter and the power
+    state are known, so that "Blank" and "Power on" can be used
+    """
+    # GIVEN: A connected class 1 projector
+    pjlink.pjlink_class = '1'
+    nul = chr(0)
+
+    # WHEN: The projector answers with a NUL byte at the end of its replies
+    with patch.object(pjlink, 'change_status'), patch.object(pjlink, 'send_command'):
+        pjlink.get_data(buff=PJLINK_PREFIX + '1AVMT=30' + nul)
+        pjlink.get_data(buff=(PJLINK_PREFIX + '1POWR=0' + nul).encode('utf-8'))
+
+    # THEN: The shutter is open and the projector is in standby
+    assert pjlink.shutter is False
+    assert pjlink.power == S_STANDBY

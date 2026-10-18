@@ -3,6 +3,14 @@
 Alle Versionen der Gemeinde-Edition, die neueste oben. Die Änderungen des offiziellen OpenLP stehen in `CHANGELOG.rst`.
 Downloads: [Releases](https://github.com/SlavaSchmick/OpenLP-Gemeinde-Edition/releases)
 
+## Noch nicht veröffentlicht
+
+### Behoben
+
+- **Beamer (z. B. Acer) ließ sich nicht abdunkeln und nicht aus dem Standby einschalten:** Der Beamer hängt an seine
+  Antworten ein unsichtbares NUL-Zeichen an. OpenLP verstand die Antworten dadurch nicht, kannte weder den
+  Verschluss- noch den Stromzustand und ließ „Abdunkeln“ und „Einschalten“ gesperrt.
+
 ## 3.1.7+gemeinde.5 – 18.10.2026
 
 ### Behoben

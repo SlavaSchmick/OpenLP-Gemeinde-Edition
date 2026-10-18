@@ -59,9 +59,9 @@ OpenLP.spec
 packaging/windows/build-info/
 Auslieferung/
 MagicMock/
-# Of the sources, only the two song books in the OpenLP format are part of the repository
+# Of the sources, only the Russian song book in the OpenLP format is part of the repository (the German
+# Gemeinde-Gesangbuch contains songs under copyright and is only passed on within the church)
 /sources/*
 !/sources/OpenLP/
 /sources/OpenLP/*
-!/sources/OpenLP/Deutsch/
 !/sources/OpenLP/Russisch/

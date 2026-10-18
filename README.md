@@ -51,8 +51,8 @@ Was sich von Version zu Version geändert hat, steht in
 - Der erste Commit (Tag `openlp-3.1.7`, Branch `upstream`) ist der **unveränderte offizielle Quellcode** von
   OpenLP 3.1.7. Alle Änderungen der Gemeinde-Edition liegen in den Commits danach auf `main`. So zeigt
   `git diff openlp-3.1.7 main` jederzeit genau, was geändert wurde.
-- `sources/OpenLP/Deutsch` und `sources/OpenLP/Russisch`: die bereinigten Liederbücher im OpenLP-Format
-  (OpenLyrics). Import in OpenLP: *Datei → Importieren → Lied → „OpenLyrics oder OpenLP 2 exportierte Lieder“*.
+- `sources/OpenLP/Russisch`: das bereinigte russische Liederbuch im OpenLP-Format (OpenLyrics). Das deutsche
+  Gemeinde-Gesangbuch enthält urheberrechtlich geschützte Lieder und liegt deshalb nicht im Repository. Import in OpenLP: *Datei → Importieren → Lied → „OpenLyrics oder OpenLP 2 exportierte Lieder“*.
 
 ## Entwicklung
 
@@ -91,7 +91,7 @@ sein (`EDITION_REPOSITORY = 'besitzer/name'`) und das Repository öffentlich sei
    git push origin main --tags
    ```
 4. Auf GitHub unter **Releases → Draft a new release** den Tag `v3.1.7+gemeinde.2` wählen, die Setup-Datei
-   (`…-Setup-x64.exe`) und die Liederbücher (`OpenLP-Gemeinde-Edition-Liederbuecher.zip`, aus `sources/OpenLP`)
+   (`…-Setup-x64.exe`) und das russische Liederbuch (`OpenLP-Gemeinde-Edition-Liederbuecher.zip`, aus `sources/OpenLP/Russisch`)
    als Dateien anhängen und **veröffentlichen** – nicht als Entwurf und nicht als Vorabversion,
    sonst wird es nicht als Update angeboten.
 

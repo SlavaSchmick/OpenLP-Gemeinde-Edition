@@ -3,7 +3,7 @@
 Alle Versionen der Gemeinde-Edition, die neueste oben. Die Änderungen des offiziellen OpenLP stehen in `CHANGELOG.rst`.
 Downloads: [Releases](https://github.com/SlavaSchmick/OpenLP-Gemeinde-Edition/releases)
 
-## Noch nicht veröffentlicht
+## 3.1.7+gemeinde.4 – 18.10.2026
 
 ### Neu
 
@@ -14,6 +14,10 @@ Downloads: [Releases](https://github.com/SlavaSchmick/OpenLP-Gemeinde-Edition/re
   (z. B. „Lied“ oder „Strg+L“).
 - **Liedsuche nach Varianten:** „d63“ findet alle Fassungen eines Liedes (D63A, D63B) als exakte Treffer oben,
   „d63a“ genau diese Fassung.
+- **Neues deutsches Liederbuch:** das Gemeinde-Gesangbuch (698 Lieder, D1–D695, mit Varianten wie D63A/D63B) ersetzt
+  das bisherige deutsche Liederbuch, jetzt mit Textautoren, Übersetzern, Copyright, Melodie und Bibelstellen. Es wird
+  wegen urheberrechtlich geschützter Lieder nur intern weitergegeben; der öffentliche Download enthält nur noch das
+  russische Liederbuch.
 
 ### Behoben
 

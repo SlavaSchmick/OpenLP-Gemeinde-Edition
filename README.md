@@ -14,10 +14,11 @@ unter *Assets*:
 
 - **`OpenLP-Gemeinde-Edition-…-Setup-x64.exe`** – das Setup (Windows 10/11, 64 Bit, VLC enthalten). Ein vorhandenes
   OpenLP wird ersetzt; Lieder, Bibeln, Designs und Einstellungen bleiben erhalten.
-- **`OpenLP-Gemeinde-Edition-Liederbuecher.zip`** – die Liederbücher Deutsch (1310 Lieder) und Russisch (800 Lieder).
-  Entpacken, dann in OpenLP *Datei → Importieren → Lied → „OpenLyrics oder OpenLP 2 exportierte Lieder“*, mit
-  *Hinzufügen...* alle Dateien der Ordner `Deutsch` und `Russisch` wählen (Strg+A). Nur einmal importieren.
-  Danach findet die Liedsuche die Lieder z. B. mit `d203` oder `r47`.
+- **`OpenLP-Gemeinde-Edition-Liederbuecher.zip`** – das russische Liederbuch (800 Lieder). Entpacken, dann in OpenLP
+  *Datei → Importieren → Lied → „OpenLyrics oder OpenLP 2 exportierte Lieder“*, mit *Hinzufügen...* alle Dateien des
+  Ordners `Russisch` wählen (Strg+A). Nur einmal importieren. Danach findet die Liedsuche die Lieder z. B. mit `r47`.
+- Das deutsche **Gemeinde-Gesangbuch** enthält urheberrechtlich geschützte Lieder und wird deshalb nur intern in der
+  Gemeinde weitergegeben, nicht über GitHub.
 
 Die ausführliche Beschreibung aller Ergänzungen für Anwender steht in
 [`documentation/gemeinde-edition/dokumentation.html`](documentation/gemeinde-edition/dokumentation.html).

@@ -45,6 +45,11 @@ from openlp.core.ui.icons import UiIcons
 from openlp.core.widgets.toolbar import OpenLPToolbar
 
 log = logging.getLogger(__name__)
+
+# How often projectors which should be connected are connected again (milliseconds)
+RECONNECT_INTERVAL = 10000
+# The power states in which the projector shows no picture
+IS_OFF = (S_STANDBY, S_OFF, S_COOLDOWN)
 log.debug('projectormanager loaded')
 
 
@@ -180,7 +185,30 @@ class UiProjectorManager(object):
                                             tooltip=translate('OpenLP.ProjectorManager',
                                                               'Show selected projectors screen.'),
                                             triggers=self.on_show_projector)
+        # The buttons to operate the projector are in a second row, below the buttons to manage the projectors, so
+        # that they fit with their labels. The actions stay children of the first toolbar (see get_toolbar_item()).
+        self.control_toolbar = OpenLPToolbar(self)
+        self.control_toolbar.setObjectName('control_toolbar')
+        for name in ('poweron_projector', 'poweron_projector_multiple', 'poweroff_projector',
+                     'poweroff_projector_multiple', 'blank_projector', 'blank_projector_multiple', 'show_projector',
+                     'show_projector_multiple'):
+            action = self.one_toolbar.findChild(QtWidgets.QAction, name)
+            self.one_toolbar.removeAction(action)
+            self.control_toolbar.addAction(action)
+        # The main buttons show a short label next to their icon
+        for toolbar, name, label in (
+                (self.one_toolbar, 'connect_projector', translate('OpenLP.ProjectorManager', 'Connect')),
+                (self.control_toolbar, 'poweron_projector', translate('OpenLP.ProjectorManager', 'Power On')),
+                (self.control_toolbar, 'poweroff_projector', translate('OpenLP.ProjectorManager', 'Standby')),
+                (self.control_toolbar, 'blank_projector', translate('OpenLP.ProjectorManager', 'Blank')),
+                (self.control_toolbar, 'show_projector', translate('OpenLP.ProjectorManager', 'Show'))):
+            action = self.one_toolbar.findChild(QtWidgets.QAction, name)
+            action.setIconText(label)
+            button = toolbar.widgetForAction(action)
+            if button:
+                button.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)
         self.layout.addWidget(self.one_toolbar)
+        self.layout.addWidget(self.control_toolbar)
         self.projector_one_widget = QtWidgets.QWidgetAction(self.one_toolbar)
         self.projector_one_widget.setObjectName('projector_one_toolbar_widget')
         # Create projector manager list
@@ -311,6 +339,11 @@ class ProjectorManager(QtWidgets.QWidget, RegistryBase, UiProjectorManager, LogM
         self.update_status_timer.timeout.connect(self._try_update_status)
         self.is_updating_status = False
         self.ip_status_to_update = (None, None, None)
+        # Reconnects projectors which should be connected, e.g. when a projector closed the connection in standby
+        self.reconnect_timer = QtCore.QTimer(self)
+        self.reconnect_timer.setInterval(RECONNECT_INTERVAL)
+        self.reconnect_timer.timeout.connect(self.reconnect_projectors)
+        self.reconnect_timer.start()
 
     def bootstrap_initialise(self):
         """
@@ -406,12 +439,11 @@ class ProjectorManager(QtWidgets.QWidget, RegistryBase, UiProjectorManager, LogM
         self.status_action.setVisible(visible)
         self.select_input_action.setVisible(visible and real_projector.link.power == S_ON)
         self.edit_input_action.setVisible(visible and real_projector.link.power == S_ON)
-        self.poweron_action.setVisible(visible and real_projector.link.power == S_STANDBY)
-        self.poweroff_action.setVisible(visible and real_projector.link.power == S_ON)
-        self.blank_action.setVisible(visible and real_projector.link.power == S_ON and
-                                     not real_projector.link.shutter)
-        self.show_action.setVisible(visible and real_projector.link.power == S_ON and
-                                    real_projector.link.shutter)
+        screen_on = visible and real_projector.link.power not in IS_OFF
+        self.poweron_action.setVisible(visible and real_projector.link.power != S_ON)
+        self.poweroff_action.setVisible(screen_on)
+        self.blank_action.setVisible(screen_on and real_projector.link.shutter is not True)
+        self.show_action.setVisible(screen_on and real_projector.link.shutter is not False)
         self.menu.projector = real_projector
         self.menu.exec(self.projector_list_widget.mapToGlobal(point))
 
@@ -487,10 +519,13 @@ class ProjectorManager(QtWidgets.QWidget, RegistryBase, UiProjectorManager, LogM
         :param opt: (Deprecated)
         """
         if hasattr(item, 'pjlink'):
+            item.keep_connected = True
             return item.pjlink.connect_to_host()
         else:
             for list_item in self.projector_list_widget.selectedItems():
-                list_item.data(QtCore.Qt.UserRole).pjlink.connect_to_host()
+                projector = list_item.data(QtCore.Qt.UserRole)
+                projector.keep_connected = True
+                projector.pjlink.connect_to_host()
 
     def on_delete_projector(self, opt=None):
         """
@@ -565,10 +600,13 @@ class ProjectorManager(QtWidgets.QWidget, RegistryBase, UiProjectorManager, LogM
         :param opt: (Deprecated)
         """
         if hasattr(item, 'pjlink'):
+            item.keep_connected = False
             return item.pjlink.disconnect_from_host()
         else:
             for list_item in self.projector_list_widget.selectedItems():
-                list_item.data(QtCore.Qt.UserRole).pjlink.disconnect_from_host()
+                projector = list_item.data(QtCore.Qt.UserRole)
+                projector.keep_connected = False
+                projector.pjlink.disconnect_from_host()
 
     def on_edit_projector(self, opt=None):
         """
@@ -581,8 +619,11 @@ class ProjectorManager(QtWidgets.QWidget, RegistryBase, UiProjectorManager, LogM
         if projector is None:
             return
         self.old_projector = projector
+        # No reconnecting while the projector is edited
+        keep_connected, projector.keep_connected = projector.keep_connected, False
         projector.link.disconnect_from_host()
         self.projector_form.exec(projector.db_item)
+        projector.keep_connected = keep_connected
         projector.db_item = self.projectordb.get_projector_by_id(self.old_projector.db_item.id)
 
     def on_poweroff_projector(self, item=None, opt=None):
@@ -755,6 +796,7 @@ class ProjectorManager(QtWidgets.QWidget, RegistryBase, UiProjectorManager, LogM
         self.udp_listen_add(item.pjlink.port)
         self.projector_list.append(item)
         if start:
+            item.keep_connected = True
             item.pjlink.connect_to_host()
         for item in self.projector_list:
             log.debug(f'New projector list - item: ({item.pjlink.ip}) {item.pjlink.name}')
@@ -873,6 +915,24 @@ class ProjectorManager(QtWidgets.QWidget, RegistryBase, UiProjectorManager, LogM
             # again (to avoid a broken list presented to the user).
             self.is_updating_status = False
 
+    def reconnect_projectors(self):
+        """
+        Connect again to the projectors which should be connected but aren't, e.g. a projector which closed the
+        connection in standby, so that it can be powered on again
+        """
+        for item in self.projector_list:
+            if item.keep_connected and QSOCKET_STATE[item.link.state()] == S_NOT_CONNECTED:
+                log.debug(f'({item.link.name}) Not connected - connecting again')
+                item.link.connect_to_host()
+
+    def update_state_text(self):
+        """
+        Show the state of each projector in plain words below its name
+        """
+        for item in self.projector_list:
+            if item.widget is not None:
+                item.widget.setText('{name}\n{state}'.format(name=item.link.name, state=projector_state_text(item)))
+
     def get_toolbar_item(self, name, enabled=False, hidden=False):
         item = self.one_toolbar.findChild(QtWidgets.QAction, name)
         if item == 0:
@@ -887,6 +947,7 @@ class ProjectorManager(QtWidgets.QWidget, RegistryBase, UiProjectorManager, LogM
         Update the icons when the selected projectors change
         """
         log.debug('update_icons(): Checking for selected projector items in list')
+        self.update_state_text()
         count = len(self.projector_list_widget.selectedItems())
         projector = None
         if count == 0:
@@ -896,10 +957,11 @@ class ProjectorManager(QtWidgets.QWidget, RegistryBase, UiProjectorManager, LogM
             self.get_toolbar_item('source_view_projector', hidden=True)
             self.get_toolbar_item('connect_projector')
             self.get_toolbar_item('disconnect_projector')
+            # Without a selected projector only "Power On" is shown (disabled), see the single selection below
             self.get_toolbar_item('poweron_projector')
-            self.get_toolbar_item('poweroff_projector')
-            self.get_toolbar_item('blank_projector')
-            self.get_toolbar_item('show_projector')
+            self.get_toolbar_item('poweroff_projector', hidden=True)
+            self.get_toolbar_item('blank_projector', hidden=True)
+            self.get_toolbar_item('show_projector', hidden=True)
             self.get_toolbar_item('connect_projector_multiple', hidden=True)
             self.get_toolbar_item('disconnect_projector_multiple', hidden=True)
             self.get_toolbar_item('poweron_projector_multiple', hidden=True)
@@ -932,14 +994,17 @@ class ProjectorManager(QtWidgets.QWidget, RegistryBase, UiProjectorManager, LogM
                 self.get_toolbar_item('delete_projector', enabled=True)
             self.get_toolbar_item('connect_projector', enabled=not connected)
             self.get_toolbar_item('disconnect_projector', enabled=connected)
-            self.get_toolbar_item('poweron_projector', enabled=connected and (projector.link.power == S_STANDBY))
-            self.get_toolbar_item('poweroff_projector', enabled=connected and (projector.link.power == S_ON))
-            if projector.link.shutter is not None:
-                self.get_toolbar_item('blank_projector', enabled=(connected and power and not projector.link.shutter))
-                self.get_toolbar_item('show_projector', enabled=(connected and power and projector.link.shutter))
-            else:
-                self.get_toolbar_item('blank_projector', enabled=False)
-                self.get_toolbar_item('show_projector', enabled=False)
+            # Only the buttons which fit the state are shown, so that they fit in one row with their labels: power on
+            # or standby, blank or show. When the power state isn't known (yet), both power buttons are shown.
+            is_on = projector.link.power in (S_ON, S_WARMUP)
+            is_off = projector.link.power in IS_OFF
+            self.get_toolbar_item('poweron_projector', enabled=connected and not is_on, hidden=is_on)
+            self.get_toolbar_item('poweroff_projector', enabled=connected and not is_off,
+                                  hidden=is_off or not connected)
+            screen_on = connected and projector.link.power == S_ON
+            blanked = projector.link.shutter is True
+            self.get_toolbar_item('blank_projector', enabled=screen_on, hidden=not screen_on or blanked)
+            self.get_toolbar_item('show_projector', enabled=screen_on, hidden=not screen_on or not blanked)
         else:
             log.debug('update_icons(): Updating for multiple items selected')
             self.get_toolbar_item('edit_projector', enabled=False)
@@ -1021,7 +1086,35 @@ class ProjectorItem(QtCore.QObject):
         self.sw_version = None
         self.model_filter = None
         self.model_lamp = None
+        # Whether the projector should stay connected (it was connected by the user or at the start)
+        self.keep_connected = False
         super().__init__()
+
+
+def projector_state_text(item):
+    """
+    The state of a projector in plain words, e.g. "On - picture blanked" or "Standby"
+
+    :param ProjectorItem item: The projector
+    """
+    link = item.link
+    if QSOCKET_STATE[link.state()] != S_CONNECTED:
+        if QSOCKET_STATE[link.state()] == S_CONNECTING:
+            return translate('OpenLP.ProjectorManager', 'Connecting...')
+        if item.keep_connected:
+            return translate('OpenLP.ProjectorManager', 'Not connected - connecting again...')
+        return translate('OpenLP.ProjectorManager', 'Not connected')
+    if link.power == S_STANDBY or link.power == S_OFF:
+        return translate('OpenLP.ProjectorManager', 'Standby')
+    if link.power == S_WARMUP:
+        return translate('OpenLP.ProjectorManager', 'Warming up...')
+    if link.power == S_COOLDOWN:
+        return translate('OpenLP.ProjectorManager', 'Cooling down...')
+    if link.power == S_ON:
+        if link.shutter:
+            return translate('OpenLP.ProjectorManager', 'On - picture blanked')
+        return translate('OpenLP.ProjectorManager', 'On')
+    return translate('OpenLP.ProjectorManager', 'Connected')
 
 
 def not_implemented(function):

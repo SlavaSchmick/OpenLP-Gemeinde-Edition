@@ -6315,6 +6315,58 @@ Dateiendung wird nicht unterstützt</translation>
         <source>Function &quot;{function}&quot;&lt;br /&gt;has not been implemented yet.&lt;br /&gt;Please check back again later.</source>
         <translation>Die Funktion &quot;{function}&quot;&lt;br /&gt;ist noch nicht implementiert.&lt;br /&gt;Bitte versuchen Sie es später erneut.</translation>
     </message>
+    <message>
+        <source>Connect</source>
+        <translation>Verbinden</translation>
+    </message>
+    <message>
+        <source>Power On</source>
+        <translation>Einschalten</translation>
+    </message>
+    <message>
+        <source>Standby</source>
+        <translation>Standby</translation>
+    </message>
+    <message>
+        <source>Blank</source>
+        <translation>Abdunkeln</translation>
+    </message>
+    <message>
+        <source>Show</source>
+        <translation>Bild zeigen</translation>
+    </message>
+    <message>
+        <source>Connecting...</source>
+        <translation>Verbinde...</translation>
+    </message>
+    <message>
+        <source>Not connected - connecting again...</source>
+        <translation>Nicht verbunden – verbinde erneut...</translation>
+    </message>
+    <message>
+        <source>Not connected</source>
+        <translation>Nicht verbunden</translation>
+    </message>
+    <message>
+        <source>Warming up...</source>
+        <translation>Wärmt auf...</translation>
+    </message>
+    <message>
+        <source>Cooling down...</source>
+        <translation>Kühlt ab...</translation>
+    </message>
+    <message>
+        <source>On - picture blanked</source>
+        <translation>Eingeschaltet – abgedunkelt</translation>
+    </message>
+    <message>
+        <source>On</source>
+        <translation>Eingeschaltet</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>Verbunden</translation>
+    </message>
 </context>
 <context>
     <name>OpenLP.ProjectorTab</name>

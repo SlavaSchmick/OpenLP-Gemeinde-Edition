@@ -5,6 +5,15 @@ Downloads: [Releases](https://github.com/SlavaSchmick/OpenLP-Gemeinde-Edition/re
 
 ## Noch nicht veröffentlicht
 
+### Geändert
+
+- **Projektor-Steuerung übersichtlicher:** Unter dem Namen des Beamers steht sein Zustand im Klartext („Standby“,
+  „Eingeschaltet“, „Eingeschaltet – abgedunkelt“, „Nicht verbunden – verbinde erneut …“). Die Bedienknöpfe stehen
+  beschriftet in einer eigenen Zeile, und es werden nur die gezeigt, die gerade passen: „Einschalten“ oder „Standby“,
+  „Abdunkeln“ oder „Bild zeigen“.
+- Trennt der Beamer die Verbindung (z. B. im Standby), verbindet OpenLP sich selbst wieder, damit er sich jederzeit
+  einschalten lässt. Wer von Hand trennt, bleibt getrennt.
+
 ### Behoben
 
 - **Beamer (z. B. Acer) ließ sich nicht abdunkeln und nicht aus dem Standby einschalten:** Der Beamer hängt an seine

@@ -6039,6 +6039,58 @@ File extension not supported</source>
         <source>Function &quot;{function}&quot;&lt;br /&gt;has not been implemented yet.&lt;br /&gt;Please check back again later.</source>
         <translation>Функция «{function}»&lt;br /&gt;ещё не реализована.&lt;br /&gt;Попробуйте позже.</translation>
     </message>
+    <message>
+        <source>Connect</source>
+        <translation>Подключить</translation>
+    </message>
+    <message>
+        <source>Power On</source>
+        <translation>Включить</translation>
+    </message>
+    <message>
+        <source>Standby</source>
+        <translation>Ожидание</translation>
+    </message>
+    <message>
+        <source>Blank</source>
+        <translation>Затемнить</translation>
+    </message>
+    <message>
+        <source>Show</source>
+        <translation>Показать</translation>
+    </message>
+    <message>
+        <source>Connecting...</source>
+        <translation>Подключение...</translation>
+    </message>
+    <message>
+        <source>Not connected - connecting again...</source>
+        <translation>Не подключено – повторное подключение...</translation>
+    </message>
+    <message>
+        <source>Not connected</source>
+        <translation>Не подключено</translation>
+    </message>
+    <message>
+        <source>Warming up...</source>
+        <translation>Прогрев...</translation>
+    </message>
+    <message>
+        <source>Cooling down...</source>
+        <translation>Охлаждение...</translation>
+    </message>
+    <message>
+        <source>On - picture blanked</source>
+        <translation>Включён – затемнён</translation>
+    </message>
+    <message>
+        <source>On</source>
+        <translation>Включён</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>Подключено</translation>
+    </message>
 </context>
 <context>
     <name>OpenLP.ProjectorTab</name>

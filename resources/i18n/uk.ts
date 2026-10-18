@@ -6317,6 +6317,58 @@ File extension not supported</source>
             <source>Function &quot;{function}&quot;&lt;br /&gt;has not been implemented yet.&lt;br /&gt;Please check back again later.</source>
             <translation>Функцію «{function}»&lt;br /&gt;ще не реалізовано.&lt;br /&gt;Спробуйте пізніше.</translation>
         </message>
+        <message>
+            <source>Connect</source>
+            <translation>Підключити</translation>
+        </message>
+        <message>
+            <source>Power On</source>
+            <translation>Увімкнути</translation>
+        </message>
+        <message>
+            <source>Standby</source>
+            <translation>Очікування</translation>
+        </message>
+        <message>
+            <source>Blank</source>
+            <translation>Затемнити</translation>
+        </message>
+        <message>
+            <source>Show</source>
+            <translation>Показати</translation>
+        </message>
+        <message>
+            <source>Connecting...</source>
+            <translation>Підключення...</translation>
+        </message>
+        <message>
+            <source>Not connected - connecting again...</source>
+            <translation>Не підключено – повторне підключення...</translation>
+        </message>
+        <message>
+            <source>Not connected</source>
+            <translation>Не підключено</translation>
+        </message>
+        <message>
+            <source>Warming up...</source>
+            <translation>Прогрівання...</translation>
+        </message>
+        <message>
+            <source>Cooling down...</source>
+            <translation>Охолодження...</translation>
+        </message>
+        <message>
+            <source>On - picture blanked</source>
+            <translation>Увімкнено – затемнено</translation>
+        </message>
+        <message>
+            <source>On</source>
+            <translation>Увімкнено</translation>
+        </message>
+        <message>
+            <source>Connected</source>
+            <translation>Підключено</translation>
+        </message>
 </context>
     <context>
         <name>OpenLP.ProjectorTab</name>

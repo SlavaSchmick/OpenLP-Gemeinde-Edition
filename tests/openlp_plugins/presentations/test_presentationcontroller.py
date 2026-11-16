@@ -141,6 +141,23 @@ def test_get_titles_and_notes(document):
         assert mocked_read_text.call_count == 3, 'Three files should be read'
 
 
+def test_get_titles_and_notes_umlauts(document, tmp_path):
+    """
+    Titles and notes are written as UTF-8 and must be read as UTF-8, not in the encoding of Windows ("für", not "fÃ¼r")
+    """
+    # GIVEN: Titles and notes with umlauts and Cyrillic letters, saved like OpenLP does
+    with patch(FOLDER_TO_PATCH) as mocked_get_thumbnail_folder:
+        mocked_get_thumbnail_folder.return_value = tmp_path
+        document.save_titles_and_notes(['Grundregeln für die Verwendung', 'Слава Богу'], ['Möglichkeiten', 'Аминь'])
+
+        # WHEN: Reading them again
+        titles, notes = document.get_titles_and_notes()
+
+    # THEN: They are the same
+    assert titles == ['Grundregeln für die Verwendung', 'Слава Богу']
+    assert notes == ['Möglichkeiten', 'Аминь']
+
+
 def test_get_titles_and_notes_with_file_not_found(document):
     """
     Test PresentationDocument.get_titles_and_notes method with file not found

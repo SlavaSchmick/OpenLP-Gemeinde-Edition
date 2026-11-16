@@ -33,6 +33,7 @@ Downloads: [Releases](https://github.com/SlavaSchmick/OpenLP-Gemeinde-Edition/re
 
 ### Behoben
 
+- Folientitel und Notizen von PowerPoint-Präsentationen zeigen Umlaute wieder richtig („für“ statt „fÃ¼r“).
 - **Beamer (z. B. Acer) ließ sich nicht abdunkeln und nicht aus dem Standby einschalten:** Der Beamer hängt an seine
   Antworten ein unsichtbares NUL-Zeichen an. OpenLP verstand die Antworten dadurch nicht, kannte weder den
   Verschluss- noch den Stromzustand und ließ „Abdunkeln“ und „Einschalten“ gesperrt.

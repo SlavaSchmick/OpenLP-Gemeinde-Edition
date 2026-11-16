@@ -37,7 +37,6 @@ from traceback import format_exception
 
 from PyQt5 import QtCore, QtGui, QtWebEngineWidgets, QtWidgets  # noqa
 
-from openlp.core.api.deploy import check_for_remote_update
 from openlp.core.common.applocation import AppLocation
 from openlp.core.common.enum import HiDPIMode
 from openlp.core.common.i18n import LanguageManager, UiStrings, translate
@@ -151,8 +150,7 @@ class OpenLP(QtCore.QObject, LogMixin):
             self.main_window.first_time()
         if self.settings.value('core/update check'):
             check_for_update(self.main_window)
-        if self.settings.value('api/update check'):
-            check_for_remote_update(self.main_window)
+        # The web remote of the Gemeinde-Edition is part of OpenLP, the one of openlp.org isn't downloaded
         self.main_window.is_display_blank()
         Registry().execute('bootstrap_completion')
         return self.exec()

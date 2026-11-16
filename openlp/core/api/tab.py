@@ -158,6 +158,8 @@ class ApiTab(SettingsTab):
         self.install_button.setObjectName('install_button')
         self.web_remote_layout.addWidget(self.install_button, 1, 2)
         self.left_layout.addWidget(self.web_remote_group_box)
+        # The web remote of the Gemeinde-Edition is part of OpenLP, the one of openlp.org isn't installed
+        self.web_remote_group_box.hide()
         self.app_group_box = QtWidgets.QGroupBox(self.right_column)
         self.app_group_box.setObjectName('app_group_box')
         self.right_layout.addWidget(self.app_group_box)

@@ -9032,6 +9032,11 @@ Add some items to it then press Save</source>
 <context>
     <name>PresentationPlugin.MediaItem</name>
     <message>
+        <location filename="../../openlp/plugins/presentations/lib/mediaitem.py"/>
+        <source>From Tablet</source>
+        <translation>С планшета</translation>
+    </message>
+    <message>
         <location filename="../../openlp/plugins/presentations/lib/mediaitem.py" line="67"/>
         <source>Select Presentation(s)</source>
         <translation>Выберите презентации</translation>

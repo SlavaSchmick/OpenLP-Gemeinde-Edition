@@ -962,4 +962,7 @@ class SongMediaItem(MediaManagerItem):
         :return: the results of the search
         """
         search_results = self.search_entire(string)
+        # Like the search in OpenLP: the song with a typed id (e.g. "d203") comes first
+        exact_results = self.search_song_id(string) or []
+        search_results = exact_results + [song for song in search_results if song not in exact_results]
         return [[song.id, song.title, song.alternate_title] for song in search_results]

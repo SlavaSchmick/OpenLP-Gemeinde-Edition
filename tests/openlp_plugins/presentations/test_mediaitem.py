@@ -235,3 +235,48 @@ def test_search_not_found(mock_setup, mock_item, registry):
 
     # THEN: a file should be found
     assert result == [], 'The result file should be empty'
+
+
+def test_supported_suffixes(media_item):
+    """
+    The suffixes which can be uploaded are those of the enabled presentation programs, each once
+    """
+    # GIVEN: An enabled and a disabled presentation program
+    media_item.controllers = {
+        'Impress': MagicMock(supports=['odp', 'pptx'], also_supports=['ppt'], **{'enabled.return_value': True}),
+        'Pdf': MagicMock(supports=['pdf'], also_supports=['pptx'], **{'enabled.return_value': True}),
+        'Keynote': MagicMock(supports=['key'], also_supports=[], **{'enabled.return_value': False}),
+    }
+
+    # WHEN: The suffixes are requested
+    suffixes = media_item.supported_suffixes()
+
+    # THEN: Those of the enabled programs are there
+    assert suffixes == ['odp', 'pptx', 'ppt', 'pdf']
+
+
+def test_add_uploaded_files(media_item, temp_folder):
+    """
+    Presentations uploaded from a tablet are added to the folder "From Tablet", which is created if needed
+    """
+    # GIVEN: No folder "From Tablet" yet and one presentation which is in OpenLP already
+    new_file = Path(temp_folder) / 'Fest.pptx'
+    new_file.write_bytes(b'slides')
+    known_file = Path(temp_folder) / 'Known.pdf'
+    media_item.manager = MagicMock()
+    media_item.manager.get_object_filtered.return_value = None
+    media_item.manager.get_all_objects.return_value = [Item(name=str(known_file), file_path=str(known_file))]
+    media_item.load_list = MagicMock()
+
+    # WHEN: Both are uploaded
+    media_item.add_uploaded_files([str(new_file), str(known_file)])
+
+    # THEN: The folder is created and only the new presentation is added to it
+    saved = [call_args.args[0] for call_args in media_item.manager.save_object.call_args_list]
+    assert isinstance(saved[0], Folder)
+    assert saved[0].name == 'From Tablet'
+    assert len(saved) == 2
+    assert isinstance(saved[1], Item)
+    assert saved[1].file_path == str(new_file)
+    assert saved[1].file_hash
+    media_item.load_list.assert_called_once()

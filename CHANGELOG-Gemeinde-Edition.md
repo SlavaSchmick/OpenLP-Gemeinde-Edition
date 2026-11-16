@@ -5,6 +5,17 @@ Downloads: [Releases](https://github.com/SlavaSchmick/OpenLP-Gemeinde-Edition/re
 
 ## Noch nicht veröffentlicht
 
+### Neu
+
+- **Neue Fernsteuerung für Tablet und Handy** (Adresse unter *Einstellungen → OpenLP konfigurieren… →
+  Fernsteuerung*): Suche, Ablauf und Folien auf einem Bildschirm, alles mit einmal Antippen.
+  - Suche in allen Bereichen (Lieder, Bibeln, Sonderfolien, Präsentationen, Bilder, Medien, Live-Video); jeder Treffer
+    lässt sich sofort **live** zeigen oder **zum Ablauf hinzufügen**. `d203` / `r47` steht wie in OpenLP ganz oben.
+  - Die Strophen bzw. Folien des Live-Eintrags als große Karten – **Antippen schaltet die Folie**.
+  - Unten nur noch **„Bild zeigen“** und **„Schwarz“**; Live-Video und Medien lassen sich beenden.
+  - **Präsentationen vom Tablet hochladen:** Sie landen in OpenLP im Ordner „Vom Tablet“ und können sofort live.
+  - Ohne Passwort, Sprache wie in OpenLP (Deutsch, Russisch, Ukrainisch, Englisch), verbindet sich selbst neu.
+
 ### Geändert
 
 - **Projektor-Steuerung übersichtlicher:** Unter dem Namen des Beamers steht sein Zustand im Klartext („Standby“,
@@ -13,6 +24,10 @@ Downloads: [Releases](https://github.com/SlavaSchmick/OpenLP-Gemeinde-Edition/re
   „Abdunkeln“ oder „Bild zeigen“.
 - Trennt der Beamer die Verbindung (z. B. im Standby), verbindet OpenLP sich selbst wieder, damit er sich jederzeit
   einschalten lässt. Wer von Hand trennt, bleibt getrennt.
+
+- Die Fernsteuerung von openlp.org wird nicht mehr heruntergeladen; ihre Einstellungen sind ausgeblendet. Wo sie
+  schon installiert war, funktionieren ihre Ansichten für Bühne, Akkorde und Live (`/stage`, `/chords`, `/main`)
+  weiter.
 
 ### Behoben
 

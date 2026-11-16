@@ -22,11 +22,14 @@
 import logging
 import json
 import re
+from pathlib import Path
 
 from flask import abort, request, Blueprint, jsonify, Response
 from PyQt5 import QtCore
 
 from openlp.core.api.lib import login_required, extract_request, old_success_response, old_auth
+from openlp.core.common.applocation import AppLocation
+from openlp.core.common.path import create_paths
 from openlp.core.lib.plugin import PluginStatus
 from openlp.core.common.json import OpenLPJSONEncoder
 from openlp.core.common.registry import Registry
@@ -82,6 +85,52 @@ def set_option(plugin_name, search_option, value):
     if plugin.status == PluginStatus.Active and plugin.media_item:
         success = plugin.media_item.set_search_option(search_option, value)
     return success
+
+
+def safe_file_name(name):
+    """
+    A file name without folders and without characters which Windows doesn't allow. Unlike
+    werkzeug.utils.secure_filename, it keeps non-Latin letters (e.g. Cyrillic names of presentations).
+
+    :param str name: The name of an uploaded file
+    """
+    name = re.split(r'[\\/]', name or '')[-1]
+    name = re.sub(r'[<>:"|?*\x00-\x1f]', '_', name).strip(' .')
+    return name
+
+
+@plugins.route('/presentations/upload', methods=['POST'])
+@login_required
+def upload_presentation():
+    """
+    Upload a presentation (e.g. from a tablet with the web remote). It is saved in the data folder of the
+    presentations and added to OpenLP in the folder "From Tablet". Answers the id and the title of the presentation,
+    so that it can be sent live or added to the service right away.
+    """
+    log.debug('presentations/upload called')
+    upload = request.files.get('file')
+    name = safe_file_name(upload.filename if upload else '')
+    if not upload or not name:
+        abort(400)
+    plugin = Registry().get('plugin_manager').get_plugin_by_name('presentations')
+    if not plugin or plugin.status != PluginStatus.Active or not plugin.media_item:
+        abort(404)
+    suffix = Path(name).suffix.lower().lstrip('.')
+    if suffix not in plugin.media_item.supported_suffixes():
+        log.warning(f'Upload of an unsupported presentation: {name}')
+        abort(415)
+    folder = AppLocation.get_section_data_path('presentations') / 'uploads'
+    create_paths(folder)
+    target = folder / name
+    number = 2
+    while target.exists():
+        target = folder / '{stem} ({number}){suffix}'.format(
+            stem=Path(name).stem, number=number, suffix=Path(name).suffix)
+        number += 1
+    upload.save(str(target))
+    # The media item belongs to the main thread, the signal adds the file there
+    plugin.media_item.presentations_uploaded.emit([str(target)])
+    return jsonify({'id': str(target), 'title': target.name}), 201
 
 
 @plugins.route('/<plugin>/search')

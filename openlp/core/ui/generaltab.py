@@ -81,6 +81,8 @@ class GeneralTab(SettingsTab):
         self.check_for_remote_updates_check_box = QtWidgets.QCheckBox(self.startup_group_box)
         self.check_for_remote_updates_check_box.setObjectName('check_for_remote_updates_check_box')
         self.startup_layout.addWidget(self.check_for_remote_updates_check_box)
+        # The web remote of the Gemeinde-Edition is part of OpenLP, there are no updates of it to check for
+        self.check_for_remote_updates_check_box.hide()
         self.left_layout.addWidget(self.startup_group_box)
         # Logo
         self.logo_group_box = QtWidgets.QGroupBox(self.left_column)

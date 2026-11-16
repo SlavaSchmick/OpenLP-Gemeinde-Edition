@@ -30,6 +30,8 @@ from openlp.core.api.main import main_views
 log = logging.getLogger(__name__)
 app = Flask(__name__)
 CORS(app)
+# Presentations can be uploaded with the web remote; a larger file is refused
+app.config['MAX_CONTENT_LENGTH'] = 500 * 1024 * 1024
 
 app.register_blueprint(main_views)
 v1.register_blueprints(app)

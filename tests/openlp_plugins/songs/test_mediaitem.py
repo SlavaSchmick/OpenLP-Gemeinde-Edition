@@ -967,3 +967,20 @@ def test_search_song_id_variant_by_song_book(song_id_db, media_item):
     # THEN: They are found by the song book "Deutsch" and the number with the variant
     assert [song.title for song in one] == ['D063B Keiner wird zuschanden']
     assert sorted(song.title for song in both) == ['D063A Keiner wird zuschanden', 'D063B Keiner wird zuschanden']
+
+
+def test_search_remote_exact_id_first(media_item):
+    """
+    The remote search shows the song with a typed id (e.g. "d203") first, like the search in OpenLP
+    """
+    # GIVEN: A text search which finds two songs, and the second one has the typed id
+    other_song = MagicMock(id=1, title='Hymne D2035', alternate_title='D17')
+    exact_song = MagicMock(id=2, title='Großer Gott', alternate_title='D203')
+    media_item.search_entire = MagicMock(return_value=[other_song, exact_song])
+    media_item.search_song_id = MagicMock(return_value=[exact_song])
+
+    # WHEN: The remote searches for the id
+    search_results = media_item.search('d203', False)
+
+    # THEN: The song with the id is first and isn't listed twice
+    assert search_results == [[2, 'Großer Gott', 'D203'], [1, 'Hymne D2035', 'D17']]

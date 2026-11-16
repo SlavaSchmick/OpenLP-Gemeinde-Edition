@@ -9307,6 +9307,11 @@ Fügen Sie Elemente hinzu und klicken Sie dann auf &quot;Speichern&quot;.</trans
 <context>
     <name>PresentationPlugin.MediaItem</name>
     <message>
+        <location filename="../../openlp/plugins/presentations/lib/mediaitem.py"/>
+        <source>From Tablet</source>
+        <translation>Vom Tablet</translation>
+    </message>
+    <message>
         <location filename="../../openlp/plugins/presentations/lib/mediaitem.py" line="67"/>
         <source>Select Presentation(s)</source>
         <translation>Präsentationen auswählen</translation>

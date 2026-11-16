@@ -61,6 +61,7 @@
   <li>Schneller Bibel-Workflow</li>
   <li>Schnelle Liedsuche</li>
   <li>Liedstatistik</li>
+  <li>Fernsteuerung mit Tablet und Handy</li>
   <li>Automatische Textgröße</li>
   <li>Die Liederbücher im Detail</li>
   <li>Tastenkürzel im Überblick</li>
@@ -198,7 +199,7 @@
   <li>Ein Bibelvers wird <strong>nie auf zwei Folien verteilt</strong> – in keinem Layout.</li>
   <li>Mit <strong>Vergleichstext</strong> (zweite Übersetzung) steht der Vers in <strong>beiden Übersetzungen zusammen</strong> auf einer Folie.</li>
   <li>Bei Layouts mit mehreren Versen pro Folie („Vers pro Zeile“, „Fortlaufend“, „Ganze Verse fortlaufend“) wird nur zwischen zwei Versen auf eine neue Folie gewechselt.</li>
-  <li>Ist ein Vers sehr lang, wird seine Schrift so weit verkleinert, dass er vollständig zu sehen ist (siehe Kapitel 9).</li>
+  <li>Ist ein Vers sehr lang, wird seine Schrift so weit verkleinert, dass er vollständig zu sehen ist (siehe Kapitel 10).</li>
 </ul>
 
 <div style="page-break-inside: avoid"><h3>Tolerante Eingabe</h3>
@@ -250,7 +251,41 @@ welche Lieder am häufigsten gesungen werden: <span class="path">Extras → Lied
 Update). Wer sie ausschalten möchte: <span class="path">Extras → Liedprotokollierung → Protokollierung ein/aus</span> oder
 <kbd>F4</kbd>.</p>
 
-<h2>9. Automatische Textgröße</h2>
+<h2>9. Fernsteuerung mit Tablet und Handy</h2>
+<p>Mit einem Tablet oder Handy im selben Netzwerk lässt sich OpenLP vom Platz aus steuern – gedacht vor allem für den
+Dirigenten: <strong>Lied finden, an die Wand werfen, Strophen schalten</strong>. Alles liegt auf einem Bildschirm und
+reagiert auf <strong>einmal Antippen</strong>.</p>
+<p>Die Adresse steht in <span class="path">Einstellungen → OpenLP konfigurieren… → Fernsteuerung</span> unter
+<strong>„URL der Fernsteuerung“</strong> (z. B. <code>http://192.168.1.20:4316/</code>), daneben als QR-Code zum
+Abfotografieren. Ein Passwort ist nicht nötig. Tipp: im Browser „Zum Startbildschirm hinzufügen“ – dann öffnet sie sich
+wie eine App.</p>
+<table>
+  <tr><th>Bereich</th><th>So geht’s</th></tr>
+  <tr><td>Suche (oben)</td><td>Bereich wählen (Lieder, Bibeln, Präsentationen, Live-Video …) und tippen – die Treffer
+    erscheinen sofort, <code>d203</code> oder <code>r47</code> steht ganz oben. Jeder Treffer hat zwei Knöpfe:
+    <strong>„Live“</strong> zeigt ihn sofort an der Wand, <strong>„+ Ablauf“</strong> hängt ihn an den Ablauf an.</td></tr>
+  <tr><td>Ablauf (links)</td><td>Antippen bringt den Eintrag live; der laufende ist gelb markiert.</td></tr>
+  <tr><td>Folien (rechts)</td><td>Alle Strophen bzw. Folien des Live-Eintrags als große Karten. <strong>Antippen schaltet
+    die Folie</strong>; die gezeigte ist blau umrandet und folgt auch, wenn am Rechner geschaltet wird.</td></tr>
+  <tr><td>Unten</td><td><strong>„Bild zeigen“</strong> und <strong>„Schwarz“</strong>; der aktive Zustand ist farbig
+    (grün bzw. rot).</td></tr>
+  <tr><td>Live-Video, Medien</td><td>Über die Suche live schalten; <strong>„Beenden“</strong> über den Folien nimmt sie
+    wieder von der Wand.</td></tr>
+  <tr><td>Präsentation hochladen</td><td>Bereich „Präsentationen“ wählen, <strong>„Präsentation hochladen“</strong>
+    antippen und die Datei auf dem Tablet auswählen (PowerPoint, PDF, Impress …). Sie landet in OpenLP im Ordner
+    <strong>„Vom Tablet“</strong> und erscheint sofort in der Trefferliste – „Live“ oder „+ Ablauf“ wie gewohnt.</td></tr>
+</table>
+<p>Auf dem Handy im Hochformat stehen Ablauf und Folien untereinander. Die Sprache der Fernsteuerung folgt der Sprache
+von OpenLP (Deutsch, Russisch, Ukrainisch, sonst Englisch). Bricht die Verbindung ab, verbindet sie sich von selbst
+wieder.</p>
+<div class="box">
+  <strong>Hinweis:</strong> Die Fernsteuerung ist Teil der Gemeinde-Edition und ersetzt die von openlp.org
+  heruntergeladene. Ihre Ansichten für Bühne, Akkorde und Live (<code>/stage</code>, <code>/chords</code>,
+  <code>/main</code>) funktionieren weiter, wo sie schon installiert war. Ohne Passwort kann jeder im selben Netzwerk
+  steuern – das Gemeinde-WLAN für Gäste sollte daher ein eigenes Netz sein.
+</div>
+
+<h2>10. Automatische Textgröße</h2>
 <p>Bibel- und Liedtexte sind unterschiedlich lang. Damit die Fläche immer optimal genutzt wird und der Text auch aus großer Entfernung lesbar ist, wählt OpenLP <strong>für jede Folie die größte Schrift</strong>, bei der der Text vollständig in den Textbereich passt – innerhalb einer Spanne, die im Design festgelegt wird.</p>
 
 <h3>Einstellen</h3>
@@ -280,7 +315,7 @@ Update). Wer sie ausschalten möchte: <span class="path">Extras → Liedprotokol
   <strong>Tipp:</strong> Bei vorhandenen Designs steht die größte Größe noch auf dem bisherigen Wert (z. B. 40 pt) – kurze Texte werden dann nicht größer als vorher. Für eine gut gefüllte Leinwand die <strong>Größte Größe</strong> z. B. auf 100–120 pt setzen. Bei Liedern mit einer sehr langen Zeile kann unten Platz frei bleiben; dann hilft die vertikale Ausrichtung „Mitte“.
 </div>
 
-<h2 class="page-break">10. Die Liederbücher im Detail</h2>
+<h2 class="page-break">11. Die Liederbücher im Detail</h2>
 <p>Grundlage sind die SongBeamer-Liederbücher der Gemeinde: das <strong>Gemeinde-Gesangbuch</strong> (deutsch, 700 Dateien) und das russische Liederbuch (801 Dateien). Alle Lieder wurden automatisch bereinigt, geprüft und in das OpenLP-Format gebracht.</p>
 <p><strong>Gemeinde-Gesangbuch:</strong> 698 Lieder, D1–D695, einige in Varianten (D63A/B, D324A/B, D387A/B; die Liedsuche findet mit <code>d63</code> alle Fassungen, mit <code>d63a</code> genau eine). Textautoren, Übersetzer und Copyright sind übernommen; Melodie, Originaltitel und Bibelstelle stehen in den Kommentaren des Liedes. Der Titel ist Nummer + Liedtitel, z. B. <code>D014_O mein Jesus, du bist's wert</code>. Es fehlt D135 („Horch, von Engelmunde“): Die Datei ist von SongBeamer verschlüsselt. Einzelheiten stehen im Bereinigungsbericht. Die folgenden Angaben beschreiben die Bereinigung des russischen Liederbuchs und des früheren deutschen Liederbuchs.</p>
 
@@ -320,7 +355,7 @@ Update). Wer sie ausschalten möchte: <span class="path">Extras → Liedprotokol
 </ul>
 
 <div style="page-break-inside: avoid">
-<h2>11. Tastenkürzel im Überblick</h2>
+<h2>12. Tastenkürzel im Überblick</h2>
 <table>
   <tr><th style="width:30%">Taste</th><th>Wirkung</th></tr>
   <tr><td><kbd>Strg</kbd>+<kbd>B</kbd></td><td>Ins Bibel-Suchfeld springen</td></tr>
@@ -333,16 +368,16 @@ Update). Wer sie ausschalten möchte: <span class="path">Extras → Liedprotokol
 <p class="small">Ist <kbd>Strg</kbd>+<kbd>Alt</kbd>+<kbd>O</kbd> schon von einem anderen Programm belegt, wählt man unter „OpenLP in den Vordergrund holen“ eine andere Kombination. Alle Kürzel lassen sich unter <span class="path">Einstellungen → Tastenkürzel konfigurieren…</span> ändern.</p>
 </div>
 
-<h2>12. Hinweise und bekannte Grenzen</h2>
+<h2>13. Hinweise und bekannte Grenzen</h2>
 <ul>
   <li><strong>Übersetzungen:</strong> Die russische und die ukrainische Oberfläche sollten von Muttersprachlern durchgesehen werden, insbesondere Fachbegriffe (z. B. „Служение/Служіння“ für den Gottesdienstablauf).</li>
   <li><strong>Zeilenumbrüche in den Liedquellen:</strong> Einige Lieder haben in den SongBeamer-Dateien falsch gesetzte Zeilenumbrüche (z. B. D1: „Cherubim und Seraphinen Stimmen / Dir ein Loblied an“). Diese lassen sich nicht automatisch erkennen und können bei Bedarf im Lied-Editor korrigiert werden.</li>
   <li><strong>Suche nach Nummern:</strong> Die Suche findet alles, was die Kennung enthält; das exakt passende Lied steht immer oben.</li>
   <li><strong>Signatur:</strong> Das Setup ist nicht digital signiert (SmartScreen-Warnung, siehe Kapitel 1).</li>
-  <li><strong>Lizenz:</strong> OpenLP steht unter der GNU General Public License Version 3. Wer diese angepasste Version weitergibt, muss den Empfängern auch den Quellcode zugänglich machen – er liegt öffentlich auf GitHub (siehe Kapitel 13).</li>
+  <li><strong>Lizenz:</strong> OpenLP steht unter der GNU General Public License Version 3. Wer diese angepasste Version weitergibt, muss den Empfängern auch den Quellcode zugänglich machen – er liegt öffentlich auf GitHub (siehe Kapitel 14).</li>
 </ul>
 
-<h2>13. Updates</h2>
+<h2>14. Updates</h2>
 <p>Die Gemeinde-Edition bekommt ihre Updates aus ihrem eigenen GitHub-Repository – <strong>nicht</strong> von openlp.org. So kann niemand versehentlich das offizielle OpenLP installieren, das alle Ergänzungen dieser Edition entfernen würde.</p>
 <h3>So läuft ein Update</h3>
 <ol>
@@ -362,7 +397,7 @@ Update). Wer sie ausschalten möchte: <span class="path">Extras → Liedprotokol
 <h3>Version</h3>
 <p>Die Version steht im Info-Dialog (<span class="path">Hilfe → Info über OpenLP</span>), z. B. <code>3.1.7 Build gemeinde.1</code>: 3.1.7 ist die zugrunde liegende OpenLP-Version, <code>gemeinde.1</code> die Ausgabe der Gemeinde-Edition.</p>
 
-<h2 class="page-break">14. Technischer Anhang</h2>
+<h2 class="page-break">15. Technischer Anhang</h2>
 <table>
   <tr><th style="width:30%">Punkt</th><th>Details</th></tr>
   <tr><td>Grundlage</td><td>OpenLP 3.1.7 (Python, PyQt5, QtWebEngine)</td></tr>

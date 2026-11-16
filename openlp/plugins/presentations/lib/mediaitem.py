@@ -49,6 +49,8 @@ class PresentationMediaItem(FolderLibraryItem):
     """
     presentations_go_live = QtCore.pyqtSignal(list)
     presentations_add_to_service = QtCore.pyqtSignal(list)
+    # Presentations uploaded with the web remote (a list of file paths), added in the main thread
+    presentations_uploaded = QtCore.pyqtSignal(list)
     log.info('Presentations Media Item loaded')
 
     def __init__(self, parent, plugin, controllers):
@@ -74,6 +76,7 @@ class PresentationMediaItem(FolderLibraryItem):
         """
         self.presentations_go_live.connect(self.go_live_remote)
         self.presentations_add_to_service.connect(self.add_to_service_remote)
+        self.presentations_uploaded.connect(self.add_uploaded_files)
         self.message_listener = MessageListener(self)
         self.has_search = True
         self.single_service_item = False
@@ -135,6 +138,40 @@ class PresentationMediaItem(FolderLibraryItem):
         self.display_layout.addRow(self.display_type_label, self.display_type_combo_box)
         # Add the Presentation widget to the page layout.
         self.page_layout.addWidget(self.presentation_widget)
+
+    def supported_suffixes(self):
+        """
+        The file suffixes of the enabled presentation programs, e.g. ['pptx', 'ppt', 'pdf']
+        """
+        suffixes = []
+        for controller in self.controllers.values():
+            if controller.enabled():
+                suffixes += [suffix for suffix in controller.supports + controller.also_supports
+                             if suffix not in suffixes]
+        return suffixes
+
+    def add_uploaded_files(self, file_paths):
+        """
+        Add presentations which were uploaded with the web remote to the folder "From Tablet", without asking for a
+        folder like when files are added in OpenLP
+
+        :param list[str] file_paths: The paths of the uploaded files
+        """
+        folder_name = translate('PresentationPlugin.MediaItem', 'From Tablet')
+        folder = self.manager.get_object_filtered(self.folder_class, self.folder_class.name == folder_name)
+        if folder is None:
+            folder = self.folder_class(name=folder_name, parent_id=None)
+            self.manager.save_object(folder)
+        existing_files = [item.file_path for item in self.manager.get_all_objects(self.item_class)]
+        for file_path in file_paths:
+            if str(file_path) in existing_files:
+                continue
+            item = self.item_class(name=str(file_path), file_path=str(file_path), folder_id=folder.id)
+            if Path(file_path).exists():
+                item.file_hash = sha256_file_hash(Path(file_path))
+            self.manager.save_object(item)
+        self.load_list(self.manager.get_all_objects(self.item_class, order_by_ref=self.item_class.file_path),
+                       target_folder=folder)
 
     def build_file_mask_string(self):
         """

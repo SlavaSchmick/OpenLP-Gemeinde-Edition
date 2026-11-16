@@ -40,6 +40,9 @@ Was sich von Version zu Version geändert hat, steht in
   CSV; die Liedprotokollierung ist von Anfang an eingeschaltet.
 - **Automatische Textgröße:** größte passende Schrift je Folie innerhalb einer Spanne im Design; Liedzeilen werden
   nicht umbrochen, Bibelverse immer ganz gezeigt.
+- **Fernsteuerung für Tablet und Handy:** eigene Web-Fernsteuerung – Suche, Ablauf und Folien auf einem Bildschirm,
+  Lied mit einem Tippen live, Strophen durch Antippen der Folien schalten, Bild zeigen / Schwarz, Live-Video,
+  Präsentationen vom Tablet hochladen.
 - **Präsentationen:** PowerPoint funktioniert auch mit Microsoft 365 (Click-to-Run).
 - **Sprachen:** Englisch, Deutsch, Russisch (vervollständigt) und Ukrainisch (neu).
 - **Kennzeichnung und Updates:** Name „OpenLP Gemeinde-Edition“, Version `3.1.7+gemeinde.N`, Updates kommen aus den

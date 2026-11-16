@@ -52,11 +52,13 @@
       failed: 'OpenLP did not answer', clear: 'Clear search'
     }
   };
+  // The names of the verse types in the order of OpenLP (VerseType). OpenLP sends the first letter of the name in its
+  // language as tag, e.g. "S1" for "Strophe 1" in German or "К1" for "Куплет 1" in Russian.
   var VERSE_NAMES = {
-    de: { v: 'Strophe', c: 'Refrain', b: 'Bridge', p: 'Vorrefrain', i: 'Intro', e: 'Schluss', o: 'Sonstiges' },
-    ru: { v: 'Куплет', c: 'Припев', b: 'Бридж', p: 'Предприпев', i: 'Вступление', e: 'Окончание', o: 'Другое' },
-    uk: { v: 'Куплет', c: 'Приспів', b: 'Брідж', p: 'Передприспів', i: 'Вступ', e: 'Закінчення', o: 'Інше' },
-    en: { v: 'Verse', c: 'Chorus', b: 'Bridge', p: 'Pre-Chorus', i: 'Intro', e: 'Ending', o: 'Other' }
+    de: ['Strophe', 'Refrain', 'Bridge', 'Vorrefrain', 'Intro', 'Ende', 'Anderes'],
+    ru: ['Куплет', 'Припев', 'Бридж', 'Предприпев', 'Вступление', 'Окончание', 'Другое'],
+    uk: ['Куплет', 'Приспів', 'Брідж', 'Передприспів', 'Вступ', 'Закінчення', 'Інше'],
+    en: ['Verse', 'Chorus', 'Bridge', 'Pre-Chorus', 'Intro', 'Ending', 'Other']
   };
   var ICONS = {
     songs: 'M9 3v10.6A4 4 0 1 0 11 17V7h6V3H9z',
@@ -157,11 +159,16 @@
   }
 
   function verseLabel(tag) {
-    var match = /^([a-z])(\d*)(.*)$/i.exec(String(tag || ''));
-    if (!match || !verseNames[match[1].toLowerCase()]) {
+    var match = /^(\D)(\d*)(.*)$/.exec(String(tag || ''));
+    if (!match) {
       return String(tag || '');
     }
-    return (verseNames[match[1].toLowerCase()] + ' ' + match[2] + match[3]).trim();
+    var letter = match[1].toLowerCase();
+    var name = verseNames.filter(function (verseName) { return verseName.charAt(0).toLowerCase() === letter; })[0];
+    if (!name) {
+      return String(tag);
+    }
+    return (name + ' ' + match[2] + match[3]).trim();
   }
 
   // ---- Search -----------------------------------------------------------------------------------------------------
@@ -363,8 +370,10 @@
     var isText = item.type === 1 || item.type === 'text' ||
       slides.some(function (slide) { return !slide.img && slide.html !== slide.text; });
     slides.forEach(function (slide, index) {
-      var card = make('button', 'slide' + (slide.selected ? ' selected' : ''));
-      card.type = 'button';
+      // Not a <button>: browsers size buttons in a grid wrongly, long verses would stick out
+      var card = make('div', 'slide' + (slide.selected ? ' selected' : ''));
+      card.setAttribute('role', 'button');
+      card.tabIndex = 0;
       card.dataset.index = index;
       if (slide.img) {
         var image = make('img');
@@ -440,6 +449,8 @@
       setTimeout(function () { connect(port); }, 3000);
       return;
     }
+    // OpenLP sends the state as binary frames (UTF-8 encoded JSON)
+    socket.binaryType = 'arraybuffer';
     var offlineTimer = setTimeout(function () { el('offline').hidden = false; }, 4000);
     socket.onopen = function () {
       clearTimeout(offlineTimer);
@@ -450,7 +461,8 @@
     };
     socket.onmessage = function (event) {
       try {
-        var message = JSON.parse(event.data);
+        var data = typeof event.data === 'string' ? event.data : new TextDecoder('utf-8').decode(event.data);
+        var message = JSON.parse(data);
         if (message && message.results) {
           onState(message.results);
         }

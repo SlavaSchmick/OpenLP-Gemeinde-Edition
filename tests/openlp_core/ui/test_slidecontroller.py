@@ -956,6 +956,7 @@ def test_process_item_transition(mocked_execute: MagicMock, registry: Registry, 
     slide_controller.preview_display = MagicMock()
     slide_controller.enable_tool_bar = MagicMock()
     slide_controller.on_controller_size_changed = MagicMock()
+    slide_controller.output_has_changed = MagicMock()
     slide_controller.on_media_start = MagicMock()
     slide_controller.on_media_close = MagicMock()
     slide_controller.slide_selected = MagicMock()
@@ -1018,6 +1019,7 @@ def test_process_item_text(mocked_execute: MagicMock, registry: Registry, state_
     slide_controller.preview_display = MagicMock()
     slide_controller.enable_tool_bar = MagicMock()
     slide_controller.on_controller_size_changed = MagicMock()
+    slide_controller.output_has_changed = MagicMock()
     slide_controller.on_media_start = MagicMock()
     slide_controller.on_media_close = MagicMock()
     slide_controller.slide_selected = MagicMock()
@@ -1043,6 +1045,8 @@ def test_process_item_text(mocked_execute: MagicMock, registry: Registry, state_
     slide_controller.on_controller_size_changed.assert_called_once()
     assert slide_controller.screen_capture is None
     assert slide_controller.slide_list['Verse name'] == 0
+    # The web remote is told about the new live item
+    slide_controller.output_has_changed.assert_called_once()
 
 
 @patch.object(Registry, 'execute')
@@ -1175,6 +1179,7 @@ def test_process_item_is_reloading_wont_change_display_hide_mode(mocked_execute:
     slide_controller.preview_display = MagicMock()
     slide_controller.enable_tool_bar = MagicMock()
     slide_controller.on_controller_size_changed = MagicMock()
+    slide_controller.output_has_changed = MagicMock()
     slide_controller.on_media_start = MagicMock()
     slide_controller.on_media_close = MagicMock()
     slide_controller.slide_selected = MagicMock()

@@ -22,7 +22,7 @@
       show: 'Bild zeigen', blank: 'Schwarz', stop: 'Beenden', upload: 'Präsentation hochladen',
       uploading: 'Lade „{0}“ hoch …', uploaded: '„{0}“ hochgeladen', uploadFailed: 'Hochladen fehlgeschlagen',
       unsupported: 'Dieses Dateiformat wird nicht unterstützt', offline: 'Keine Verbindung zu OpenLP – verbinde neu …',
-      failed: 'OpenLP hat nicht geantwortet', clear: 'Suche leeren'
+      failed: 'OpenLP hat nicht geantwortet', clear: 'Suche leeren', toLight: 'Helle Ansicht', toDark: 'Dunkle Ansicht'
     },
     ru: {
       search: 'Песня, номер, место Писания …', service: 'Порядок', serviceEmpty: 'Порядок служения пуст.',
@@ -31,7 +31,7 @@
       show: 'Показать', blank: 'Чёрный', stop: 'Остановить', upload: 'Загрузить презентацию',
       uploading: 'Загрузка «{0}» …', uploaded: '«{0}» загружено', uploadFailed: 'Не удалось загрузить',
       unsupported: 'Этот формат файла не поддерживается', offline: 'Нет связи с OpenLP – подключаюсь …',
-      failed: 'OpenLP не ответил', clear: 'Очистить поиск'
+      failed: 'OpenLP не ответил', clear: 'Очистить поиск', toLight: 'Светлая тема', toDark: 'Тёмная тема'
     },
     uk: {
       search: 'Пісня, номер, місце Писання …', service: 'Порядок', serviceEmpty: 'Порядок служіння порожній.',
@@ -40,7 +40,7 @@
       show: 'Показати', blank: 'Чорний', stop: 'Зупинити', upload: 'Завантажити презентацію',
       uploading: 'Завантаження «{0}» …', uploaded: '«{0}» завантажено', uploadFailed: 'Не вдалося завантажити',
       unsupported: 'Цей формат файлу не підтримується', offline: 'Немає зв’язку з OpenLP – підключаюся …',
-      failed: 'OpenLP не відповів', clear: 'Очистити пошук'
+      failed: 'OpenLP не відповів', clear: 'Очистити пошук', toLight: 'Світла тема', toDark: 'Темна тема'
     },
     en: {
       search: 'Song, number, Bible reference …', service: 'Service', serviceEmpty: 'The service is empty.',
@@ -49,7 +49,7 @@
       show: 'Show', blank: 'Black', stop: 'Stop', upload: 'Upload presentation',
       uploading: 'Uploading "{0}" …', uploaded: '"{0}" uploaded', uploadFailed: 'Upload failed',
       unsupported: 'This file format is not supported', offline: 'No connection to OpenLP – reconnecting …',
-      failed: 'OpenLP did not answer', clear: 'Clear search'
+      failed: 'OpenLP did not answer', clear: 'Clear search', toLight: 'Light mode', toDark: 'Dark mode'
     }
   };
   // The names of the verse types in the order of OpenLP (VerseType). OpenLP sends the first letter of the name in its
@@ -265,6 +265,7 @@
       live.addEventListener('click', function () {
         post('/plugins/' + category + '/live', { id: entry.id }).then(function () {
           clearSearch();
+          reloadSlidesLater();
         });
       });
       row.appendChild(add);
@@ -342,7 +343,7 @@
       row.addEventListener('click', function () {
         list.querySelectorAll('li.live').forEach(function (node) { node.classList.remove('live'); });
         row.classList.add('live');
-        post('/service/show', { id: item.id });
+        post('/service/show', { id: item.id }).then(reloadSlidesLater);
       });
       list.appendChild(row);
       if (item.selected) {
@@ -357,7 +358,23 @@
     return request('GET', '/controller/live-items').then(renderSlides).catch(function () {});
   }
 
+  // Presentations need a few seconds until PowerPoint or Impress has opened them. In case OpenLP doesn't report the new
+  // live item over the web socket, the slides are loaded again a little later.
+  function reloadSlidesLater() {
+    [1500, 5000, 12000].forEach(function (delay) {
+      setTimeout(function () {
+        request('GET', '/controller/live-items').then(function (item) {
+          if (item && item.id && item.id !== state.liveId) {
+            renderSlides(item);
+            loadService();
+          }
+        }).catch(function () {});
+      }, delay);
+    });
+  }
+
   function renderSlides(item) {
+    state.liveId = item && item.id;
     var list = el('slide-list');
     list.textContent = '';
     var slides = (item && item.slides) || [];
@@ -477,6 +494,60 @@
     };
   }
 
+  // ---- Light / dark -----------------------------------------------------------------------------------------------
+
+  var THEME_KEY = 'openlp-remote-theme';
+
+  function isDark() {
+    var chosen = document.documentElement.dataset.theme;
+    if (chosen) {
+      return chosen === 'dark';
+    }
+    return !(window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches);
+  }
+
+  function applyTheme() {
+    var dark = isDark();
+    document.documentElement.classList.toggle('dark-theme', dark);
+    var label = dark ? texts.toLight : texts.toDark;
+    el('theme').title = label;
+    el('theme').setAttribute('aria-label', label);
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) {
+      meta.content = dark ? '#14171c' : '#eef1f5';
+    }
+  }
+
+  function loadTheme() {
+    var saved = null;
+    try {
+      saved = window.localStorage.getItem(THEME_KEY);
+    } catch (error) {
+      // No storage, e.g. in a private window: follow the tablet
+    }
+    if (saved === 'light' || saved === 'dark') {
+      document.documentElement.dataset.theme = saved;
+    }
+    applyTheme();
+    if (window.matchMedia) {
+      var query = window.matchMedia('(prefers-color-scheme: light)');
+      if (query.addEventListener) {
+        query.addEventListener('change', applyTheme);
+      }
+    }
+  }
+
+  function toggleTheme() {
+    var theme = isDark() ? 'light' : 'dark';
+    document.documentElement.dataset.theme = theme;
+    try {
+      window.localStorage.setItem(THEME_KEY, theme);
+    } catch (error) {
+      // Only for this visit then
+    }
+    applyTheme();
+  }
+
   // ---- Start ------------------------------------------------------------------------------------------------------
 
   function applyTexts() {
@@ -489,6 +560,7 @@
     el('blank').querySelector('.label').textContent = texts.blank;
     el('stop').querySelector('.label').textContent = texts.stop;
     el('offline').querySelector('span').textContent = texts.offline;
+    applyTheme();
   }
 
   function bindControls() {
@@ -528,6 +600,7 @@
       el('show').classList.remove('active');
       post('/core/display', { display: 'blank' });
     });
+    el('theme').addEventListener('click', toggleTheme);
     el('stop').addEventListener('click', function () {
       post('/controller/clear/live');
     });
@@ -543,6 +616,7 @@
   }
 
   function start() {
+    loadTheme();
     applyTexts();
     bindControls();
     request('GET', '/core/language').then(function (data) {

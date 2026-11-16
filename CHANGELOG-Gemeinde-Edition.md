@@ -15,6 +15,8 @@ Downloads: [Releases](https://github.com/SlavaSchmick/OpenLP-Gemeinde-Edition/re
   - Unten nur noch **„Bild zeigen“** und **„Schwarz“**; Live-Video und Medien lassen sich beenden.
   - **Präsentationen vom Tablet hochladen:** Sie landen in OpenLP im Ordner „Vom Tablet“ und können sofort live.
   - Ohne Passwort, Sprache wie in OpenLP (Deutsch, Russisch, Ukrainisch, Englisch), verbindet sich selbst neu.
+  - **Hell oder dunkel:** Mit dem Knopf oben rechts (Sonne/Mond); die Wahl merkt sich jedes Gerät, sonst wie das
+    Tablet eingestellt ist.
 
 ### Geändert
 

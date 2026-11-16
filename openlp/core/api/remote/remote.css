@@ -15,7 +15,47 @@
   --blank: #d03b3b;
   --radius: 12px;
   --gap: 10px;
+  --toast: #f2f4f7;
+  --toast-text: #111;
+  --shadow: rgba(0, 0, 0, 0.5);
   color-scheme: dark;
+}
+/* Light: chosen with the sun/moon button, otherwise like the tablet */
+:root[data-theme="light"] {
+  --bg: #eef1f5;
+  --panel: #ffffff;
+  --card: #ffffff;
+  --card-hover: #e3e8ef;
+  --line: #cfd6df;
+  --text: #14171c;
+  --muted: #5b6472;
+  --accent: #2563eb;
+  --accent-soft: rgba(37, 99, 235, 0.12);
+  --live: #e0a526;
+  --live-soft: rgba(224, 165, 38, 0.2);
+  --toast: #1d2128;
+  --toast-text: #fff;
+  --shadow: rgba(20, 23, 28, 0.18);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #eef1f5;
+    --panel: #ffffff;
+    --card: #ffffff;
+    --card-hover: #e3e8ef;
+    --line: #cfd6df;
+    --text: #14171c;
+    --muted: #5b6472;
+    --accent: #2563eb;
+    --accent-soft: rgba(37, 99, 235, 0.12);
+    --live: #e0a526;
+    --live-soft: rgba(224, 165, 38, 0.2);
+    --toast: #1d2128;
+    --toast-text: #fff;
+    --shadow: rgba(20, 23, 28, 0.18);
+    color-scheme: light;
+  }
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -88,6 +128,10 @@ button {
   border-radius: var(--radius);
 }
 .upload:active { background: var(--card-hover); }
+.theme { padding: 0 14px; }
+.theme .sun { display: none; }
+.dark-theme .theme .sun { display: block; }
+.dark-theme .theme .moon { display: none; }
 
 .categories {
   display: flex;
@@ -119,7 +163,7 @@ button {
   background: var(--bg);
   padding: 0 var(--gap) var(--gap);
   border-bottom: 2px solid var(--line);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 12px 24px var(--shadow);
 }
 .results ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
 .result {
@@ -291,9 +335,9 @@ button {
   max-width: calc(100% - 32px);
   padding: 12px 20px;
   border-radius: var(--radius);
-  background: #f2f4f7;
-  color: #111;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+  background: var(--toast);
+  color: var(--toast-text);
+  box-shadow: 0 6px 20px var(--shadow);
   font-size: 16px;
 }
 .toast.error { background: var(--blank); color: #fff; }

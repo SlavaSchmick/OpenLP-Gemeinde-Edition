@@ -1002,6 +1002,9 @@ class SlideController(QtWidgets.QWidget, LogMixin, RegistryProperties):
             self.on_controller_size_changed()
             if not is_reloading and self.settings.value('core/auto unblank'):
                 self.set_hide_mode(None)
+            # Tell the web remote about the new item. slide_selected() does it too, but skips everything when it
+            # doesn't get its lock in time, e.g. while PowerPoint is still opening a presentation.
+            self.output_has_changed()
         self.log_debug('_process_item end')
 
     def on_slide_selected_index(self, message):
